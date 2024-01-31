@@ -1,9 +1,12 @@
 using WebAppComercial.Web.Components;
+using WebAppComercial.Web.Repositories;
 
 var builder = WebApplication.CreateBuilder(args);
 
 // Add services to the container.
 builder.Services.AddRazorComponents();
+builder.Services.AddScoped(sp => new HttpClient { BaseAddress = new Uri("https://localhost:7278//") });
+builder.Services.AddScoped<IRepository, Repository>();
 
 var app = builder.Build();
 
