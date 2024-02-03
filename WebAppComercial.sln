@@ -7,7 +7,7 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "WebAppComercial.Api", "WebA
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "WebAppComercial.Shared", "WebAppComercial.Shared\WebAppComercial.Shared.csproj", "{1C4EA73E-D16F-4645-BDD4-DC09B1A1820F}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "WebAppComercial.Web", "WebAppComercial.Web\WebAppComercial.Web.csproj", "{1C583F0B-A667-4412-9B61-9A1BC8FD8514}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "WebAppComercial.Web", "WebAppComercial.Web\WebAppComercial.Web.csproj", "{1C583F0B-A667-4412-9B61-9A1BC8FD8514}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution

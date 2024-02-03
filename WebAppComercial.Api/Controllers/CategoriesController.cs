@@ -29,8 +29,27 @@ namespace WebAppComercial.Api.Controllers
         public async Task<ActionResult> PostAsync(Category category)
         {
             _context.Add(category);
-            await _context.SaveChangesAsync();
-            return Ok(category);
+            try
+            {
+                await _context.SaveChangesAsync();
+                return Ok(category);
+            }
+            catch (DbUpdateException dbUpdateException)
+            {
+                if (dbUpdateException.InnerException!.Message.Contains("duplica"))
+                {
+                    return BadRequest("Ya existe una Categoría con el mismo nombre.");
+                }
+                else
+                {
+                    return BadRequest(dbUpdateException.InnerException.Message);
+                }
+            }
+            catch (Exception exception)
+            {
+                return BadRequest(exception.Message);
+            }
+
         }
 
         //---------------------------------------------------------------------------------------
@@ -51,8 +70,26 @@ namespace WebAppComercial.Api.Controllers
         public async Task<ActionResult> Put(Category category)
         {
             _context.Update(category);
-            await _context.SaveChangesAsync();
-            return Ok(category);
+            try
+            {
+                await _context.SaveChangesAsync();
+                return Ok(category);
+            }
+            catch (DbUpdateException dbUpdateException)
+            {
+                if (dbUpdateException.InnerException!.Message.Contains("duplica"))
+                {
+                    return BadRequest("Ya existe una Categoría con el mismo nombre.");
+                }
+                else
+                {
+                    return BadRequest(dbUpdateException.InnerException.Message);
+                }
+            }
+            catch (Exception exception)
+            {
+                return BadRequest(exception.Message);
+            }
         }
 
         //---------------------------------------------------------------------------------------
