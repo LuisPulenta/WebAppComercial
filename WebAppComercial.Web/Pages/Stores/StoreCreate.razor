@@ -1,0 +1,31 @@
+﻿@page "/stores/create"
+@inject IRepository repository
+@inject NavigationManager navigationManager
+@inject SweetAlertService sweetAlertService
+
+<h3>Crear Almacén</h3>
+
+<StoreForm @ref="storeFormForm" Store="store" OnValidSubmit="CreateAsync" ReturnAction="Return" />
+
+@code {
+    private Store store = new();
+    private StoreForm? storeFormForm;
+
+    private async Task CreateAsync()
+    {
+        var httpResponse = await repository.Post("/api/stores", store);
+        if (httpResponse.Error)
+        {
+            var message = await httpResponse.GetErrorMessage();
+            await sweetAlertService.FireAsync("Error", message , SweetAlertIcon.Error);
+            return;
+        }
+        Return();
+    }
+
+    private void Return()
+    {
+        storeFormForm!.FormPostedSuccessfully = true;
+        navigationManager.NavigateTo("/stores");
+    }
+}

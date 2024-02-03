@@ -9,11 +9,13 @@ namespace WebAppComercial.Api.Data
         {
         }
         public DbSet<Category> Categories { get; set; }
+        public DbSet<Store> Stores { get; set; }
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
             base.OnModelCreating(modelBuilder);
             modelBuilder.Entity<Category>().HasIndex(c => c.Name).IsUnique();
+            modelBuilder.Entity<Store>().HasIndex(c => c.Name).IsUnique();
         }
     }
 }

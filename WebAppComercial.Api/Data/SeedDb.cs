@@ -16,6 +16,7 @@ namespace WebAppComercial.API.Data
         {
             await _context.Database.EnsureCreatedAsync();
             await CheckCountriesAsync();
+            await CheckStoresAsync();
         }
 
         private async Task CheckCountriesAsync()
@@ -26,6 +27,17 @@ namespace WebAppComercial.API.Data
                 _context.Categories.Add(new Category { Name = "Bebidas" });
                 _context.Categories.Add(new Category { Name = "Herramientas" });
                 _context.Categories.Add(new Category { Name = "Juguetes" });
+            }
+            await _context.SaveChangesAsync();
+        }
+
+        private async Task CheckStoresAsync()
+        {
+            if (!_context.Stores.Any())
+            {
+                _context.Stores.Add(new Store { Name = "Principal" });
+                _context.Stores.Add(new Store { Name = "Auxiliar1" });
+                _context.Stores.Add(new Store { Name = "Auxiliar2" });
             }
             await _context.SaveChangesAsync();
         }
