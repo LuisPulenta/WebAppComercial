@@ -3,10 +3,27 @@
 @inject IRepository repository
 @inject NavigationManager navigationManager
 @inject SweetAlertService sweetAlertService
+@inject HttpClient Http
+@inject IJSRuntime JS
 
 <h3>Categorías</h3>
 
-<a class="btn btn-primary mb-3" href="/categories/create">Nueva Categoría</a>
+<div class="d-flex justify-content-between align-items-lg-center">
+    <a class="btn btn-sm btn-outline-primary mb-3" href="/categories/create">Nueva Categoría</a>
+
+    <button class="btn btn-sm btn-outline-success mb-3" data-toggle="tooltip" title="Exportar" @onclick="(()=> ExportarExcel(Categories))">
+        <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-file-earmark-excel-fill" viewBox="0 0 16 16">
+            <path d="M9.293 0H4a2 2 0 0 0-2 2v12a2 2 0 0 0 2 2h8a2 2 0 0 0 2-2V4.707A1 1 0 0 0 13.707 4L10 .293A1 1 0 0 0 9.293 0M9.5 3.5v-2l3 3h-2a1 1 0 0 1-1-1M5.884 6.68 8 9.219l2.116-2.54a.5.5 0 1 1 .768.641L8.651 10l2.233 2.68a.5.5 0 0 1-.768.64L8 10.781l-2.116 2.54a.5.5 0 0 1-.768-.641L7.349 10 5.116 7.32a.5.5 0 1 1 .768-.64" />
+        </svg>
+    </button>
+</div>
+
+
+
+
+
+
+
 
 <GenericList MyList="Categories">
     <Body>
@@ -81,5 +98,13 @@
             }
         }
         await LoadAsync();
+    }
+
+    private async Task ExportarExcel(List<Category> categories)
+    {
+        var response = await repository.Post("/api/Excel/ExportExcelCategories", categories);
+        var fileStream = response.HttpResponseMessage.Content.ReadAsStream();
+        using var streamRef = new DotNetStreamReference(stream: fileStream);
+        await JS.InvokeVoidAsync("DescargarExcel", "Categorias.xlsx", streamRef);
     }
 }
