@@ -6,18 +6,36 @@
 @inject HttpClient Http
 @inject IJSRuntime JS
 
-
 <h3>Almacenes</h3>
 
+<div class="mb-2" style="display: flex; flex-wrap:wrap; align-items: center;">
+    <div>
+        <a class="btn btn-primary" href="/countries/create">Nuevo País</a>
+    </div>
+    <div class="mx-2">
+        <input style="width: 400px;" type="text" class="form-control" id="titulo" placeholder="Buscar país..." @bind-value="Filter" />
+    </div>
+    <div>
+        <button type="button" class="btn btn-outline-primary" @onclick="ApplyFilterAsync">Filtrar</button>
+        <button type="button" class="btn btn-outline-danger" @onclick="CleanFilterAsync">Limpiar</button>
+    </div>
+</div>
 
 <div class="d-flex justify-content-between align-items-lg-center">
     <a class="btn btn-sm btn-outline-primary mb-3" href="/stores/create">Nuevo Almacén</a>
+    <div>
+        <button class="btn btn-sm btn-outline-success mb-3" data-toggle="tooltip" title="Exportar" @onclick="(()=> ExportarExcel(Stores!))">
+            <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-file-earmark-excel-fill" viewBox="0 0 16 16">
+                <path d="M9.293 0H4a2 2 0 0 0-2 2v12a2 2 0 0 0 2 2h8a2 2 0 0 0 2-2V4.707A1 1 0 0 0 13.707 4L10 .293A1 1 0 0 0 9.293 0M9.5 3.5v-2l3 3h-2a1 1 0 0 1-1-1M5.884 6.68 8 9.219l2.116-2.54a.5.5 0 1 1 .768.641L8.651 10l2.233 2.68a.5.5 0 0 1-.768.64L8 10.781l-2.116 2.54a.5.5 0 0 1-.768-.641L7.349 10 5.116 7.32a.5.5 0 1 1 .768-.64" />
+            </svg>
+        </button>
 
-    <button class="btn btn-sm btn-outline-success mb-3" data-toggle="tooltip" title="Exportar" @onclick="(()=> ExportarExcel(Stores))">
-        <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-file-earmark-excel-fill" viewBox="0 0 16 16">
-            <path d="M9.293 0H4a2 2 0 0 0-2 2v12a2 2 0 0 0 2 2h8a2 2 0 0 0 2-2V4.707A1 1 0 0 0 13.707 4L10 .293A1 1 0 0 0 9.293 0M9.5 3.5v-2l3 3h-2a1 1 0 0 1-1-1M5.884 6.68 8 9.219l2.116-2.54a.5.5 0 1 1 .768.641L8.651 10l2.233 2.68a.5.5 0 0 1-.768.64L8 10.781l-2.116 2.54a.5.5 0 0 1-.768-.641L7.349 10 5.116 7.32a.5.5 0 1 1 .768-.64" />
-        </svg>
-    </button>
+        <button class="btn btn-sm btn-outline-success mb-3" data-toggle="tooltip" title="Exportar" @onclick="(()=> ExportarExcel(StoresAll!))">
+            <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-file-excel-fill" viewBox="0 0 16 16">
+                <path d="M12 0H4a2 2 0 0 0-2 2v12a2 2 0 0 0 2 2h8a2 2 0 0 0 2-2V2a2 2 0 0 0-2-2M5.884 4.68 8 7.219l2.116-2.54a.5.5 0 1 1 .768.641L8.651 8l2.233 2.68a.5.5 0 0 1-.768.64L8 8.781l-2.116 2.54a.5.5 0 0 1-.768-.641L7.349 8 5.116 5.32a.5.5 0 1 1 .768-.64" />
+            </svg>
+        </button>
+    </div>
 </div>
 
 <GenericList MyList="Stores">
@@ -46,20 +64,75 @@
         </table>
     </Body>
 </GenericList>
-
+<div class="d-flex justify-content-between align-items-lg-center">
+    <Pagination CurrentPage="currentPage"
+                TotalPages="totalPages"
+                SelectedPage="SelectedPage" />
+    <p> Total Registros: @totalRegisters</p>
+</div>
 
 @code {
     public List<Store>? Stores { get; set; }
+    public List<Store>? StoresAll { get; set; }
+    private int currentPage = 1;
+    private int totalPages;
+    private int totalRegisters;
+
+    [Parameter]
+    [SupplyParameterFromQuery]
+    public string Page { get; set; } = "";
+
+    [Parameter]
+    [SupplyParameterFromQuery]
+    public string Filter { get; set; } = "";
+
 
     protected override async Task OnInitializedAsync()
     {
         await LoadAsync();
     }
 
-    private async Task LoadAsync()
+    private async Task SelectedPage(int page)
     {
-        var responseHttp = await repository.Get<List<Store>>("/api/stores");
-        Stores = responseHttp.Response;
+        currentPage = page;
+        await LoadAsync(page);
+    }
+
+    private async Task LoadAsync(int page = 1)
+    {
+        if (!string.IsNullOrWhiteSpace(Page))
+        {
+            page = Convert.ToInt32(Page);
+        }
+
+        string url1 = string.Empty;
+        string url2 = string.Empty;
+        string url3 = string.Empty;
+        string url4 = string.Empty;
+
+        if (string.IsNullOrEmpty(Filter))
+        {
+            url1 = $"/api/stores?page={page}";
+            url2 = $"/api/stores/totalPages";
+            url3 = $"/api/stores/totalRegisters";
+            url4 = $"/api/stores/all";
+        }
+        else
+        {
+            url1 = $"/api/stores?page={page}&filter={Filter}";
+            url2 = $"/api/stores/totalPages?filter={Filter}";
+            url3 = $"/api/stores/totalRegisters?filter={Filter}";
+            url4 = $"/api/stores/all?filter={Filter}";
+        }
+        
+        var responseHttp = await repository.Get<List<Store>>(url1);
+        var responseHttp2 = await repository.Get<int>(url2);
+        var responseHttp3 = await repository.Get<int>(url3);
+        var responseHttp4 = await repository.Get<List<Store>>(url4);
+        Stores = responseHttp.Response!;
+        totalPages = responseHttp2.Response!;
+        totalRegisters = responseHttp3.Response!;
+        StoresAll = responseHttp4.Response!;
     }
 
     private async Task DeleteAsync(int id)
@@ -101,5 +174,18 @@
         var fileStream = response.HttpResponseMessage.Content.ReadAsStream();
         using var streamRef = new DotNetStreamReference(stream: fileStream);
         await JS.InvokeVoidAsync("DescargarExcel", "Almacenes.xlsx", streamRef);
+    }
+
+    private async Task CleanFilterAsync()
+    {
+        Filter = string.Empty;
+        await ApplyFilterAsync();
+    }
+
+    private async Task ApplyFilterAsync()
+    {
+        int page = 1;
+        await LoadAsync(page);
+        await SelectedPage(page);
     }
 }

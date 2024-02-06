@@ -1,7 +1,8 @@
 ﻿using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
-using System.Diagnostics.Metrics;
 using WebAppComercial.Api.Data;
+using WebAppComercial.Api.Helpers;
+using WebAppComercial.Shared.DTOs;
 using WebAppComercial.Shared.Entities;
 
 namespace WebAppComercial.Api.Controllers
@@ -19,9 +20,64 @@ namespace WebAppComercial.Api.Controllers
 
         //---------------------------------------------------------------------------------------
         [HttpGet]
-        public async Task<ActionResult> GetAsync()
+        public async Task<IActionResult> GetAsync([FromQuery] PaginationDTO pagination)
         {
-            return Ok(await _context.Categories.ToListAsync());
+            var queryable = _context.Categories
+                .AsQueryable();
+
+            if (!string.IsNullOrWhiteSpace(pagination.Filter))
+            {
+                queryable = queryable.Where(x => x.Name.ToLower().Contains(pagination.Filter.ToLower()));
+            }
+
+            return Ok(await queryable
+                .OrderBy(x => x.Name)
+                .Paginate(pagination)
+                .ToListAsync());
+        }
+
+        //---------------------------------------------------------------------------------------
+        [HttpGet("all")]
+        public async Task<IActionResult> GetAll([FromQuery] PaginationDTO pagination)
+        {
+            var queryable = _context.Categories.AsQueryable();
+            if (!string.IsNullOrWhiteSpace(pagination.Filter))
+            {
+                queryable = queryable.Where(x => x.Name.ToLower().Contains(pagination.Filter.ToLower()));
+            }
+                        
+            return Ok(await queryable
+                .OrderBy(x => x.Name)
+                .ToListAsync());
+        }
+
+        //---------------------------------------------------------------------------------------
+        [HttpGet("totalPages")]
+        public async Task<ActionResult> GetPages([FromQuery] PaginationDTO pagination)
+        {
+            var queryable = _context.Categories.AsQueryable();
+            if (!string.IsNullOrWhiteSpace(pagination.Filter))
+            {
+                queryable = queryable.Where(x => x.Name.ToLower().Contains(pagination.Filter.ToLower()));
+            }
+
+            double count = await queryable.CountAsync();
+            double totalPages = Math.Ceiling(count / pagination.RecordsNumber);
+            return Ok(totalPages);
+        }
+
+        //---------------------------------------------------------------------------------------
+        [HttpGet("totalRegisters")]
+        public async Task<ActionResult> GetRegisters([FromQuery] PaginationDTO pagination)
+        {
+            var queryable = _context.Categories.AsQueryable();
+            if (!string.IsNullOrWhiteSpace(pagination.Filter))
+            {
+                queryable = queryable.Where(x => x.Name.ToLower().Contains(pagination.Filter.ToLower()));
+            }
+
+            double count = await queryable.CountAsync();
+            return Ok(count);
         }
 
         //---------------------------------------------------------------------------------------
