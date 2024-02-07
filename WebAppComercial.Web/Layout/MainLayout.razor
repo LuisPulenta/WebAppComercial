@@ -25,13 +25,27 @@
                                                 Archivos
                                             </a>
                                             <ul class="dropdown-menu">
-                                                <li><a class="dropdown-item" href="/stores">Almacenes</a></li>
+
+                                                <AuthorizeView Roles="Admin">
+                                                    <Authorized>
+                                                        <li><a class="dropdown-item" href="/stores">Almacenes</a></li>
+                                                    </Authorized>
+                                                </AuthorizeView>
+
                                                 <li><a class="dropdown-item" href="/stores">Clientes</a></li>
                                                 <li><a class="dropdown-item" href="#">Proveedores</a></li>
                                                 <li><a class="dropdown-item" href="#">Conceptos</a></li>
                                                 <li><a class="dropdown-item" href="#">Tipos Documento</a></li>
                                                 <li><hr class="dropdown-divider"></li>
-                                                <li><a class="dropdown-item" href="/categories">Categorías</a></li>
+
+                                                <AuthorizeView Roles="Admin">
+                                                    <Authorized>
+                                                        <li><a class="dropdown-item" href="/categories">Categorías</a></li>
+                                                    </Authorized>
+                                                </AuthorizeView>
+
+
+                                                
                                                 <li><a class="dropdown-item" href="#">IVA's'</a></li>
                                                 <li><a class="dropdown-item" href="#">Productos</a></li>
                                                 <li><a class="dropdown-item" href="#">Medidas</a></li>

@@ -1,5 +1,5 @@
 ﻿@page "/stores"
-
+@attribute [Authorize(Roles = "Admin")]
 @inject IRepository repository
 @inject NavigationManager navigationManager
 @inject SweetAlertService sweetAlertService
@@ -10,10 +10,10 @@
 
 <div class="mb-2" style="display: flex; flex-wrap:wrap; align-items: center;">
     <div>
-        <a class="btn btn-primary" href="/countries/create">Nuevo País</a>
+        <a class="btn btn-primary" href="/countries/create">Nuevo Almacén</a>
     </div>
     <div class="mx-2">
-        <input style="width: 400px;" type="text" class="form-control" id="titulo" placeholder="Buscar país..." @bind-value="Filter" />
+        <input style="width: 400px;" type="text" class="form-control" id="titulo" placeholder="Buscar Almacén..." @bind-value="Filter" />
     </div>
     <div>
         <button type="button" class="btn btn-outline-primary" @onclick="ApplyFilterAsync">Filtrar</button>
