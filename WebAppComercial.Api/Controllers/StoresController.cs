@@ -1,4 +1,6 @@
-﻿using Microsoft.AspNetCore.Mvc;
+﻿using Microsoft.AspNetCore.Authentication.JwtBearer;
+using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using System.Diagnostics.Metrics;
 using WebAppComercial.Api.Data;
@@ -10,6 +12,7 @@ namespace WebAppComercial.Api.Controllers
 {
     [ApiController]
     [Route("/api/stores")]
+    [Authorize(AuthenticationSchemes = JwtBearerDefaults.AuthenticationScheme)]
     public class StoreController : ControllerBase
     {
         private readonly DataContext _context;

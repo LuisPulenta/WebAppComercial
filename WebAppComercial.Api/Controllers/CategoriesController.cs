@@ -1,4 +1,6 @@
-﻿using Microsoft.AspNetCore.Mvc;
+﻿using Microsoft.AspNetCore.Authentication.JwtBearer;
+using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using WebAppComercial.Api.Data;
 using WebAppComercial.Api.Helpers;
@@ -9,6 +11,7 @@ namespace WebAppComercial.Api.Controllers
 {
     [ApiController]
     [Route("/api/categories")]
+    [Authorize(AuthenticationSchemes = JwtBearerDefaults.AuthenticationScheme)]
     public class CategoriesController : ControllerBase
     {
         private readonly DataContext _context;

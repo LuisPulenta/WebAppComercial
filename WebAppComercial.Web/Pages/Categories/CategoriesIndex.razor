@@ -124,16 +124,21 @@
             url4 = $"/api/categories/all?filter={Filter}";
         }
 
-        
-
-        var responseHttp = await repository.Get<List<Category>>(url1);
-        var responseHttp2 = await repository.Get<int>(url2);
-        var responseHttp3 = await repository.Get<int>(url3);
-        var responseHttp4 = await repository.Get<List<Category>>(url4);
-        Categories = responseHttp.Response!;
-        totalPages = responseHttp2.Response!;
-        totalRegisters = responseHttp3.Response!;
-        CategoriesAll = responseHttp4.Response!;
+        try
+        {
+            var responseHttp = await repository.Get<List<Category>>(url1);
+            var responseHttp2 = await repository.Get<int>(url2);
+            var responseHttp3 = await repository.Get<int>(url3);
+            var responseHttp4 = await repository.Get<List<Category>>(url4);
+            Categories = responseHttp.Response!;
+            totalPages = responseHttp2.Response!;
+            totalRegisters = responseHttp3.Response!;
+            CategoriesAll = responseHttp4.Response!;
+        }
+        catch (Exception ex)
+        {
+            await sweetAlertService.FireAsync("Error", ex.Message, SweetAlertIcon.Error);
+        }
     }
 
     private async Task DeleteAsync(int id)

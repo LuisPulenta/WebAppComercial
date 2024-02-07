@@ -124,15 +124,21 @@
             url3 = $"/api/stores/totalRegisters?filter={Filter}";
             url4 = $"/api/stores/all?filter={Filter}";
         }
-        
-        var responseHttp = await repository.Get<List<Store>>(url1);
-        var responseHttp2 = await repository.Get<int>(url2);
-        var responseHttp3 = await repository.Get<int>(url3);
-        var responseHttp4 = await repository.Get<List<Store>>(url4);
-        Stores = responseHttp.Response!;
-        totalPages = responseHttp2.Response!;
-        totalRegisters = responseHttp3.Response!;
-        StoresAll = responseHttp4.Response!;
+        try
+        {
+            var responseHttp = await repository.Get<List<Store>>(url1);
+            var responseHttp2 = await repository.Get<int>(url2);
+            var responseHttp3 = await repository.Get<int>(url3);
+            var responseHttp4 = await repository.Get<List<Store>>(url4);
+            Stores = responseHttp.Response!;
+            totalPages = responseHttp2.Response!;
+            totalRegisters = responseHttp3.Response!;
+            StoresAll = responseHttp4.Response!;
+        }
+        catch (Exception ex)
+        {
+            await sweetAlertService.FireAsync("Error", ex.Message, SweetAlertIcon.Error);
+        }
     }
 
     private async Task DeleteAsync(int id)
