@@ -17,13 +17,13 @@ namespace WebAppComercial.Shared.Entities
         public string LastName { get; set; } = null!;
 
         [Display(Name = "Tipo de usuario")]
-        public UserType UserType { get; set; }
+        public UserType? UserType { get; set; }
         
         [Display(Name = "Activo")]
         public bool Active { get; set; }
 
         [Display(Name = "Usuario")]
         public string FullName => $"{FirstName} {LastName}";
-        public string Rol => UserType==0 ? "Administrador" : "Ventas";
+        public string Rol => (Convert.ToInt32(UserType) ==0) ? "Administrador" : (Convert.ToInt32(UserType) == 1) ? "Inventario" : "Venta";
     }
 }

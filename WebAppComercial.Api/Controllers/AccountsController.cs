@@ -8,6 +8,7 @@ using WebAppComercial.Api.Data;
 using WebAppComercial.Api.Helpers;
 using WebAppComercial.Shared.DTOs;
 using WebAppComercial.Shared.Entities;
+using WebAppComercial.Shared.Enums;
 
 namespace WebAppComercial.Api.Controllers
 {
@@ -43,7 +44,9 @@ namespace WebAppComercial.Api.Controllers
             }
 
             return Ok(await queryable
-                .OrderBy(x => x.FirstName)
+                .OrderBy(x => x.UserType)
+                .ThenBy(x => x.LastName)
+                .ThenBy(x => x.FirstName)
                 .Paginate(pagination)
                 .ToListAsync());
         }

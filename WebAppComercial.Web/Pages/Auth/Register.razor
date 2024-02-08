@@ -43,7 +43,18 @@
             </div>
         </div>
         <div class="col-6">
-           
+
+            <label>Tipo Usuario:</label>
+            <div>
+                <select class="form-select" @onchange="UserTypeChanged">
+                    <option value="-1">-- Seleccione un Tipo de Usuario --</option>
+                    <option value=0>Administrador</option>
+                    <option value=1>Inventario</option>
+                    <option value=2>Venta</option>
+                </select>
+            </div>
+
+
             <div class="mb-3">
                 <label>Contraseña:</label>
                 <div>
@@ -66,11 +77,34 @@
 
 @code {
     private UserDTO userDTO = new();
+    private int userType = -1;
+
+    private void UserTypeChanged(ChangeEventArgs e)
+    {
+        if (Convert.ToInt32(e.Value!) == 0)
+        {
+            userDTO.UserType = UserType.Admin;
+        }
+        if (Convert.ToInt32(e.Value!) == 1)
+        {
+            userDTO.UserType = UserType.Inventory;
+        }
+        if (Convert.ToInt32(e.Value!) == 2)
+        {
+            userDTO.UserType = UserType.Sale;
+        }
+    }
 
     private async Task CreateUserAsync()
     {
+        if (Convert.ToInt32(userDTO.UserType) < 0 || userDTO.UserType==null)
+        {
+            await sweetAlertService.FireAsync("Error", "Debes elegir un Tipo de Usuario", SweetAlertIcon.Error);
+            return;            
+        }
+
         userDTO.UserName = userDTO.Email;
-        userDTO.UserType = UserType.Inventory;
+        userDTO.Active = true;
         var responseHttp = await repository.Post<UserDTO, TokenDTO>("/api/accounts/CreateUser", userDTO);
         if (responseHttp.Error)
         {
@@ -87,4 +121,6 @@
     {
         navigationManager.NavigateTo("/users");
     }
+
+    
 }
