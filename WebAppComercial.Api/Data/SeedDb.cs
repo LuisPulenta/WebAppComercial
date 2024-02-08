@@ -39,6 +39,7 @@ namespace WebAppComercial.API.Data
                     UserName = email,
                     PhoneNumber = phone,
                     UserType = userType,
+                    Active=true
                 };
 
                 await _userHelper.AddUserAsync(user, "123456");

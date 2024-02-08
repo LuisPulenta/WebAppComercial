@@ -1,4 +1,4 @@
-﻿@page "/categories"
+﻿@page "/users"
 @attribute [Authorize(Roles = "Admin")]
 @inject IRepository repository
 @inject NavigationManager navigationManager
@@ -6,13 +6,13 @@
 @inject HttpClient Http
 @inject IJSRuntime JS
 
-<h3>Categorías</h3>
+<h3>Usuarios</h3>
 
 <div class="d-flex justify-content-between align-items-center">
     <div style="display: flex; flex-wrap:wrap; align-items: center;">
-        <a class="btn btn-sm btn-outline-primary" href="/categories/create">Nueva Categoría</a>
+        <a class="btn btn-sm btn-outline-primary" href="/accounts/register">Nuevo Usuario</a>
         <div class="mx-2">
-            <input style="width: 400px;" type="text" class="form-control" id="titulo" placeholder="Buscar Categoría..." @bind-value="Filter" />
+            <input style="width: 400px;" type="text" class="form-control" id="titulo" placeholder="Buscar Usuario..." @bind-value="Filter" />
         </div>
         <div>
             <button type="button" class="btn btn-outline-primary" @onclick="ApplyFilterAsync">Filtrar</button>
@@ -20,13 +20,13 @@
         </div>
     </div>
     <div>
-        <button class="btn btn-sm btn-outline-success mb-3" data-toggle="tooltip" title="Exportar" @onclick="(()=> ExportarExcel(Categories!))">
+        <button class="btn btn-sm btn-outline-success mb-3" data-toggle="tooltip" title="Exportar" @onclick="(()=> ExportarExcel(Users!))">
             <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-file-earmark-excel-fill" viewBox="0 0 16 16">
                 <path d="M9.293 0H4a2 2 0 0 0-2 2v12a2 2 0 0 0 2 2h8a2 2 0 0 0 2-2V4.707A1 1 0 0 0 13.707 4L10 .293A1 1 0 0 0 9.293 0M9.5 3.5v-2l3 3h-2a1 1 0 0 1-1-1M5.884 6.68 8 9.219l2.116-2.54a.5.5 0 1 1 .768.641L8.651 10l2.233 2.68a.5.5 0 0 1-.768.64L8 10.781l-2.116 2.54a.5.5 0 0 1-.768-.641L7.349 10 5.116 7.32a.5.5 0 1 1 .768-.64" />
             </svg>
         </button>
 
-        <button class="btn btn-sm btn-outline-success mb-3" data-toggle="tooltip" title="Exportar" @onclick="(()=> ExportarExcel(CategoriesAll!))">
+        <button class="btn btn-sm btn-outline-success mb-3" data-toggle="tooltip" title="Exportar" @onclick="(()=> ExportarExcel(UsersAll!))">
             <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-file-excel-fill" viewBox="0 0 16 16">
                 <path d="M12 0H4a2 2 0 0 0-2 2v12a2 2 0 0 0 2 2h8a2 2 0 0 0 2-2V2a2 2 0 0 0-2-2M5.884 4.68 8 7.219l2.116-2.54a.5.5 0 1 1 .768.641L8.651 8l2.233 2.68a.5.5 0 0 1-.768.64L8 8.781l-2.116 2.54a.5.5 0 0 1-.768-.641L7.349 8 5.116 5.32a.5.5 0 1 1 .768-.64" />
             </svg>
@@ -34,25 +34,45 @@
     </div>
 </div>
 
-<GenericList MyList="Categories">
+<GenericList MyList="Users">
     <Body>
         <table class="table table-sm table-info table-striped">
             <thead>
                 <tr>
-                    <th>Categoría</th>
+                    <th>Rol</th>
+                    <th>Nombre</th>
+                    <th>Apellido</th>
+                    <th>Email</th>
+                    <th>Confirmado</th>
+                    <th>Activo</th>
                     <th></th>
                 </tr>
             </thead>
             <tbody>
-                @foreach (var category in Categories!)
+                @foreach (var user in Users!)
                 {
                     <tr>
                         <td>
-                            @category.Name
+                            @user.Rol
                         </td>
                         <td>
-                            <a class="btn btn-sm  btn-warning" href="/categories/edit/@category.Id">Editar</a>
-                            <button class="btn btn-sm  btn-danger" @onclick=@(() => DeleteAsync(category.Id))>Borrar</button>
+                            @user.FirstName
+                        </td>
+                        <td>
+                            @user.LastName
+                        </td>
+                        <td>
+                            @user.Email
+                        </td>
+                        <td>
+                            <input type="checkbox" onclick="return false" @bind="@user.EmailConfirmed">
+                        </td>
+                        <td>
+                            <input type="checkbox" onclick="return false" @bind="@user.Active">
+                        </td>
+                        <td>
+                            <a class="btn btn-sm btn-warning" href="/accounts/edit/@user.Id">Editar</a>
+                            <button class="btn btn-sm btn-danger" @onclick=@(() => DeleteAsync(user.Id))>Borrar</button>
                         </td>
                     </tr>
                 }
@@ -68,8 +88,8 @@
 </div>
 
 @code {
-    public List<Category>? Categories { get; set; }
-    public List<Category>? CategoriesAll { get; set; }
+    public List<User>? Users { get; set; }
+    public List<User>? UsersAll { get; set; }
     private int currentPage = 1;
     private int totalPages;
     private int totalRegisters;
@@ -107,29 +127,29 @@
 
         if (string.IsNullOrEmpty(Filter))
         {
-            url1 = $"/api/categories?page={page}";
-            url2 = $"/api/categories/totalPages";
-            url3 = $"/api/categories/totalRegisters";
-            url4 = $"/api/categories/all";
+            url1 = $"/api/accounts?page={page}";
+            url2 = $"/api/accounts/totalPages";
+            url3 = $"/api/accounts/totalRegisters";
+            url4 = $"/api/accounts/all";
         }
         else
         {
-            url1 = $"/api/categories?page={page}&filter={Filter}";
-            url2 = $"/api/categories/totalPages?filter={Filter}";
-            url3 = $"/api/categories/totalRegisters?filter={Filter}";
-            url4 = $"/api/categories/all?filter={Filter}";
+            url1 = $"/api/accounts?page={page}&filter={Filter}";
+            url2 = $"/api/accounts/totalPages?filter={Filter}";
+            url3 = $"/api/accounts/totalRegisters?filter={Filter}";
+            url4 = $"/api/accounts/all?filter={Filter}";
         }
 
         try
         {
-            var responseHttp = await repository.Get<List<Category>>(url1);
+            var responseHttp = await repository.Get<List<User>>(url1);
             var responseHttp2 = await repository.Get<int>(url2);
             var responseHttp3 = await repository.Get<int>(url3);
-            var responseHttp4 = await repository.Get<List<Category>>(url4);
-            Categories = responseHttp.Response!;
+            var responseHttp4 = await repository.Get<List<User>>(url4);
+            Users = responseHttp.Response!;
             totalPages = responseHttp2.Response!;
             totalRegisters = responseHttp3.Response!;
-            CategoriesAll = responseHttp4.Response!;
+            UsersAll = responseHttp4.Response!;
         }
         catch (Exception ex)
         {
@@ -137,7 +157,7 @@
         }
     }
 
-    private async Task DeleteAsync(int id)
+    private async Task DeleteAsync(string id)
     {
         var result = await sweetAlertService.FireAsync(new SweetAlertOptions
             {
@@ -156,7 +176,7 @@
             return;
         }
 
-        var responseHttp = await repository.Delete($"/api/categories/{id}");
+        var responseHttp = await repository.Delete($"/api/users/{id}");
 
         if (responseHttp.Error)
         {
@@ -170,12 +190,12 @@
         await LoadAsync();
     }
 
-    private async Task ExportarExcel(List<Category> categories)
+    private async Task ExportarExcel(List<User> users)
     {
-        var response = await repository.Post("/api/Excel/ExportExcelCategories", categories);
+        var response = await repository.Post("/api/Excel/ExportExcelUsers", users);
         var fileStream = response.HttpResponseMessage.Content.ReadAsStream();
         using var streamRef = new DotNetStreamReference(stream: fileStream);
-        await JS.InvokeVoidAsync("DescargarExcel", "Categorias.xlsx", streamRef);
+        await JS.InvokeVoidAsync("DescargarExcel", "Usuarios.xlsx", streamRef);
     }
 
     private async Task CleanFilterAsync()

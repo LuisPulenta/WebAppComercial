@@ -12,7 +12,7 @@ using WebAppComercial.Api.Data;
 namespace WebAppComercial.Api.Migrations
 {
     [DbContext(typeof(DataContext))]
-    [Migration("20240207115142_InitialDb")]
+    [Migration("20240208121418_InitialDb")]
     partial class InitialDb
     {
         /// <inheritdoc />
@@ -207,6 +207,9 @@ namespace WebAppComercial.Api.Migrations
 
                     b.Property<int>("AccessFailedCount")
                         .HasColumnType("int");
+
+                    b.Property<bool>("Active")
+                        .HasColumnType("bit");
 
                     b.Property<string>("ConcurrencyStamp")
                         .IsConcurrencyToken()

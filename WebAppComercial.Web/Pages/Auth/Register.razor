@@ -1,4 +1,4 @@
-﻿@page "/Register"
+﻿@page "/accounts/register"
 @inject IRepository repository
 @inject SweetAlertService sweetAlertService
 @inject NavigationManager navigationManager
@@ -60,7 +60,8 @@
             </div>
         </div>
     </div>
-    <button class="btn btn-primary" type="submit">Registrar</button>
+    <button class="btn btn-sm btn-outline-primary" type="submit">Registrar</button>
+    <button class="btn btn-sm btn-outline-success" @onclick="Return">Regresar</button>
 </EditForm>
 
 @code {
@@ -78,7 +79,12 @@
             return;
         }
 
-        await loginService.LoginAsync(responseHttp.Response!.Token);
-        navigationManager.NavigateTo("/");
+        //await loginService.LoginAsync(responseHttp.Response!.Token);
+        navigationManager.NavigateTo("/users");
+    }
+    
+    private void Return()
+    {
+        navigationManager.NavigateTo("/users");
     }
 }
