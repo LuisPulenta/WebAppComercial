@@ -7,85 +7,92 @@
 @inject IJSRuntime JS
 
 <h3>Usuarios</h3>
-
-<div class="d-flex justify-content-between align-items-center">
-    <div style="display: flex; flex-wrap:wrap; align-items: center;">
-        <a class="btn btn-sm btn-outline-primary" href="/accounts/register">Nuevo Usuario</a>
-        <div class="mx-2">
-            <input style="width: 400px;" type="text" class="form-control" id="titulo" placeholder="Buscar Usuario..." @bind-value="Filter" />
+@if (Users is null)
+{
+    <Spinner />
+}
+else
+{
+    <div class="d-flex justify-content-between align-items-center">
+        <div style="display: flex; flex-wrap:wrap; align-items: center;">
+            <a class="btn btn-sm btn-outline-primary" href="/accounts/register">Nuevo Usuario</a>
+            <div class="mx-2">
+                <input style="width: 400px;" type="text" class="form-control" id="titulo" placeholder="Buscar Usuario..." @bind-value="Filter" />
+            </div>
+            <div>
+                <button type="button" class="btn btn-outline-primary" @onclick="ApplyFilterAsync">Filtrar</button>
+                <button type="button" class="btn btn-outline-danger" @onclick="CleanFilterAsync">Limpiar</button>
+            </div>
         </div>
         <div>
-            <button type="button" class="btn btn-outline-primary" @onclick="ApplyFilterAsync">Filtrar</button>
-            <button type="button" class="btn btn-outline-danger" @onclick="CleanFilterAsync">Limpiar</button>
+            <button class="btn btn-sm btn-outline-success mb-3" data-toggle="tooltip" title="Exportar" @onclick="(()=> ExportarExcel(Users!))">
+                <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-file-earmark-excel-fill" viewBox="0 0 16 16">
+                    <path d="M9.293 0H4a2 2 0 0 0-2 2v12a2 2 0 0 0 2 2h8a2 2 0 0 0 2-2V4.707A1 1 0 0 0 13.707 4L10 .293A1 1 0 0 0 9.293 0M9.5 3.5v-2l3 3h-2a1 1 0 0 1-1-1M5.884 6.68 8 9.219l2.116-2.54a.5.5 0 1 1 .768.641L8.651 10l2.233 2.68a.5.5 0 0 1-.768.64L8 10.781l-2.116 2.54a.5.5 0 0 1-.768-.641L7.349 10 5.116 7.32a.5.5 0 1 1 .768-.64" />
+                </svg>
+            </button>
+
+            <button class="btn btn-sm btn-outline-success mb-3" data-toggle="tooltip" title="Exportar" @onclick="(()=> ExportarExcel(UsersAll!))">
+                <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-file-excel-fill" viewBox="0 0 16 16">
+                    <path d="M12 0H4a2 2 0 0 0-2 2v12a2 2 0 0 0 2 2h8a2 2 0 0 0 2-2V2a2 2 0 0 0-2-2M5.884 4.68 8 7.219l2.116-2.54a.5.5 0 1 1 .768.641L8.651 8l2.233 2.68a.5.5 0 0 1-.768.64L8 8.781l-2.116 2.54a.5.5 0 0 1-.768-.641L7.349 8 5.116 5.32a.5.5 0 1 1 .768-.64" />
+                </svg>
+            </button>
         </div>
     </div>
-    <div>
-        <button class="btn btn-sm btn-outline-success mb-3" data-toggle="tooltip" title="Exportar" @onclick="(()=> ExportarExcel(Users!))">
-            <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-file-earmark-excel-fill" viewBox="0 0 16 16">
-                <path d="M9.293 0H4a2 2 0 0 0-2 2v12a2 2 0 0 0 2 2h8a2 2 0 0 0 2-2V4.707A1 1 0 0 0 13.707 4L10 .293A1 1 0 0 0 9.293 0M9.5 3.5v-2l3 3h-2a1 1 0 0 1-1-1M5.884 6.68 8 9.219l2.116-2.54a.5.5 0 1 1 .768.641L8.651 10l2.233 2.68a.5.5 0 0 1-.768.64L8 10.781l-2.116 2.54a.5.5 0 0 1-.768-.641L7.349 10 5.116 7.32a.5.5 0 1 1 .768-.64" />
-            </svg>
-        </button>
 
-        <button class="btn btn-sm btn-outline-success mb-3" data-toggle="tooltip" title="Exportar" @onclick="(()=> ExportarExcel(UsersAll!))">
-            <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-file-excel-fill" viewBox="0 0 16 16">
-                <path d="M12 0H4a2 2 0 0 0-2 2v12a2 2 0 0 0 2 2h8a2 2 0 0 0 2-2V2a2 2 0 0 0-2-2M5.884 4.68 8 7.219l2.116-2.54a.5.5 0 1 1 .768.641L8.651 8l2.233 2.68a.5.5 0 0 1-.768.64L8 8.781l-2.116 2.54a.5.5 0 0 1-.768-.641L7.349 8 5.116 5.32a.5.5 0 1 1 .768-.64" />
-            </svg>
-        </button>
-    </div>
-</div>
-
-<GenericList MyList="Users">
-    <Body>
-        <table class="table table-sm table-info table-striped">
-            <thead>
-                <tr>
-                    <th>Rol</th>
-                    <th>Apellido</th>
-                    <th>Nombre</th>
-                    <th>Email</th>
-                    <th>Confirmado</th>
-                    <th>Activo</th>
-                    <th></th>
-                </tr>
-            </thead>
-            <tbody>
-                @foreach (var user in Users!)
-                {
+    <GenericList MyList="Users">
+        <Body>
+            <table class="table table-sm table-info table-striped">
+                <thead>
                     <tr>
-                        <td>
-                            @user.Rol
-                        </td>
-                        <td>
-                            @user.LastName
-                        </td>
-                        <td>
-                            @user.FirstName
-                        </td>
-                        <td>
-                            @user.Email
-                        </td>
-                        <td>
-                            <input type="checkbox" onclick="return false" @bind="@user.EmailConfirmed">
-                        </td>
-                        <td>
-                            <input type="checkbox" onclick="return false" @bind="@user.Active">
-                        </td>
-                        <td>
-                            <a class="btn btn-sm btn-warning" href="/accounts/edit/@user.Id">Editar</a>
-                            <button class="btn btn-sm btn-danger" @onclick=@(() => DeleteAsync(user.Id))>Borrar</button>
-                        </td>
+                        <th>Rol</th>
+                        <th>Apellido</th>
+                        <th>Nombre</th>
+                        <th>Email</th>
+                        <th>Confirmado</th>
+                        <th>Activo</th>
+                        <th></th>
                     </tr>
-                }
-            </tbody>
-        </table>
-    </Body>
-</GenericList>
-<div class="d-flex justify-content-between align-items-lg-center">
-    <Pagination CurrentPage="currentPage"
-                TotalPages="totalPages"
-                SelectedPage="SelectedPage" />
-    <p> Total Registros: @totalRegisters</p>
-</div>
+                </thead>
+                <tbody>
+                    @foreach (var user in Users!)
+                    {
+                        <tr>
+                            <td>
+                                @user.Rol
+                            </td>
+                            <td>
+                                @user.LastName
+                            </td>
+                            <td>
+                                @user.FirstName
+                            </td>
+                            <td>
+                                @user.Email
+                            </td>
+                            <td>
+                                <input type="checkbox" onclick="return false" @bind="@user.EmailConfirmed">
+                            </td>
+                            <td>
+                                <input type="checkbox" onclick="return false" @bind="@user.Active">
+                            </td>
+                            <td>
+                                <a class="btn btn-sm btn-warning" href="/accounts/edit/@user.Id">Editar</a>
+                                <button class="btn btn-sm btn-danger" @onclick=@(() => DeleteAsync(user.Id))>Borrar</button>
+                            </td>
+                        </tr>
+                    }
+                </tbody>
+            </table>
+        </Body>
+    </GenericList>
+    <div class="d-flex justify-content-between align-items-lg-center">
+        <Pagination CurrentPage="currentPage"
+                    TotalPages="totalPages"
+                    SelectedPage="SelectedPage" />
+        <p> Total Registros: @totalRegisters</p>
+    </div>
+}
+
 
 @code {
     public List<User>? Users { get; set; }
