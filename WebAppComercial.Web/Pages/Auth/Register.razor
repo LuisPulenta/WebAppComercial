@@ -4,80 +4,101 @@
 @inject NavigationManager navigationManager
 @inject ILoginService loginService
 
-<h3>Registrar Nuevo Usuario</h3>
 
 <EditForm Model="userDTO" OnValidSubmit="CreateUserAsync">
     <DataAnnotationsValidator />
+    <div class="card">
+        <div class="card-header">
 
-    <div class="row">
-        <div class="col-6">
-            <div class="mb-3">
-                <label>Nombres:</label>
-                <div>
-                    <InputText class="form-control" @bind-Value="@userDTO.FirstName" />
-                    <ValidationMessage For="@(() => userDTO.FirstName)" />
+            <div class="d-flex justify-content-between align-items-center">
+                
+                <span>
+                    Registrar Nuevo  Usuario
+                </span>
+
+                <div style="display: flex;  align-items: center;">
+                    <div class="mx-1">
+                        <button class="btn btn-sm btn-outline-primary me-2" type="submit">Registrar</button>
+                        <button class="btn btn-sm btn-outline-success float-end" @onclick="Return">Regresar</button>
+                    </div>
                 </div>
+
             </div>
-            <div class="mb-3">
-                <label>Apellidos:</label>
-                <div>
-                    <InputText class="form-control" @bind-Value="@userDTO.LastName" />
-                    <ValidationMessage For="@(() => userDTO.LastName)" />
-                </div>
-            </div>
-          
-            <div class="mb-3">
-                <label>Teléfono:</label>
-                <div>
-                    <InputText class="form-control" @bind-Value="@userDTO.PhoneNumber" />
-                    <ValidationMessage For="@(() => userDTO.PhoneNumber)" />
-                </div>
-            </div>
-            
-            <div class="mb-3">
-                <label>Email:</label>
-                <div>
-                    <InputText class="form-control" @bind-Value="@userDTO.Email" />
-                    <ValidationMessage For="@(() => userDTO.Email)" />
-                </div>
-            </div>
+
+
+
         </div>
-        <div class="col-6">
+        <div class="card-body">
 
-            <label>Tipo Usuario:</label>
-            <div>
-                <select class="form-select" @onchange="UserTypeChanged">
-                    <option value="-1">-- Seleccione un Tipo de Usuario --</option>
-                    <option value=0>Administrador</option>
-                    <option value=1>Inventario</option>
-                    <option value=2>Venta</option>
-                </select>
-            </div>
+            <div class="row">
+                <div class="col-6">
+                    <div class="mb-3">
+                        <label>Nombres:</label>
+                        <div>
+                            <InputText class="form-control" @bind-Value="@userDTO.FirstName" />
+                            <ValidationMessage For="@(() => userDTO.FirstName)" />
+                        </div>
+                    </div>
+                    <div class="mb-3">
+                        <label>Apellidos:</label>
+                        <div>
+                            <InputText class="form-control" @bind-Value="@userDTO.LastName" />
+                            <ValidationMessage For="@(() => userDTO.LastName)" />
+                        </div>
+                    </div>
 
+                    <div class="mb-3">
+                        <label>Teléfono:</label>
+                        <div>
+                            <InputText class="form-control" @bind-Value="@userDTO.PhoneNumber" />
+                            <ValidationMessage For="@(() => userDTO.PhoneNumber)" />
+                        </div>
+                    </div>
 
-            <div class="mb-3">
-                <label>Contraseña:</label>
-                <div>
-                    <InputText type="password" class="form-control" @bind-Value="@userDTO.Password" />
-                    <ValidationMessage For="@(() => userDTO.Password)" />
+                    <div class="mb-3">
+                        <label>Email:</label>
+                        <div>
+                            <InputText class="form-control" @bind-Value="@userDTO.Email" />
+                            <ValidationMessage For="@(() => userDTO.Email)" />
+                        </div>
+                    </div>
                 </div>
-            </div>
-            <div class="mb-3">
-                <label>Confirmación de contraseña:</label>
-                <div>
-                    <InputText type="password" class="form-control" @bind-Value="@userDTO.PasswordConfirm" />
-                    <ValidationMessage For="@(() => userDTO.PasswordConfirm)" />
+                <div class="col-6">
+
+                    <label>Tipo Usuario:</label>
+                    <div>
+                        <select class="form-select" @onchange="UserTypeChanged">
+                            <option value="-1">-- Seleccione un Tipo de Usuario --</option>
+                            <option value=0>Administrador</option>
+                            <option value=1>Inventario</option>
+                            <option value=2>Venta</option>
+                        </select>
+                    </div>
+
+
+                    <div class="mb-3">
+                        <label>Contraseña:</label>
+                        <div>
+                            <InputText type="password" class="form-control" @bind-Value="@userDTO.Password" />
+                            <ValidationMessage For="@(() => userDTO.Password)" />
+                        </div>
+                    </div>
+                    <div class="mb-3">
+                        <label>Confirmación de contraseña:</label>
+                        <div>
+                            <InputText type="password" class="form-control" @bind-Value="@userDTO.PasswordConfirm" />
+                            <ValidationMessage For="@(() => userDTO.PasswordConfirm)" />
+                        </div>
+                    </div>
                 </div>
             </div>
         </div>
     </div>
-    <button class="btn btn-sm btn-outline-primary" type="submit">Registrar</button>
-    <button class="btn btn-sm btn-outline-success" @onclick="Return">Regresar</button>
+
 </EditForm>
 
 @code {
     private UserDTO userDTO = new();
-    private int userType = -1;
 
     private void UserTypeChanged(ChangeEventArgs e)
     {
@@ -97,10 +118,10 @@
 
     private async Task CreateUserAsync()
     {
-        if (Convert.ToInt32(userDTO.UserType) < 0 || userDTO.UserType==null)
+        if (Convert.ToInt32(userDTO.UserType) < 0 || userDTO.UserType == null)
         {
             await sweetAlertService.FireAsync("Error", "Debes elegir un Tipo de Usuario", SweetAlertIcon.Error);
-            return;            
+            return;
         }
 
         userDTO.UserName = userDTO.Email;
@@ -116,11 +137,11 @@
         //await loginService.LoginAsync(responseHttp.Response!.Token);
         navigationManager.NavigateTo("/users");
     }
-    
+
     private void Return()
     {
         navigationManager.NavigateTo("/users");
     }
 
-    
+
 }

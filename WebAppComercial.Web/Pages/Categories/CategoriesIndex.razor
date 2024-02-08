@@ -20,12 +20,12 @@ else
                     <div class="card-header">
                         <span>
                             <i class="oi oi-globe"></i> Categorías
-                            <a class="btn btn-sm btn-primary float-end" href="/categories/create"><i class="oi oi-plus"></i> Nueva Categoría</a>
+                            <a class="btn btn-sm btn-outline-primary float-end" href="/categories/create"><i class="oi oi-plus"></i> Nueva Categoría</a>
                         </span>
                     </div>
                     <div class="card-body">
                         <div style="display: flex; justify-content:space-between; align-items: center;">
-                            <div style="display: flex; flex-wrap:wrap; align-items: center;">
+                            <div style="display: flex;  align-items: center;">
                                 <div>
                                     <input style="width: 400px;" type="text" class="form-control" id="titulo" placeholder="Buscar Categoría..." @bind-value="Filter" />
                                 </div>
@@ -37,13 +37,13 @@ else
                             </div>
                             <div>
                                 <button class="btn btn-sm btn-outline-success mb-3" data-toggle="tooltip" title="Exportar" @onclick="(()=> ExportarExcel(Categories!))">
-                                    <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-file-earmark-excel-fill" viewBox="0 0 16 16">
+                                    <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" fill="currentColor" class="bi bi-file-earmark-excel-fill" viewBox="0 0 16 16">
                                         <path d="M9.293 0H4a2 2 0 0 0-2 2v12a2 2 0 0 0 2 2h8a2 2 0 0 0 2-2V4.707A1 1 0 0 0 13.707 4L10 .293A1 1 0 0 0 9.293 0M9.5 3.5v-2l3 3h-2a1 1 0 0 1-1-1M5.884 6.68 8 9.219l2.116-2.54a.5.5 0 1 1 .768.641L8.651 10l2.233 2.68a.5.5 0 0 1-.768.64L8 10.781l-2.116 2.54a.5.5 0 0 1-.768-.641L7.349 10 5.116 7.32a.5.5 0 1 1 .768-.64" />
                                     </svg>
                                 </button>
 
                                 <button class="btn btn-sm btn-outline-success mb-3" data-toggle="tooltip" title="Exportar" @onclick="(()=> ExportarExcel(CategoriesAll!))">
-                                    <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-file-excel-fill" viewBox="0 0 16 16">
+                                    <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" fill="currentColor" class="bi bi-file-excel-fill" viewBox="0 0 16 16">
                                         <path d="M12 0H4a2 2 0 0 0-2 2v12a2 2 0 0 0 2 2h8a2 2 0 0 0 2-2V2a2 2 0 0 0-2-2M5.884 4.68 8 7.219l2.116-2.54a.5.5 0 1 1 .768.641L8.651 8l2.233 2.68a.5.5 0 0 1-.768.64L8 8.781l-2.116 2.54a.5.5 0 0 1-.768-.641L7.349 8 5.116 5.32a.5.5 0 1 1 .768-.64" />
                                     </svg>
                                 </button>
@@ -51,14 +51,14 @@ else
                         </div>
                     </div>
                 </div>
-
+                
                 <GenericList MyList="Categories">
                     <Body>
                         <table class="table table-sm table-info table-striped">
                             <thead>
                                 <tr>
                                     <th>Categoría</th>
-                                    <th style="width:100px"></th>
+                                    <th style="width:60px"></th>
                                 </tr>
                             </thead>
                             <tbody>
@@ -69,7 +69,6 @@ else
                                             @category.Name
                                         </td>
                                         <td>
-
                                             <a href="/categories/edit/@category.Id" class="btn btn-sm btn-warning btn-sm">
                                                 <i class="bi bi-pencil-square" />
                                                 <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" fill="white" class="bi bi-pencil-square" viewBox="0 0 16 16">
@@ -77,7 +76,6 @@ else
                                                     <path fill-rule="evenodd" d="M1 13.5A1.5 1.5 0 0 0 2.5 15h11a1.5 1.5 0 0 0 1.5-1.5v-6a.5.5 0 0 0-1 0v6a.5.5 0 0 1-.5.5h-11a.5.5 0 0 1-.5-.5v-11a.5.5 0 0 1 .5-.5H9a.5.5 0 0 0 0-1H2.5A1.5 1.5 0 0 0 1 2.5z" />
                                                 </svg>
                                             </a>
-
 
                                             <button class="btn btn-danger btn-sm" @onclick=@(() => DeleteAsync(category.Id))>
                                                 <i class="bi bi-trash3-fill" />
