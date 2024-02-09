@@ -44,11 +44,21 @@
                                                     </Authorized>
                                                 </AuthorizeView>
 
-
+                                                <AuthorizeView Roles="Admin">
+                                                    <Authorized>
+                                                        <li><a class="dropdown-item" href="/ivas">IVA's</a></li>
+                                                    </Authorized>
+                                                </AuthorizeView>
                                                 
-                                                <li><a class="dropdown-item" href="#">IVA's'</a></li>
+                                                
                                                 <li><a class="dropdown-item" href="#">Productos</a></li>
-                                                <li><a class="dropdown-item" href="#">Medidas</a></li>
+                                                
+                                                <AuthorizeView Roles="Admin">
+                                                    <Authorized>
+                                                        <li><a class="dropdown-item" href="/measures">Medidas</a></li>
+                                                    </Authorized>
+                                                </AuthorizeView>
+                                                                                                
                                                 <li><hr class="dropdown-divider"></li>
                                                 <AuthorizeView Roles="Admin">
                                                     <Authorized>

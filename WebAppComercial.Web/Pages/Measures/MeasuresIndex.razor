@@ -1,0 +1,232 @@
+﻿@page "/measures"
+@attribute [Authorize(Roles = "Admin")]
+@inject IRepository repository
+@inject NavigationManager navigationManager
+@inject SweetAlertService sweetAlertService
+@inject HttpClient Http
+@inject IJSRuntime JS
+
+
+@if (Measures is null)
+{
+    <Spinner />
+}
+else
+{
+    <div class="container">
+        <div class="row">
+            <div class="offset-3 col-6">
+                <div class="card">
+                    <div class="card-header">
+                        <span>
+                            <i class="oi oi-globe"></i> Medidas
+                            <a class="btn btn-sm btn-outline-primary float-end" href="/measures/create"><i class="oi oi-plus"></i> Nueva Medida</a>
+                        </span>
+                    </div>
+                    <div class="card-body">
+                        <div style="display: flex; justify-content:space-between; align-items: center;">
+                            <div style="display: flex;  align-items: center;">
+                                <div>
+                                    <input style="width: 400px;" type="text" class="form-control" id="titulo" placeholder="Buscar Medida..." @bind-value="Filter" />
+                                </div>
+                                <div class="mx-1">
+                                    <button type="button" class="btn btn-outline-primary" @onclick="ApplyFilterAsync"><i class="oi oi-layers" /> Filtrar</button>
+                                    <button type="button" class="btn btn-outline-danger" @onclick="CleanFilterAsync"><i class="oi oi-ban" /> Limpiar</button>
+                                </div>
+
+                            </div>
+                            <div>
+                                <button class="btn btn-sm btn-outline-success mb-3" data-toggle="tooltip" title="Exportar" @onclick="(()=> ExportarExcel(Measures!))">
+                                    <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" fill="currentColor" class="bi bi-file-earmark-excel-fill" viewBox="0 0 16 16">
+                                        <path d="M9.293 0H4a2 2 0 0 0-2 2v12a2 2 0 0 0 2 2h8a2 2 0 0 0 2-2V4.707A1 1 0 0 0 13.707 4L10 .293A1 1 0 0 0 9.293 0M9.5 3.5v-2l3 3h-2a1 1 0 0 1-1-1M5.884 6.68 8 9.219l2.116-2.54a.5.5 0 1 1 .768.641L8.651 10l2.233 2.68a.5.5 0 0 1-.768.64L8 10.781l-2.116 2.54a.5.5 0 0 1-.768-.641L7.349 10 5.116 7.32a.5.5 0 1 1 .768-.64" />
+                                    </svg>
+                                </button>
+
+                                <button class="btn btn-sm btn-outline-success mb-3" data-toggle="tooltip" title="Exportar" @onclick="(()=> ExportarExcel(MeasuresAll!))">
+                                    <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" fill="currentColor" class="bi bi-file-excel-fill" viewBox="0 0 16 16">
+                                        <path d="M12 0H4a2 2 0 0 0-2 2v12a2 2 0 0 0 2 2h8a2 2 0 0 0 2-2V2a2 2 0 0 0-2-2M5.884 4.68 8 7.219l2.116-2.54a.5.5 0 1 1 .768.641L8.651 8l2.233 2.68a.5.5 0 0 1-.768.64L8 8.781l-2.116 2.54a.5.5 0 0 1-.768-.641L7.349 8 5.116 5.32a.5.5 0 1 1 .768-.64" />
+                                    </svg>
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <GenericList MyList="Measures">
+                    <Body>
+                        <table class="table table-sm table-info table-striped">
+                            <thead>
+                                <tr>
+                                    <th>Medida</th>
+                                    <th>Descripción</th>
+                                    <th style="width:60px"></th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                @foreach (var measure in Measures!)
+                                {
+                                    <tr>
+                                        <td>
+                                            @measure.Unit
+                                        </td>
+                                        <td>
+                                            @measure.Name
+                                        </td>
+                                        <td>
+                                            <a href="/measures/edit/@measure.Id" class="btn btn-sm btn-warning btn-sm">
+                                                <i class="bi bi-pencil-square" />
+                                                <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" fill="white" class="bi bi-pencil-square" viewBox="0 0 16 16">
+                                                    <path d="M15.502 1.94a.5.5 0 0 1 0 .706L14.459 3.69l-2-2L13.502.646a.5.5 0 0 1 .707 0l1.293 1.293zm-1.75 2.456-2-2L4.939 9.21a.5.5 0 0 0-.121.196l-.805 2.414a.25.25 0 0 0 .316.316l2.414-.805a.5.5 0 0 0 .196-.12l6.813-6.814z" />
+                                                    <path fill-rule="evenodd" d="M1 13.5A1.5 1.5 0 0 0 2.5 15h11a1.5 1.5 0 0 0 1.5-1.5v-6a.5.5 0 0 0-1 0v6a.5.5 0 0 1-.5.5h-11a.5.5 0 0 1-.5-.5v-11a.5.5 0 0 1 .5-.5H9a.5.5 0 0 0 0-1H2.5A1.5 1.5 0 0 0 1 2.5z" />
+                                                </svg>
+                                            </a>
+
+                                            <button class="btn btn-danger btn-sm" @onclick=@(() => DeleteAsync(measure.Id))>
+                                                <i class="bi bi-trash3-fill" />
+                                                <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" fill="white" class="bi bi-trash3-fill" viewBox="0 0 16 16">
+                                                    <path d="M11 1.5v1h3.5a.5.5 0 0 1 0 1h-.538l-.853 10.66A2 2 0 0 1 11.115 16h-6.23a2 2 0 0 1-1.994-1.84L2.038 3.5H1.5a.5.5 0 0 1 0-1H5v-1A1.5 1.5 0 0 1 6.5 0h3A1.5 1.5 0 0 1 11 1.5m-5 0v1h4v-1a.5.5 0 0 0-.5-.5h-3a.5.5 0 0 0-.5.5M4.5 5.029l.5 8.5a.5.5 0 1 0 .998-.06l-.5-8.5a.5.5 0 1 0-.998.06m6.53-.528a.5.5 0 0 0-.528.47l-.5 8.5a.5.5 0 0 0 .998.058l.5-8.5a.5.5 0 0 0-.47-.528M8 4.5a.5.5 0 0 0-.5.5v8.5a.5.5 0 0 0 1 0V5a.5.5 0 0 0-.5-.5" />
+                                                </svg>
+                                            </button>
+                                        </td>
+                                    </tr>
+                                }
+                            </tbody>
+                        </table>
+                    </Body>
+                </GenericList>
+                <div class="d-flex justify-content-between align-items-lg-center">
+                    <Pagination CurrentPage="currentPage"
+                                TotalPages="totalPages"
+                                SelectedPage="SelectedPage" />
+                    <p> Total Registros: @totalRegisters</p>
+                </div>
+
+            </div>
+        </div>
+    </div>    
+}
+
+@code {
+    public List<Measure>? Measures { get; set; }
+    public List<Measure>? MeasuresAll { get; set; }
+    private int currentPage = 1;
+    private int totalPages;
+    private int totalRegisters;
+
+    [Parameter]
+    [SupplyParameterFromQuery]
+    public string Page { get; set; } = "";
+
+    [Parameter]
+    [SupplyParameterFromQuery]
+    public string Filter { get; set; } = "";
+
+    protected override async Task OnInitializedAsync()
+    {
+        await LoadAsync();
+    }
+
+    private async Task SelectedPage(int page)
+    {
+        currentPage = page;
+        await LoadAsync(page);
+    }
+
+    private async Task LoadAsync(int page = 1)
+    {
+        if (!string.IsNullOrWhiteSpace(Page))
+        {
+            page = Convert.ToInt32(Page);
+        }
+
+        string url1 = string.Empty;
+        string url2 = string.Empty;
+        string url3 = string.Empty;
+        string url4 = string.Empty;
+
+        if (string.IsNullOrEmpty(Filter))
+        {
+            url1 = $"/api/measures?page={page}";
+            url2 = $"/api/measures/totalPages";
+            url3 = $"/api/measures/totalRegisters";
+            url4 = $"/api/measures/all";
+        }
+        else
+        {
+            url1 = $"/api/measures?page={page}&filter={Filter}";
+            url2 = $"/api/measures/totalPages?filter={Filter}";
+            url3 = $"/api/measures/totalRegisters?filter={Filter}";
+            url4 = $"/api/measures/all?filter={Filter}";
+        }
+
+        try
+        {
+            var responseHttp = await repository.Get<List<Measure>>(url1);
+            var responseHttp2 = await repository.Get<int>(url2);
+            var responseHttp3 = await repository.Get<int>(url3);
+            var responseHttp4 = await repository.Get<List<Measure>>(url4);
+            Measures = responseHttp.Response!;
+            totalPages = responseHttp2.Response!;
+            totalRegisters = responseHttp3.Response!;
+            MeasuresAll = responseHttp4.Response!;
+        }
+        catch (Exception ex)
+        {
+            await sweetAlertService.FireAsync("Error", ex.Message, SweetAlertIcon.Error);
+        }
+    }
+
+    private async Task DeleteAsync(int id)
+    {
+        var result = await sweetAlertService.FireAsync(new SweetAlertOptions
+            {
+                Title = "Confirmación",
+                Text = "¿Realmente deseas eliminar el registro?",
+                Icon = SweetAlertIcon.Question,
+                ShowCancelButton = true,
+                CancelButtonText = "No",
+                ConfirmButtonText = "Si"
+            });
+
+        var confirm = string.IsNullOrEmpty(result.Value);
+
+        if (confirm)
+        {
+            return;
+        }
+
+        var responseHttp = await repository.Delete($"/api/measures/{id}");
+
+        if (responseHttp.Error)
+        {
+            if (responseHttp.HttpResponseMessage.StatusCode != HttpStatusCode.NotFound)
+            {
+                var message = await responseHttp.GetErrorMessage();
+                await sweetAlertService.FireAsync("Error", message, SweetAlertIcon.Error);
+                return;
+            }
+        }
+        await LoadAsync();
+    }
+
+    private async Task ExportarExcel(List<Measure> measures)
+    {
+        var response = await repository.Post("/api/Excel/ExportExcelMeasures", measures);
+        var fileStream = response.HttpResponseMessage.Content.ReadAsStream();
+        using var streamRef = new DotNetStreamReference(stream: fileStream);
+        await JS.InvokeVoidAsync("DescargarExcel", "Medidas.xlsx", streamRef);
+    }
+
+    private async Task CleanFilterAsync()
+    {
+        Filter = string.Empty;
+        await ApplyFilterAsync();
+    }
+
+    private async Task ApplyFilterAsync()
+    {
+        int page = 1;
+        await LoadAsync(page);
+        await SelectedPage(page);
+    }
+}

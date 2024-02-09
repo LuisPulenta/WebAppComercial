@@ -1,0 +1,32 @@
+﻿@page "/measures/create"
+@attribute [Authorize(Roles = "Admin")]
+@inject IRepository repository
+@inject NavigationManager navigationManager
+@inject SweetAlertService sweetAlertService
+
+<h3>Crear Medida</h3>
+
+<MeasureForm @ref="measureForm" Measure="measure" OnValidSubmit="CreateAsync" ReturnAction="Return" />
+
+@code {
+    private Measure measure = new();
+    private MeasureForm? measureForm;
+
+    private async Task CreateAsync()
+    {
+        var httpResponse = await repository.Post("/api/measures", measure);
+        if (httpResponse.Error)
+        {
+            var message = await httpResponse.GetErrorMessage();
+            await sweetAlertService.FireAsync("Error", message , SweetAlertIcon.Error);
+            return;
+        }
+        Return();
+    }
+
+    private void Return()
+    {
+        measureForm!.FormPostedSuccessfully = true;
+        navigationManager.NavigateTo("/measures");
+    }
+}

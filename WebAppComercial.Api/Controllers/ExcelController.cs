@@ -136,5 +136,89 @@ namespace GenerarExcel.Server.Controllers
                 throw;
             }
         }
+
+        //-------------------------------------------------------------------------------------------
+        [HttpPost]
+        [Route("ExportExcelMeasures")]
+
+        public IActionResult ExportExcelMeasures([FromBody] List<Measure> measures)
+        {
+            try
+            {
+                DataTable table = new DataTable();//tabla general
+
+                table.Columns.Add("ID");
+                table.Columns.Add("UNIDAD");
+                table.Columns.Add("DESCRIPCION");
+
+                foreach (Measure measure in measures)
+                {
+                    DataRow fila = table.NewRow();
+                    fila["ID"] = measure.Id;
+                    fila["UNIDAD"] = measure.Unit;
+                    fila["DESCRIPCION"] = measure.Name;
+                    table.Rows.Add(fila);
+                }
+
+                using var libro = new XLWorkbook();
+                table.TableName = "Medidas";
+
+                var hoja = libro.Worksheets.Add(table);
+
+                hoja.ColumnsUsed().AdjustToContents();
+
+                using var memoria = new MemoryStream();
+                libro.SaveAs(memoria);
+                var nombreExcel = "Reporte.xlsx";
+                var archivo = File(memoria.ToArray(), "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet", nombreExcel);
+                return archivo;
+            }
+            catch (Exception)
+            {
+                throw;
+            }
+        }
+
+        //-------------------------------------------------------------------------------------------
+        [HttpPost]
+        [Route("ExportExcelIvas")]
+
+        public IActionResult ExportExcelIvas([FromBody] List<Iva> ivas)
+        {
+            try
+            {
+                DataTable table = new DataTable();//tabla general
+
+                table.Columns.Add("ID");
+                table.Columns.Add("DESCRIPCION");
+                table.Columns.Add("%");
+
+                foreach (Iva iva in ivas)
+                {
+                    DataRow fila = table.NewRow();
+                    fila["ID"] = iva.Id;
+                    fila["DESCRIPCION"] = iva.Name;
+                    fila["%"] = iva.Percentage;
+                    table.Rows.Add(fila);
+                }
+
+                using var libro = new XLWorkbook();
+                table.TableName = "Ivas";
+
+                var hoja = libro.Worksheets.Add(table);
+
+                hoja.ColumnsUsed().AdjustToContents();
+
+                using var memoria = new MemoryStream();
+                libro.SaveAs(memoria);
+                var nombreExcel = "Reporte.xlsx";
+                var archivo = File(memoria.ToArray(), "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet", nombreExcel);
+                return archivo;
+            }
+            catch (Exception)
+            {
+                throw;
+            }
+        }
     }
 }

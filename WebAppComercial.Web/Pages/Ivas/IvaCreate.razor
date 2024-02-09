@@ -1,0 +1,32 @@
+﻿@page "/ivas/create"
+@attribute [Authorize(Roles = "Admin")]
+@inject IRepository repository
+@inject NavigationManager navigationManager
+@inject SweetAlertService sweetAlertService
+
+<h3>Crear Iva</h3>
+
+<IvaForm @ref="ivaForm" Iva="iva" OnValidSubmit="CreateAsync" ReturnAction="Return" />
+
+@code {
+    private Iva iva = new();
+    private IvaForm? ivaForm;
+
+    private async Task CreateAsync()
+    {
+        var httpResponse = await repository.Post("/api/ivas", iva);
+        if (httpResponse.Error)
+        {
+            var message = await httpResponse.GetErrorMessage();
+            await sweetAlertService.FireAsync("Error", message , SweetAlertIcon.Error);
+            return;
+        }
+        Return();
+    }
+
+    private void Return()
+    {
+        ivaForm!.FormPostedSuccessfully = true;
+        navigationManager.NavigateTo("/ivas");
+    }
+}
