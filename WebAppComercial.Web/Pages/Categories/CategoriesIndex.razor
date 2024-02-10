@@ -2,7 +2,7 @@
 @attribute [Authorize(Roles = "Admin")]
 @inject IRepository repository
 @inject NavigationManager navigationManager
-@inject SweetAlertService sweetAlertService
+@inject SweetAlertService swal
 @inject HttpClient Http
 @inject IJSRuntime JS
 
@@ -168,13 +168,13 @@ else
         }
         catch (Exception ex)
         {
-            await sweetAlertService.FireAsync("Error", ex.Message, SweetAlertIcon.Error);
+            await swal.FireAsync("Error", ex.Message, SweetAlertIcon.Error);
         }
     }
 
     private async Task DeleteAsync(int id)
     {
-        var result = await sweetAlertService.FireAsync(new SweetAlertOptions
+        var result = await swal.FireAsync(new SweetAlertOptions
             {
                 Title = "Confirmación",
                 Text = "¿Realmente deseas eliminar el registro?",
@@ -198,11 +198,19 @@ else
             if (responseHttp.HttpResponseMessage.StatusCode != HttpStatusCode.NotFound)
             {
                 var message = await responseHttp.GetErrorMessage();
-                await sweetAlertService.FireAsync("Error", message, SweetAlertIcon.Error);
+                await swal.FireAsync("Error", message, SweetAlertIcon.Error);
                 return;
             }
         }
+        var toast = swal.Mixin(new SweetAlertOptions
+            {
+                Toast = true,
+                Position = SweetAlertPosition.Center,
+                ShowConfirmButton = true,
+                Timer = 3000
+            });
         await LoadAsync();
+        await toast.FireAsync(icon: SweetAlertIcon.Success, message: "Categoría eliminada con éxito.");
     }
 
     private async Task ExportarExcel(List<Category> categories)

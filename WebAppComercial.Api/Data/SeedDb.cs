@@ -22,7 +22,8 @@ namespace WebAppComercial.API.Data
             await CheckCountriesAsync();
             await CheckStoresAsync();
             await CheckRolesAsync();
-            await CheckUserAsync("Luis", "Nùñez", "luis@yopmail.com", "156 814 963", UserType.Admin);
+            await CheckUserAsync("Luis", "Núñez", "luis@yopmail.com", "156 814 963", UserType.Admin);
+            await CheckUserAsync("Juan", "Vendedor", "juan@yopmail.com", "111 111 111", UserType.Inventory);
         }
 
         //----------------------------------------------------------------------------------------------

@@ -2,7 +2,7 @@
 @attribute [Authorize(Roles = "Admin")]
 @inject IRepository repository
 @inject NavigationManager navigationManager
-@inject SweetAlertService sweetAlertService
+@inject SweetAlertService swal
 @inject HttpClient Http
 @inject IJSRuntime JS
 
@@ -14,7 +14,7 @@ else
 {
     <div class="container">
         <div class="row">
-            <div class="offset-3 col-6">
+            <div class="offset-2 col-8">
 
                 <div class="card">
                     <div class="card-header">
@@ -61,6 +61,7 @@ else
                                     <th>Apellido</th>
                                     <th>Nombre</th>
                                     <th>Email</th>
+                                    <th>Teléfono</th>
                                     <th>Confirmado</th>
                                     <th>Activo</th>
                                     <th style="width:60px"></th>
@@ -81,6 +82,9 @@ else
                                         </td>
                                         <td>
                                             @user.Email
+                                        </td>
+                                        <td>
+                                            @user.PhoneNumber
                                         </td>
                                         <td>
                                             <input type="checkbox" onclick="return false" @bind="@user.EmailConfirmed">
@@ -188,13 +192,23 @@ else
         }
         catch (Exception ex)
         {
-            await sweetAlertService.FireAsync("Error", ex.Message, SweetAlertIcon.Error);
+            await swal.FireAsync("Error", ex.Message, SweetAlertIcon.Error);
         }
     }
 
-    private async Task DeleteAsync(string id)
+    private async Task DeleteAsync(String id)
     {
-        var result = await sweetAlertService.FireAsync(new SweetAlertOptions
+        var userResponseHttp = await repository.Get<User>("/api/accounts/GetUserLogged");
+        User userLogged = userResponseHttp.Response!;
+
+        if (userLogged.Id == id)
+        {
+            var messageError = "No se puede borrar a uno mismo!!!";
+            await swal.FireAsync("Error", messageError, SweetAlertIcon.Error);
+            return;
+        }
+
+        var result = await swal.FireAsync(new SweetAlertOptions
             {
                 Title = "Confirmación",
                 Text = "¿Realmente deseas eliminar el registro?",
@@ -210,19 +224,27 @@ else
         {
             return;
         }
+                
+        var httpResponse = await repository.Delete($"/api/accounts/{id}");
 
-        var responseHttp = await repository.Delete($"/api/users/{id}");
-
-        if (responseHttp.Error)
+        if (httpResponse.Error)
         {
-            if (responseHttp.HttpResponseMessage.StatusCode != HttpStatusCode.NotFound)
+            if (httpResponse.HttpResponseMessage.StatusCode != HttpStatusCode.NotFound)
             {
-                var message = await responseHttp.GetErrorMessage();
-                await sweetAlertService.FireAsync("Error", message, SweetAlertIcon.Error);
+                var messageError = await httpResponse.GetErrorMessage();
+                await swal.FireAsync("Error", messageError, SweetAlertIcon.Error);
                 return;
             }
         }
+        var toast = swal.Mixin(new SweetAlertOptions
+            {
+                Toast = true,
+                Position = SweetAlertPosition.Center,
+                ShowConfirmButton = true,
+                Timer = 5000
+            });
         await LoadAsync();
+        await toast.FireAsync(icon: SweetAlertIcon.Success, message: "Usuario eliminado con éxito.");
     }
 
     private async Task ExportarExcel(List<User> users)

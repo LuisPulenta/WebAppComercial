@@ -1,6 +1,6 @@
 ﻿@page "/accounts/register"
 @inject IRepository repository
-@inject SweetAlertService sweetAlertService
+@inject SweetAlertService swal
 @inject NavigationManager navigationManager
 @inject ILoginService loginService
 
@@ -120,7 +120,7 @@
     {
         if (Convert.ToInt32(userDTO.UserType) < 0 || userDTO.UserType == null)
         {
-            await sweetAlertService.FireAsync("Error", "Debes elegir un Tipo de Usuario", SweetAlertIcon.Error);
+            await swal.FireAsync("Error", "Debes elegir un Tipo de Usuario", SweetAlertIcon.Error);
             return;
         }
 
@@ -130,11 +130,18 @@
         if (responseHttp.Error)
         {
             var message = await responseHttp.GetErrorMessage();
-            await sweetAlertService.FireAsync("Error", message, SweetAlertIcon.Error);
+            await swal.FireAsync("Error", message, SweetAlertIcon.Error);
             return;
         }
 
-        //await loginService.LoginAsync(responseHttp.Response!.Token);
+        var toast = swal.Mixin(new SweetAlertOptions
+            {
+                Toast = true,
+                Position = SweetAlertPosition.Center,
+                ShowConfirmButton = true,
+                Timer = 3000
+            });
+        await toast.FireAsync(icon: SweetAlertIcon.Success, message: "Usuario registrado con éxito.");
         navigationManager.NavigateTo("/users");
     }
 
@@ -142,6 +149,4 @@
     {
         navigationManager.NavigateTo("/users");
     }
-
-
 }

@@ -1,4 +1,6 @@
-﻿using Microsoft.AspNetCore.Mvc;
+﻿using Microsoft.AspNetCore.Authentication.JwtBearer;
+using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.IdentityModel.Tokens;
 using System.IdentityModel.Tokens.Jwt;
@@ -8,7 +10,6 @@ using WebAppComercial.Api.Data;
 using WebAppComercial.Api.Helpers;
 using WebAppComercial.Shared.DTOs;
 using WebAppComercial.Shared.Entities;
-using WebAppComercial.Shared.Enums;
 
 namespace WebAppComercial.Api.Controllers
 {
@@ -130,6 +131,11 @@ namespace WebAppComercial.Api.Controllers
             if (result.Succeeded)
             {
                 var user = await _userHelper.GetUserAsync(model.Email);
+
+                if (!user.Active)
+                {
+                    return BadRequest("Usuario no activo.");
+                }
                 return Ok(BuildToken(user));
             }
 
@@ -163,5 +169,98 @@ namespace WebAppComercial.Api.Controllers
                 Expiration = expiration
             };
         }
+
+        //---------------------------------------------------------------------------------------
+        [HttpPut]
+        [Authorize(AuthenticationSchemes = JwtBearerDefaults.AuthenticationScheme)]
+        public async Task<ActionResult> Put(User user)
+        {
+            try
+            {
+                var currentUser = await _userHelper.GetUserAsync(user.Email!);
+                if (currentUser == null)
+                {
+                    return NotFound();
+                }
+
+                currentUser.FirstName = user.FirstName;
+                currentUser.LastName = user.LastName;
+                currentUser.PhoneNumber = user.PhoneNumber;
+                currentUser.Active = user.Active;
+
+                var result = await _userHelper.UpdateUserAsync(currentUser);
+                if (result.Succeeded)
+                {
+                    if (currentUser.UserType != user.UserType)
+                    {
+                        await _userHelper.AddUserToRoleAsync(user, user.UserType.ToString());
+                        await _userHelper.RemoveUserFromRoleAsync(user, currentUser.UserType.ToString());
+                    }
+                    return NoContent();
+                }
+
+                return BadRequest(result.Errors.FirstOrDefault());
+            }
+            catch (Exception ex)
+            {
+                return BadRequest(ex.Message);
+            }
+        }
+
+        //---------------------------------------------------------------------------------------
+        [HttpDelete("{Id}")]
+        public async Task<IActionResult> DeleteAsync(string id)
+        {
+            User user = await _userHelper.GetUserAsync(new Guid(id));
+            if (user == null)
+            {
+                return NotFound();
+            }
+            await _userHelper.DeleteUserAsync(user);
+            return NoContent();
+        }
+
+        //---------------------------------------------------------------------------------------
+        [HttpGet]
+        [Route("/api/accounts/GetUserById/{id}")]
+        public async Task<User> GetUserById(string Id)
+        {
+            User user = await _userHelper.GetUserAsync(new Guid(Id));
+            return user!;
+        }
+
+        //---------------------------------------------------------------------------------------
+        [HttpGet]
+        [Route("/api/accounts/GetUserLogged")]
+        [Authorize(AuthenticationSchemes = JwtBearerDefaults.AuthenticationScheme)]
+        public async Task<ActionResult> Get()
+        {
+            return Ok(await _userHelper.GetUserAsync(User.Identity!.Name!));
+        }
+
+        //---------------------------------------------------------------------------------------
+        [HttpPost("changePassword")]
+        [Authorize(AuthenticationSchemes = JwtBearerDefaults.AuthenticationScheme)]
+        public async Task<ActionResult> ChangePasswordAsync(ChangePasswordDTO model)
+        {
+            if (!ModelState.IsValid)
+            {
+                return BadRequest(ModelState);
+            }
+
+            var user = await _userHelper.GetUserAsync(User.Identity!.Name!);
+            if (user == null)
+            {
+                return NotFound();
+            }
+
+            var result = await _userHelper.ChangePasswordAsync(user, model.CurrentPassword, model.NewPassword);
+            if (!result.Succeeded)
+            {
+                return BadRequest(result.Errors.FirstOrDefault().Description);
+            }
+            return NoContent();
+        }
+
     }
 }

@@ -55,6 +55,14 @@ else
             return;
         }
         categoryForm!.FormPostedSuccessfully = true;
+        var toast = swal.Mixin(new SweetAlertOptions
+            {
+                Toast = true,
+                Position = SweetAlertPosition.Center,
+                ShowConfirmButton = true,
+                Timer = 3000
+            });
+        await toast.FireAsync(icon: SweetAlertIcon.Success, message: "Cambios guardados con éxito.");
         navigationManager.NavigateTo("/categories");
 
     }
