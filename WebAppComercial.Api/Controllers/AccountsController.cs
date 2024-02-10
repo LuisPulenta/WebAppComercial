@@ -20,12 +20,14 @@ namespace WebAppComercial.Api.Controllers
         private readonly DataContext _context;
         private readonly IUserHelper _userHelper;
         private readonly IConfiguration _configuration;
+        private readonly IMailHelper _mailHelper;
 
-        public AccountsController(DataContext context,IUserHelper userHelper, IConfiguration configuration)
+        public AccountsController(DataContext context,IUserHelper userHelper, IConfiguration configuration, IMailHelper mailHelper)
         {
             _context = context;
             _userHelper = userHelper;
             _configuration = configuration;
+            this._mailHelper = mailHelper;
         }
 
         //---------------------------------------------------------------------------------------
@@ -117,9 +119,26 @@ namespace WebAppComercial.Api.Controllers
             if (result.Succeeded)
             {
                 await _userHelper.AddUserToRoleAsync(user, user.UserType.ToString());
-                return Ok(BuildToken(user));
-            }
+                var myToken = await _userHelper.GenerateEmailConfirmationTokenAsync(user);
+                var tokenLink = Url.Action("ConfirmEmail", "accounts", new
+                {
+                    userid = user.Id,
+                    token = myToken
+                }, HttpContext.Request.Scheme, _configuration["UrlWEB"]);
 
+                var response = _mailHelper.SendMail(user.FullName, user.Email!,
+                    $"WebAppComercial- Confirmación de cuenta",
+                    $"<h1>WebAppComercial - Confirmación de cuenta</h1>" +
+                    $"<p>Para habilitar el usuario, por favor hacer clic 'Confirmar Email':</p>" +
+                    $"<b><a href ={tokenLink}>Confirmar Email</a></b>");
+
+                if (response.IsSuccess)
+                {
+                    return NoContent();
+                }
+
+                return BadRequest(response.Message);
+            }
             return BadRequest(result.Errors.FirstOrDefault());
         }
 
@@ -138,7 +157,15 @@ namespace WebAppComercial.Api.Controllers
                 }
                 return Ok(BuildToken(user));
             }
+            if (result.IsLockedOut)
+            {
+                return BadRequest("Ha superado el máximo número de intentos, su cuenta está bloqueada, intente de nuevo en 5 minutos.");
+            }
 
+            if (result.IsNotAllowed)
+            {
+                return BadRequest("El usuario no ha sido habilitado, debes de seguir las instrucciones del correo enviado para poder habilitar el usuario.");
+            }
             return BadRequest("Email o contraseña incorrectos.");
         }
 
@@ -262,5 +289,102 @@ namespace WebAppComercial.Api.Controllers
             return NoContent();
         }
 
+        //---------------------------------------------------------------------------------------
+        [HttpGet("ConfirmEmail")]
+        public async Task<ActionResult> ConfirmEmailAsync(string userId, string token)
+        {
+            token = token.Replace(" ", "+");
+            var user = await _userHelper.GetUserAsync(new Guid(userId));
+            if (user == null)
+            {
+                return NotFound();
+            }
+
+            var result = await _userHelper.ConfirmEmailAsync(user, token);
+            if (!result.Succeeded)
+            {
+                return BadRequest(result.Errors.FirstOrDefault());
+            }
+
+            return NoContent();
+        }
+
+        //---------------------------------------------------------------------------------------
+        [HttpPost("ResetToken")]
+        public async Task<ActionResult> ResetToken([FromBody] EmailDTO model)
+        {
+            User user = await _userHelper.GetUserAsync(model.Email);
+            if (user == null)
+            {
+                return NotFound();
+            }
+
+            var myToken = await _userHelper.GenerateEmailConfirmationTokenAsync(user);
+            var tokenLink = Url.Action("ConfirmEmail", "accounts", new
+            {
+                userid = user.Id,
+                token = myToken
+            }, HttpContext.Request.Scheme, _configuration["UrlWEB"]);
+
+            var response = _mailHelper.SendMail(user.FullName, user.Email!,
+                $"WebAppComercial- Confirmación de cuenta",
+                $"<h1>WebAppComercial - Confirmación de cuenta</h1>" +
+                $"<p>Para habilitar el usuario, por favor hacer clic 'Confirmar Email':</p>" +
+                $"<b><a href ={tokenLink}>Confirmar Email</a></b>");
+
+            if (response.IsSuccess)
+            {
+                return NoContent();
+            }
+            return BadRequest(response.Message);
+        }
+
+        //---------------------------------------------------------------------------------------
+        [HttpPost("RecoverPassword")]
+        public async Task<ActionResult> RecoverPassword([FromBody] EmailDTO model)
+        {
+            User user = await _userHelper.GetUserAsync(model.Email);
+            if (user == null)
+            {
+                return NotFound();
+            }
+
+            var myToken = await _userHelper.GeneratePasswordResetTokenAsync(user);
+            var tokenLink = Url.Action("ResetPassword", "accounts", new
+            {
+                userid = user.Id,
+                token = myToken
+            }, HttpContext.Request.Scheme, _configuration["UrlWEB"]);
+
+            var response = _mailHelper.SendMail(user.FullName, user.Email!,
+                $"Sales - Recuperación de contraseña",
+                $"<h1>Sales - Recuperación de contraseña</h1>" +
+                $"<p>Para recuperar su contraseña, por favor hacer clic 'Recuperar Contraseña':</p>" +
+                $"<b><a href ={tokenLink}>Recuperar Contraseña</a></b>");
+
+            if (response.IsSuccess)
+            {
+                return NoContent();
+            }
+            return BadRequest(response.Message);
+        }
+
+        //---------------------------------------------------------------------------------------
+        [HttpPost("ResetPassword")]
+        public async Task<ActionResult> ResetPassword([FromBody] ResetPasswordDTO model)
+        {
+            User user = await _userHelper.GetUserAsync(model.Email);
+            if (user == null)
+            {
+                return NotFound();
+            }
+
+            var result = await _userHelper.ResetPasswordAsync(user, model.Token, model.Password);
+            if (result.Succeeded)
+            {
+                return NoContent();
+            }
+            return BadRequest(result.Errors.FirstOrDefault()!.Description);
+        }
     }
 }

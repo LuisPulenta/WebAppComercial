@@ -126,7 +126,7 @@
 
         userDTO.UserName = userDTO.Email;
         userDTO.Active = true;
-        var responseHttp = await repository.Post<UserDTO, TokenDTO>("/api/accounts/CreateUser", userDTO);
+        var responseHttp = await repository.Post<UserDTO>("/api/accounts/CreateUser", userDTO);
         if (responseHttp.Error)
         {
             var message = await responseHttp.GetErrorMessage();
@@ -141,7 +141,7 @@
                 ShowConfirmButton = true,
                 Timer = 3000
             });
-        await toast.FireAsync(icon: SweetAlertIcon.Success, message: "Usuario registrado con éxito.");
+        await swal.FireAsync("Confirmación", "Su cuenta ha sido creada con éxito. Se te ha enviado un correo electrónico con las instrucciones para activar tu usuario.", SweetAlertIcon.Info);
         navigationManager.NavigateTo("/users");
     }
 
