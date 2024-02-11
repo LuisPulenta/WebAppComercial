@@ -8,7 +8,11 @@
             </Authorizing>
 
             <NotAuthorized>
-                <p>No estas autorizado para ver este contenido...</p>
+                <div class="row " style="height:100vh ">
+                    <div class="d-flex justify-content-center align-items-center text-danger">
+                        <h3>No estas autorizado para ver este contenido...</h3>
+                    </div>
+                </div>
             </NotAuthorized>
 
         </AuthorizeRouteView>
@@ -22,7 +26,16 @@
         <CascadingAuthenticationState>
             <PageTitle>No encontrado</PageTitle>
             <LayoutView Layout="@typeof(MainLayout)">
-                <p role="alert">Lo sentimos no hay nada en esta ruta.</p>
+
+                <div class="row " style="height:100vh ">
+                    <div class="d-flex justify-content-center align-items-center">
+                        <img src="img/page404.png" width="300" />
+                    </div>
+                    <div class="d-flex justify-content-center align-items-center">
+                        <h2 class="text-danger" role="alert">Lo sentimos no hay nada en esta ruta.</h2>
+                    </div>
+                </div>
+
             </LayoutView>
         </CascadingAuthenticationState>
 

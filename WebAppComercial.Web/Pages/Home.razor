@@ -5,11 +5,19 @@
 <AuthorizeView Roles="Admin">
 
     <Authorized>
-        <p>Estas autenticado y autorizado, @context.User.Identity?.Name</p>
+        <div class="row " style="height:100vh ">
+            <div class="d-flex justify-content-center align-items-center">
+                <h3>Estas autenticado y autorizado, @context.User.Identity?.Name</h3>
+            </div>
+        </div>
     </Authorized>
     
     <NotAuthorized>
-        <p>No estas autorizado</p>
+        <div class="row " style="height:100vh ">
+            <div class="d-flex justify-content-center align-items-center">
+                <h3>*** Bienvenido a WebAppComercial ***</h3>
+            </div>
+        </div>
     </NotAuthorized>
 
 </AuthorizeView>
