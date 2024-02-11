@@ -22,184 +22,225 @@
                                     <ul class="navbar-nav me-auto mb-2 mb-lg-0">
 
                                         <li class="nav-item dropdown">
-                                            <a class="nav-link dropdown-toggle text-white " href="#" role="button" data-bs-toggle="dropdown" aria-expanded="false">
-                                                Archivos
+                                            @* ------------------- Archivos ---------------------- *@
+
+                                            <a class="nav-link dropdown-toggle text-white ms-1" href="#" role="button" data-bs-toggle="dropdown" aria-expanded="false">
+                                                <div class="d-flex align-items-center">
+                                                    <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" fill="currentColor" class="bi bi-folder-fill ms-3 me-1 text-white" viewBox="0 0 16 16">
+                                                        <path d="M9.828 3h3.982a2 2 0 0 1 1.992 2.181l-.637 7A2 2 0 0 1 13.174 14H2.825a2 2 0 0 1-1.991-1.819l-.637-7a2 2 0 0 1 .342-1.31L.5 3a2 2 0 0 1 2-2h3.672a2 2 0 0 1 1.414.586l.828.828A2 2 0 0 0 9.828 3m-8.322.12q.322-.119.684-.12h5.396l-.707-.707A1 1 0 0 0 6.172 2H2.5a1 1 0 0 0-1 .981z" />
+                                                    </svg>
+                                                    Archivos
+                                                </div>
                                             </a>
+
                                             <ul class="dropdown-menu">
+                                                <li>
+                                                    <AuthorizeView Roles="Admin">
+                                                        <Authorized>
+                                                            <div class="d-flex align-items-center">
+                                                                <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" fill="currentColor" class="bi bi-shop ms-1" viewBox="0 0 16 16">
+                                                                    <path d="M2.97 1.35A1 1 0 0 1 3.73 1h8.54a1 1 0 0 1 .76.35l2.609 3.044A1.5 1.5 0 0 1 16 5.37v.255a2.375 2.375 0 0 1-4.25 1.458A2.37 2.37 0 0 1 9.875 8 2.37 2.37 0 0 1 8 7.083 2.37 2.37 0 0 1 6.125 8a2.37 2.37 0 0 1-1.875-.917A2.375 2.375 0 0 1 0 5.625V5.37a1.5 1.5 0 0 1 .361-.976zm1.78 4.275a1.375 1.375 0 0 0 2.75 0 .5.5 0 0 1 1 0 1.375 1.375 0 0 0 2.75 0 .5.5 0 0 1 1 0 1.375 1.375 0 1 0 2.75 0V5.37a.5.5 0 0 0-.12-.325L12.27 2H3.73L1.12 5.045A.5.5 0 0 0 1 5.37v.255a1.375 1.375 0 0 0 2.75 0 .5.5 0 0 1 1 0M1.5 8.5A.5.5 0 0 1 2 9v6h1v-5a1 1 0 0 1 1-1h3a1 1 0 0 1 1 1v5h6V9a.5.5 0 0 1 1 0v6h.5a.5.5 0 0 1 0 1H.5a.5.5 0 0 1 0-1H1V9a.5.5 0 0 1 .5-.5M4 15h3v-5H4zm5-5a1 1 0 0 1 1-1h2a1 1 0 0 1 1 1v3a1 1 0 0 1-1 1h-2a1 1 0 0 1-1-1zm3 0h-2v3h2z" />
+                                                                </svg>
+                                                                <a class="dropdown-item" href="/stores">Almacenes</a>
+                                                            </div>
+                                                        </Authorized>
+                                                    </AuthorizeView>
+                                                </li>
 
-                                                <AuthorizeView Roles="Admin">
-                                                    <Authorized>
-                                                        <div class="d-flex align-items-center">
-                                                            <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" fill="currentColor" class="bi bi-shop" viewBox="0 0 16 16">
-                                                                <path d="M2.97 1.35A1 1 0 0 1 3.73 1h8.54a1 1 0 0 1 .76.35l2.609 3.044A1.5 1.5 0 0 1 16 5.37v.255a2.375 2.375 0 0 1-4.25 1.458A2.37 2.37 0 0 1 9.875 8 2.37 2.37 0 0 1 8 7.083 2.37 2.37 0 0 1 6.125 8a2.37 2.37 0 0 1-1.875-.917A2.375 2.375 0 0 1 0 5.625V5.37a1.5 1.5 0 0 1 .361-.976zm1.78 4.275a1.375 1.375 0 0 0 2.75 0 .5.5 0 0 1 1 0 1.375 1.375 0 0 0 2.75 0 .5.5 0 0 1 1 0 1.375 1.375 0 1 0 2.75 0V5.37a.5.5 0 0 0-.12-.325L12.27 2H3.73L1.12 5.045A.5.5 0 0 0 1 5.37v.255a1.375 1.375 0 0 0 2.75 0 .5.5 0 0 1 1 0M1.5 8.5A.5.5 0 0 1 2 9v6h1v-5a1 1 0 0 1 1-1h3a1 1 0 0 1 1 1v5h6V9a.5.5 0 0 1 1 0v6h.5a.5.5 0 0 1 0 1H.5a.5.5 0 0 1 0-1H1V9a.5.5 0 0 1 .5-.5M4 15h3v-5H4zm5-5a1 1 0 0 1 1-1h2a1 1 0 0 1 1 1v3a1 1 0 0 1-1 1h-2a1 1 0 0 1-1-1zm3 0h-2v3h2z" />
-                                                            </svg>
-                                                        <li>
-                                                            <a class="dropdown-item" href="/stores">Almacenes</a>
-                                                        </li>
+                                                <li><a class="dropdown-item" href="/stores">Clientes</a></li>
+                                                <li><a class="dropdown-item" href="#">Proveedores</a></li>
+                                                <li><a class="dropdown-item" href="#">Conceptos</a></li>
+                                                <li><a class="dropdown-item" href="#">Tipos Documento</a></li>
+                                                <li><hr class="dropdown-divider"></li>
+
+                                                <li>
+                                                    <AuthorizeView Roles="Admin">
+                                                        <Authorized>
+                                                            <div class="d-flex align-items-center">
+                                                                <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" fill="currentColor" class="bi bi-alphabet-uppercase ms-1" viewBox="0 0 16 16">
+                                                                    <path d="M1.226 10.88H0l2.056-6.26h1.42l2.047 6.26h-1.29l-.48-1.61H1.707l-.48 1.61ZM2.76 5.818h-.054l-.75 2.532H3.51zm3.217 5.062V4.62h2.56c1.09 0 1.808.582 1.808 1.54 0 .762-.444 1.22-1.05 1.372v.055c.736.074 1.365.587 1.365 1.528 0 1.119-.89 1.766-2.133 1.766zM7.18 5.55v1.675h.8c.812 0 1.171-.308 1.171-.853 0-.51-.328-.822-.898-.822zm0 2.537V9.95h.903c.951 0 1.342-.312 1.342-.909 0-.591-.382-.954-1.095-.954zm5.089-.711v.775c0 1.156.49 1.803 1.347 1.803.705 0 1.163-.454 1.212-1.096H16v.12C15.942 10.173 14.95 11 13.607 11c-1.648 0-2.573-1.073-2.573-2.849v-.78c0-1.775.934-2.871 2.573-2.871 1.347 0 2.34.849 2.393 2.087v.115h-1.172c-.05-.665-.516-1.156-1.212-1.156-.849 0-1.347.67-1.347 1.83" />
+                                                                </svg>
+                                                                <a class="dropdown-item" href="/categories">Categorías</a>
+                                                            </div>
+                                                        </Authorized>
+                                                    </AuthorizeView>
+                                                </li>
+                                                <li>
+                                                    <AuthorizeView Roles="Admin">
+                                                        <Authorized>
+                                                            <div class="d-flex align-items-center">
+                                                                <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" fill="currentColor" class="bi bi-percent ms-1 ms-1" viewBox="0 0 16 16">
+                                                                    <path d="M13.442 2.558a.625.625 0 0 1 0 .884l-10 10a.625.625 0 1 1-.884-.884l10-10a.625.625 0 0 1 .884 0M4.5 6a1.5 1.5 0 1 1 0-3 1.5 1.5 0 0 1 0 3m0 1a2.5 2.5 0 1 0 0-5 2.5 2.5 0 0 0 0 5m7 6a1.5 1.5 0 1 1 0-3 1.5 1.5 0 0 1 0 3m0 1a2.5 2.5 0 1 0 0-5 2.5 2.5 0 0 0 0 5" />
+                                                                </svg>
+                                                                <a class="dropdown-item" href="/ivas">IVA's</a>
+                                                            </div>
+                                                        </Authorized>
+                                                    </AuthorizeView>
+                                                </li>
+
+                                                <li>
+                                                    <AuthorizeView Roles="Admin">
+                                                        <Authorized>
+                                                            <div class="d-flex align-items-center">
+                                                                <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" fill="currentColor" class="bi bi-rulers ms-1" viewBox="0 0 16 16">
+                                                                    <path d="M1 0a1 1 0 0 0-1 1v14a1 1 0 0 0 1 1h5v-1H2v-1h4v-1H4v-1h2v-1H2v-1h4V9H4V8h2V7H2V6h4V2h1v4h1V4h1v2h1V2h1v4h1V4h1v2h1V2h1v4h1V1a1 1 0 0 0-1-1z" />
+                                                                </svg>
+                                                                <a class="dropdown-item" href="/measures">Medidas</a>
+                                                            </div>
+                                                        </Authorized>
+                                                    </AuthorizeView>
+                                                </li>
+                                                <li><a class="dropdown-item" href="#">Productos</a></li>
+                                                <li><hr class="dropdown-divider"></li>
+                                                <li>
+                                                    <AuthorizeView Roles="Admin">
+                                                        <Authorized>
+                                                            <div class="d-flex align-items-center">
+                                                                <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" fill="currentColor" class="bi bi-people-fill ms-1" viewBox="0 0 16 16">
+                                                                    <path d="M7 14s-1 0-1-1 1-4 5-4 5 3 5 4-1 1-1 1zm4-6a3 3 0 1 0 0-6 3 3 0 0 0 0 6m-5.784 6A2.24 2.24 0 0 1 5 13c0-1.355.68-2.75 1.936-3.72A6.3 6.3 0 0 0 5 9c-4 0-5 3-5 4s1 1 1 1zM4.5 8a2.5 2.5 0 1 0 0-5 2.5 2.5 0 0 0 0 5" />
+                                                                </svg>
+                                                                <a class="dropdown-item" href="/users">Usuarios</a>
+                                                            </div>
+                                                        </Authorized>
+                                                    </AuthorizeView>
+                                                </li>
+
+                                                <li><a class="dropdown-item" href="#">Cambio de Usuario </a></li>
+                                                <li><hr class="dropdown-divider"></li>
+                                                <li>
+                                                    <AuthorizeView Roles="Admin, Inventory, Sale">
+                                                        <Authorized>
+                                                            <div class="d-flex align-items-center">
+                                                                <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" fill="currentColor" class="bi bi-person-lock ms-1" viewBox="0 0 16 16">
+                                                                    <path d="M11 5a3 3 0 1 1-6 0 3 3 0 0 1 6 0M8 7a2 2 0 1 0 0-4 2 2 0 0 0 0 4m0 5.996V14H3s-1 0-1-1 1-4 6-4q.845.002 1.544.107a4.5 4.5 0 0 0-.803.918A11 11 0 0 0 8 10c-2.29 0-3.516.68-4.168 1.332-.678.678-.83 1.418-.832 1.664zM9 13a1 1 0 0 1 1-1v-1a2 2 0 1 1 4 0v1a1 1 0 0 1 1 1v2a1 1 0 0 1-1 1h-4a1 1 0 0 1-1-1zm3-3a1 1 0 0 0-1 1v1h2v-1a1 1 0 0 0-1-1" />
+                                                                </svg>
+                                                                <a class="dropdown-item ms-1" href="/accounts/changePassword">Cambio de Contraseña</a>
+                                                            </div>
+                                                        </Authorized>
+                                                    </AuthorizeView>
+                                                </li>
+                                                <li><a class="dropdown-item" href="#">Cerrar Sesión</a></li>
+                                            </ul>
+                                        </li>
+
+                                        @* ------------------- Movimientos ---------------------- *@
+                                        <li class="nav-item dropdown">
+                                            <a class="nav-link dropdown-toggle text-white ms-1" href="#" role="button" data-bs-toggle="dropdown" aria-expanded="false">
+                                                <div class="d-flex align-items-center">
+                                                    <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" fill="currentColor" class="bi bi-arrow-down-up ms-3 me-1 text-white" viewBox="0 0 16 16">
+                                                        <path fill-rule="evenodd" d="M11.5 15a.5.5 0 0 0 .5-.5V2.707l3.146 3.147a.5.5 0 0 0 .708-.708l-4-4a.5.5 0 0 0-.708 0l-4 4a.5.5 0 1 0 .708.708L11 2.707V14.5a.5.5 0 0 0 .5.5m-7-14a.5.5 0 0 1 .5.5v11.793l3.146-3.147a.5.5 0 0 1 .708.708l-4 4a.5.5 0 0 1-.708 0l-4-4a.5.5 0 0 1 .708-.708L4 13.293V1.5a.5.5 0 0 1 .5-.5" />
+                                                    </svg>
+                                                    Movimientos
+                                                </div>
+                                            </a>
+
+                                            <ul class="dropdown-menu">
+                                                <li><a class="dropdown-item" href="#">Ventas</a></li>
+                                                <li><a class="dropdown-item" href="#">Dev. de Clientes</a></li>
+                                                <li><hr class="dropdown-divider"></li>
+                                                <li><a class="dropdown-item" href="#">Compras</a></li>
+                                                <li><a class="dropdown-item" href="#">Dev. a Proveedores </a></li>
+                                                <li><hr class="dropdown-divider"></li>
+                                                <li><a class="dropdown-item" href="#">Salidas</a></li>
+                                                <li><a class="dropdown-item" href="#">Traslados</a></li>
+                                                <li><a class="dropdown-item" href="#">Inventarios'</a></li>
+                                                <li><hr class="dropdown-divider"></li>
+                                                <li><a class="dropdown-item" href="#">Verificar Kardex'</a></li>
+                                            </ul>
+                                        </li>
+
+                                        @* ------------------- Consultas ---------------------- *@
+                                        <li class="nav-item dropdown">
+
+                                            <a class="nav-link dropdown-toggle text-white ms-1" href="#" role="button" data-bs-toggle="dropdown" aria-expanded="false">
+                                                <div class="d-flex align-items-center">
+                                                    <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" fill="currentColor" class="bi bi-question-circle-fill ms-3 me-1 text-white" viewBox="0 0 16 16">
+                                                        <path d="M16 8A8 8 0 1 1 0 8a8 8 0 0 1 16 0M5.496 6.033h.825c.138 0 .248-.113.266-.25.09-.656.54-1.134 1.342-1.134.686 0 1.314.343 1.314 1.168 0 .635-.374.927-.965 1.371-.673.489-1.206 1.06-1.168 1.987l.003.217a.25.25 0 0 0 .25.246h.811a.25.25 0 0 0 .25-.25v-.105c0-.718.273-.927 1.01-1.486.609-.463 1.244-.977 1.244-2.056 0-1.511-1.276-2.241-2.673-2.241-1.267 0-2.655.59-2.75 2.286a.237.237 0 0 0 .241.247m2.325 6.443c.61 0 1.029-.394 1.029-.927 0-.552-.42-.94-1.029-.94-.584 0-1.009.388-1.009.94 0 .533.425.927 1.01.927z" />
+                                                    </svg>
+                                                    Consultas
+                                                </div>
+                                            </a>
+
+                                            <ul class="dropdown-menu">
+                                                <li><a class="dropdown-item" href="#">Kardex</a></li>
+                                                <li><hr class="dropdown-divider"></li>
+                                                <li><a class="dropdown-item" href="#">Ventas</a></li>
+                                                <li><a class="dropdown-item" href="#">Dev. de Clientes</a></li>
+                                                <li><hr class="dropdown-divider"></li>
+                                                <li><a class="dropdown-item" href="#">Compras</a></li>
+                                                <li><a class="dropdown-item" href="#">Dev. a Proveedores </a></li>
+                                                <li><hr class="dropdown-divider"></li>
+                                                <li><a class="dropdown-item" href="#">Salidas</a></li>
+                                                <li><a class="dropdown-item" href="#">Traslados</a></li>
+                                                <li><a class="dropdown-item" href="#">Inventarios'</a></li>
+                                                <li><hr class="dropdown-divider"></li>
+                                                <li><a class="dropdown-item" href="#">Stock</a></li>
+                                                <li><a class="dropdown-item" href="#">Utilidad'</a></li>
+                                            </ul>
+                                        </li>
+
+                                        @* ------------------- Listados ---------------------- *@
+
+                                        <li class="nav-item dropdown">
+
+                                            <a class="nav-link dropdown-toggle text-white ms-1" href="#" role="button" data-bs-toggle="dropdown" aria-expanded="false">
+                                                <div class="d-flex align-items-center">
+                                                    <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-list ms-3 me-1 text-white" viewBox="0 0 16 16">
+                                                        <path fill-rule="evenodd" d="M2.5 12a.5.5 0 0 1 .5-.5h10a.5.5 0 0 1 0 1H3a.5.5 0 0 1-.5-.5m0-4a.5.5 0 0 1 .5-.5h10a.5.5 0 0 1 0 1H3a.5.5 0 0 1-.5-.5m0-4a.5.5 0 0 1 .5-.5h10a.5.5 0 0 1 0 1H3a.5.5 0 0 1-.5-.5" />
+                                                    </svg>
+                                                    Listados
+                                                </div>
+                                            </a>
+
+                                            <ul class="dropdown-menu">
+                                                <li><a class="dropdown-item" href="#">Productos</a></li>
+                                            </ul>
+
+                                        </li>
+
+                                        @* ------------------- Reportes ---------------------- *@
+                                        <li class="nav-item dropdown">
+
+                                            <a class="nav-link dropdown-toggle text-white ms-1" href="#" role="button" data-bs-toggle="dropdown" aria-expanded="false">
+                                                <div class="d-flex align-items-center">
+                                                    <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" fill="currentColor" class="bi bi-card-checklist ms-3 me-1 text-white" viewBox="0 0 16 16">
+                                                        <path d="M14.5 3a.5.5 0 0 1 .5.5v9a.5.5 0 0 1-.5.5h-13a.5.5 0 0 1-.5-.5v-9a.5.5 0 0 1 .5-.5zm-13-1A1.5 1.5 0 0 0 0 3.5v9A1.5 1.5 0 0 0 1.5 14h13a1.5 1.5 0 0 0 1.5-1.5v-9A1.5 1.5 0 0 0 14.5 2z" />
+                                                        <path d="M7 5.5a.5.5 0 0 1 .5-.5h5a.5.5 0 0 1 0 1h-5a.5.5 0 0 1-.5-.5m-1.496-.854a.5.5 0 0 1 0 .708l-1.5 1.5a.5.5 0 0 1-.708 0l-.5-.5a.5.5 0 1 1 .708-.708l.146.147 1.146-1.147a.5.5 0 0 1 .708 0M7 9.5a.5.5 0 0 1 .5-.5h5a.5.5 0 0 1 0 1h-5a.5.5 0 0 1-.5-.5m-1.496-.854a.5.5 0 0 1 0 .708l-1.5 1.5a.5.5 0 0 1-.708 0l-.5-.5a.5.5 0 0 1 .708-.708l.146.147 1.146-1.147a.5.5 0 0 1 .708 0" />
+                                                    </svg>
+                                                    Reportes
+                                                </div>
+                                            </a>
+
+                                            <ul class="dropdown-menu">
+                                                <li><a class="dropdown-item" href="#">Inventarios</a></li>
+                                                <li><a class="dropdown-item" href="#">Ventas</a></li>
+                                                <li><a class="dropdown-item" href="#">Utilidad</a></li>
+                                            </ul>
+                                        </li>
+
+                                        @* ------------------- Acerca de ---------------------- *@
+                                        <li class="nav-item dropdown">
+
+                                            <a class="nav-link dropdown-toggle text-white ms-1" href="#" role="button" data-bs-toggle="dropdown" aria-expanded="false">
+                                                <div class="d-flex align-items-center">
+
+                                                    <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" fill="currentColor" class="bi bi-info-circle-fill ms-3 me-1 text-white" viewBox="0 0 16 16">
+                                                        <path d="M8 16A8 8 0 1 0 8 0a8 8 0 0 0 0 16m.93-9.412-1 4.705c-.07.34.029.533.304.533.194 0 .487-.07.686-.246l-.088.416c-.287.346-.92.598-1.465.598-.703 0-1.002-.422-.808-1.319l.738-3.468c.064-.293.006-.399-.287-.47l-.451-.081.082-.381 2.29-.287zM8 5.5a1 1 0 1 1 0-2 1 1 0 0 1 0 2" />
+                                                    </svg>
+                                                    Acerca de
+                                                </div>
+                                            </a>
+                                        </li>
+                                    </ul>
                                 </div>
-                                </Authorized>
-                                </AuthorizeView>
-
-                                <li><a class="dropdown-item" href="/stores">Clientes</a></li>
-                                <li><a class="dropdown-item" href="#">Proveedores</a></li>
-                                <li><a class="dropdown-item" href="#">Conceptos</a></li>
-                                <li><a class="dropdown-item" href="#">Tipos Documento</a></li>
-                                <li><hr class="dropdown-divider"></li>
-
-                                <AuthorizeView Roles="Admin">
-                                    <Authorized>
-                                        <div class="d-flex align-items-center">
-                                            <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" fill="currentColor" class="bi bi-alphabet-uppercase" viewBox="0 0 16 16">
-                                                <path d="M1.226 10.88H0l2.056-6.26h1.42l2.047 6.26h-1.29l-.48-1.61H1.707l-.48 1.61ZM2.76 5.818h-.054l-.75 2.532H3.51zm3.217 5.062V4.62h2.56c1.09 0 1.808.582 1.808 1.54 0 .762-.444 1.22-1.05 1.372v.055c.736.074 1.365.587 1.365 1.528 0 1.119-.89 1.766-2.133 1.766zM7.18 5.55v1.675h.8c.812 0 1.171-.308 1.171-.853 0-.51-.328-.822-.898-.822zm0 2.537V9.95h.903c.951 0 1.342-.312 1.342-.909 0-.591-.382-.954-1.095-.954zm5.089-.711v.775c0 1.156.49 1.803 1.347 1.803.705 0 1.163-.454 1.212-1.096H16v.12C15.942 10.173 14.95 11 13.607 11c-1.648 0-2.573-1.073-2.573-2.849v-.78c0-1.775.934-2.871 2.573-2.871 1.347 0 2.34.849 2.393 2.087v.115h-1.172c-.05-.665-.516-1.156-1.212-1.156-.849 0-1.347.67-1.347 1.83" />
-                                            </svg>
-                                            <li>
-                                                <a class="dropdown-item" href="/categories">Categorías</a>
-                                            </li>
-                                        </div>
-                                    </Authorized>
-                                </AuthorizeView>
-
-                                <AuthorizeView Roles="Admin">
-                                    <Authorized>
-                                        <div class="d-flex align-items-center">
-                                            <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" fill="currentColor" class="bi bi-percent" viewBox="0 0 16 16">
-                                                <path d="M13.442 2.558a.625.625 0 0 1 0 .884l-10 10a.625.625 0 1 1-.884-.884l10-10a.625.625 0 0 1 .884 0M4.5 6a1.5 1.5 0 1 1 0-3 1.5 1.5 0 0 1 0 3m0 1a2.5 2.5 0 1 0 0-5 2.5 2.5 0 0 0 0 5m7 6a1.5 1.5 0 1 1 0-3 1.5 1.5 0 0 1 0 3m0 1a2.5 2.5 0 1 0 0-5 2.5 2.5 0 0 0 0 5" />
-                                            </svg>
-                                            <li>
-                                                <a class="dropdown-item" href="/ivas">IVA's</a>
-                                            </li>
-                                        </div>
-                                    </Authorized>
-                                </AuthorizeView>
-
-                                <li><a class="dropdown-item" href="#">Productos</a></li>
-
-                                <AuthorizeView Roles="Admin">
-                                    <Authorized>
-                                        <div class="d-flex align-items-center">
-                                            <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" fill="currentColor" class="bi bi-rulers" viewBox="0 0 16 16">
-                                                <path d="M1 0a1 1 0 0 0-1 1v14a1 1 0 0 0 1 1h5v-1H2v-1h4v-1H4v-1h2v-1H2v-1h4V9H4V8h2V7H2V6h4V2h1v4h1V4h1v2h1V2h1v4h1V4h1v2h1V2h1v4h1V1a1 1 0 0 0-1-1z" />
-                                            </svg>
-                                            <li>
-                                                <a class="dropdown-item" href="/measures">Medidas</a>
-                                            </li>
-                                        </div>
-                                    </Authorized>
-                                </AuthorizeView>
-
-                                <li><hr class="dropdown-divider"></li>
-
-                                <AuthorizeView Roles="Admin">
-                                    <Authorized>
-                                        <div class="d-flex align-items-center">
-                                            <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" fill="currentColor" class="bi bi-people-fill" viewBox="0 0 16 16">
-                                                <path d="M7 14s-1 0-1-1 1-4 5-4 5 3 5 4-1 1-1 1zm4-6a3 3 0 1 0 0-6 3 3 0 0 0 0 6m-5.784 6A2.24 2.24 0 0 1 5 13c0-1.355.68-2.75 1.936-3.72A6.3 6.3 0 0 0 5 9c-4 0-5 3-5 4s1 1 1 1zM4.5 8a2.5 2.5 0 1 0 0-5 2.5 2.5 0 0 0 0 5" />
-                                            </svg>
-                                            <li>
-                                                <a class="dropdown-item" href="/users">Usuarios</a>
-                                            </li>
-                                        </div>
-                                    </Authorized>
-                                </AuthorizeView>
-
-                                <li><a class="dropdown-item" href="#">Cambio de Usuario </a></li>
-
-                                <AuthorizeView Roles="Admin, Inventory, Sale">
-                                    <Authorized>
-                                        <div class="d-flex align-items-center">
-                                            <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" fill="currentColor" class="bi bi-person-lock" viewBox="0 0 16 16">
-                                                <path d="M11 5a3 3 0 1 1-6 0 3 3 0 0 1 6 0M8 7a2 2 0 1 0 0-4 2 2 0 0 0 0 4m0 5.996V14H3s-1 0-1-1 1-4 6-4q.845.002 1.544.107a4.5 4.5 0 0 0-.803.918A11 11 0 0 0 8 10c-2.29 0-3.516.68-4.168 1.332-.678.678-.83 1.418-.832 1.664zM9 13a1 1 0 0 1 1-1v-1a2 2 0 1 1 4 0v1a1 1 0 0 1 1 1v2a1 1 0 0 1-1 1h-4a1 1 0 0 1-1-1zm3-3a1 1 0 0 0-1 1v1h2v-1a1 1 0 0 0-1-1" />
-                                            </svg>
-                                            <li>
-                                                <a class="dropdown-item ms-1" href="/accounts/changePassword">Cambio de Contraseña</a>
-                                            </li>
-                                        </div>
-                                    </Authorized>
-                                </AuthorizeView>
-
-                                <li><hr class="dropdown-divider"></li>
-                                <li><a class="dropdown-item" href="#">Cerrar Sesión</a></li>
-                            </ul>
-                        </li>
-
-    <li class="nav-item dropdown">
-        <a class="nav-link dropdown-toggle text-white" href="#" role="button" data-bs-toggle="dropdown" aria-expanded="false">
-            Movimientos
-        </a>
-        <ul class="dropdown-menu">
-            <li><a class="dropdown-item" href="#">Ventas</a></li>
-            <li><a class="dropdown-item" href="#">Dev. de Clientes</a></li>
-            <li><hr class="dropdown-divider"></li>
-            <li><a class="dropdown-item" href="#">Compras</a></li>
-            <li><a class="dropdown-item" href="#">Dev. a Proveedores </a></li>
-            <li><hr class="dropdown-divider"></li>
-            <li><a class="dropdown-item" href="#">Salidas</a></li>
-            <li><a class="dropdown-item" href="#">Traslados</a></li>
-            <li><a class="dropdown-item" href="#">Inventarios'</a></li>
-            <li><hr class="dropdown-divider"></li>
-            <li><a class="dropdown-item" href="#">Verificar Kardex'</a></li>
-        </ul>
-    </li>
-
-    <li class="nav-item dropdown">
-        <a class="nav-link dropdown-toggle text-white" href="#" role="button" data-bs-toggle="dropdown" aria-expanded="false">
-            Consultas
-        </a>
-        <ul class="dropdown-menu">
-            <li><a class="dropdown-item" href="#">Kardex</a></li>
-            <li><hr class="dropdown-divider"></li>
-            <li><a class="dropdown-item" href="#">Ventas</a></li>
-            <li><a class="dropdown-item" href="#">Dev. de Clientes</a></li>
-            <li><hr class="dropdown-divider"></li>
-            <li><a class="dropdown-item" href="#">Compras</a></li>
-            <li><a class="dropdown-item" href="#">Dev. a Proveedores </a></li>
-            <li><hr class="dropdown-divider"></li>
-            <li><a class="dropdown-item" href="#">Salidas</a></li>
-            <li><a class="dropdown-item" href="#">Traslados</a></li>
-            <li><a class="dropdown-item" href="#">Inventarios'</a></li>
-            <li><hr class="dropdown-divider"></li>
-            <li><a class="dropdown-item" href="#">Stock</a></li>
-            <li><a class="dropdown-item" href="#">Utilidad'</a></li>
-        </ul>
-    </li>
-
-    <li class="nav-item dropdown">
-        <a class="nav-link dropdown-toggle text-white" href="#" role="button" data-bs-toggle="dropdown" aria-expanded="false">
-            Listados
-        </a>
-        <ul class="dropdown-menu">
-            <li><a class="dropdown-item" href="#">Productos</a></li>
-        </ul>
-    </li>
-
-    <li class="nav-item dropdown">
-        <a class="nav-link dropdown-toggle text-white" href="#" role="button" data-bs-toggle="dropdown" aria-expanded="false">
-            Reportes
-        </a>
-        <ul class="dropdown-menu">
-            <li><a class="dropdown-item" href="#">Inventarios</a></li>
-            <li><a class="dropdown-item" href="#">Ventas</a></li>
-            <li><a class="dropdown-item" href="#">Utilidad</a></li>
-        </ul>
-    </li>
-
-    <li class="nav-item dropdown">
-        <a class="nav-link dropdown-toggle text-white" href="#" role="button" data-bs-toggle="dropdown" aria-expanded="false">
-            Acerca de
-        </a>
-    </li>
-
-    </ul>
-
-</div>
                             </div>
                         </nav>
-<AuthLinks />
+                        <AuthLinks />
                     </div>
 
-<article class="content px-4">
+                    <article class="content px-4">
                         @Body
-</article>
+                    </article>
                 </main>
             </div>
         </div>
