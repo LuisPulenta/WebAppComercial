@@ -26,6 +26,7 @@ namespace WebAppComercial.Api.Controllers
         public async Task<IActionResult> GetAsync([FromQuery] PaginationDTO pagination)
         {
             var queryable = _context.Suppliers
+                .Include(x => x.DocumentType!)
                 .AsQueryable();
 
             if (!string.IsNullOrWhiteSpace(pagination.Filter))
@@ -43,7 +44,9 @@ namespace WebAppComercial.Api.Controllers
         [HttpGet("all")]
         public async Task<IActionResult> GetAll([FromQuery] PaginationDTO pagination)
         {
-            var queryable = _context.Suppliers.AsQueryable();
+            var queryable = _context.Suppliers
+                .Include(x => x.DocumentType!)
+                .AsQueryable();
             if (!string.IsNullOrWhiteSpace(pagination.Filter))
             {
                 queryable = queryable.Where(x => x.Name.ToLower().Contains(pagination.Filter.ToLower()));
@@ -58,7 +61,9 @@ namespace WebAppComercial.Api.Controllers
         [HttpGet("totalPages")]
         public async Task<ActionResult> GetPages([FromQuery] PaginationDTO pagination)
         {
-            var queryable = _context.Suppliers.AsQueryable();
+            var queryable = _context.Suppliers
+                .Include(x => x.DocumentType!)
+                .AsQueryable();
             if (!string.IsNullOrWhiteSpace(pagination.Filter))
             {
                 queryable = queryable.Where(x => x.Name.ToLower().Contains(pagination.Filter.ToLower()));
@@ -73,7 +78,9 @@ namespace WebAppComercial.Api.Controllers
         [HttpGet("totalRegisters")]
         public async Task<ActionResult> GetRegisters([FromQuery] PaginationDTO pagination)
         {
-            var queryable = _context.Suppliers.AsQueryable();
+            var queryable = _context.Suppliers
+                .Include(x => x.DocumentType!)
+                .AsQueryable();
             if (!string.IsNullOrWhiteSpace(pagination.Filter))
             {
                 queryable = queryable.Where(x => x.Name.ToLower().Contains(pagination.Filter.ToLower()));
@@ -85,13 +92,29 @@ namespace WebAppComercial.Api.Controllers
 
         //---------------------------------------------------------------------------------------
         [HttpPost]
-        public async Task<ActionResult> PostAsync(Supplier supplier)
+        public async Task<ActionResult> PostAsync(SupplierDTO supplierDTO)
         {
-            _context.Add(supplier);
             try
             {
+                DocumentType doc = await _context.DocumentTypes!.FindAsync(supplierDTO.DocumentTypeId);
+
+                Supplier newSupplier = new()
+                {
+                    Id = supplierDTO.Id,
+                    Name = supplierDTO.Name,
+                    DocumentType = doc!,
+                    DocumentTypeId = supplierDTO.DocumentTypeId,
+                    Document = supplierDTO.Document,
+                    ContactName = supplierDTO.ContactName,
+                    Address = supplierDTO.Address,
+                    LandPhone = supplierDTO.LandPhone,
+                    CellPhone = supplierDTO.CellPhone,
+                    Email = supplierDTO.Email,
+                    Remarks = supplierDTO.Remarks
+                };
+                _context.Add(newSupplier);
                 await _context.SaveChangesAsync();
-                return Ok(supplier);
+                return Ok(newSupplier);
             }
             catch (DbUpdateException dbUpdateException)
             {
@@ -108,7 +131,6 @@ namespace WebAppComercial.Api.Controllers
             {
                 return BadRequest(exception.Message);
             }
-
         }
 
         //---------------------------------------------------------------------------------------
@@ -126,13 +148,29 @@ namespace WebAppComercial.Api.Controllers
 
         //---------------------------------------------------------------------------------------
         [HttpPut]
-        public async Task<ActionResult> Put(Supplier supplier)
+        public async Task<ActionResult> Put(SupplierDTO supplierDTO)
         {
-            _context.Update(supplier);
             try
             {
+                Supplier supplier = await _context.Suppliers
+                    .FirstOrDefaultAsync(x => x.Id == supplierDTO.Id);
+                if (supplier == null)
+                {
+                    return NotFound();
+                }
+                supplier.Address = supplierDTO.Address;
+                supplier.Document = supplierDTO.Document;
+                supplier.DocumentType = await _context.DocumentTypes.FirstOrDefaultAsync(x => x.Id == supplierDTO.DocumentTypeId);
+                supplier.DocumentTypeId = supplierDTO.DocumentTypeId;
+                supplier.CellPhone = supplierDTO.CellPhone;
+                supplier.LandPhone = supplierDTO.LandPhone;
+                supplier.Email = supplierDTO.Email;
+                supplier.Remarks = supplierDTO.Remarks;
+                supplier.Name = supplierDTO.Name;
+
+                _context.Update(supplier);
                 await _context.SaveChangesAsync();
-                return Ok(supplier);
+                return Ok(supplierDTO);
             }
             catch (DbUpdateException dbUpdateException)
             {

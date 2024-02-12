@@ -6,10 +6,11 @@
 
 <h3>Crear Proveedor</h3>
 
-<SupplierForm @ref="supplierForm" Supplier="supplier" OnValidSubmit="CreateAsync" ReturnAction="Return" />
+<SupplierForm @ref="supplierForm" SupplierDTO="supplierDTO" OnValidSubmit="CreateAsync" ReturnAction="Return" />
 
 @code {
-    private Supplier supplier = new();
+    private SupplierDTO supplierDTO = new SupplierDTO();
+    
     private SupplierForm? supplierForm;
 
     [CascadingParameter]
@@ -17,7 +18,7 @@
 
     private async Task CreateAsync()
     {
-        var httpResponse = await repository.Post("/api/suppliers", supplier);
+        var httpResponse = await repository.Post("/api/suppliers", supplierDTO);
         if (httpResponse.Error)
         {
             var message = await httpResponse.GetErrorMessage();

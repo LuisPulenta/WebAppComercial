@@ -51,7 +51,6 @@ else
         customer = responseHTTP.Response!;
         customerDTO = ToCustomerDTO(customer);
         loading = false;
-        var a = 1;
     }
 
     private CustomerDTO ToCustomerDTO(Customer customer)
@@ -80,7 +79,7 @@ else
             await swal.FireAsync("Error", mensajeError, SweetAlertIcon.Error);
             return;
         }
-        // customerForm!.FormPostedSuccessfully = true;
+        customerForm!.FormPostedSuccessfully = true;
         var toast = swal.Mixin(new SweetAlertOptions
             {
                 Toast = true,

@@ -1,16 +1,101 @@
 ﻿@inject SweetAlertService swal
+@inject IRepository repository
 
 <NavigationLock OnBeforeInternalNavigation="OnBeforeInternalNavigation"></NavigationLock>
 
 <EditForm EditContext="editContext" OnValidSubmit="OnValidSubmit">
     <DataAnnotationsValidator />
+    
     <div class="mb-3">
         <label>Proveedor:</label>
         <div>
-            <InputText class="form-control" @bind-Value="@Supplier.Name" />
-            <ValidationMessage For="@(() => Supplier.Name)" />
+            <InputText class="form-control" @bind-Value="@SupplierDTO.Name" />
+            <ValidationMessage For="@(() => SupplierDTO.Name)" />
         </div>
     </div>
+
+    <div class="mb-3">
+        <label>Tipo Documento:</label>
+        <div>
+            <select class="form-select" @bind="@SupplierDTO.DocumentTypeId">
+                <option value="0">-- Seleccione un Tipo de Documento --</option>
+                @if (documentTypes is not null)
+                {
+                    @foreach (var documentType in documentTypes)
+                    {
+                        <option value="@documentType.Id">@documentType.Name</option>
+                    }
+                }
+            </select>
+        </div>
+    </div>
+
+
+    <div class="mb-3">
+        <label>Documento:</label>
+        <div>
+            <InputText class="form-control" @bind-Value="@SupplierDTO.Document" />
+            <ValidationMessage For="@(() => SupplierDTO.Document)" />
+        </div>
+    </div>
+
+    <div class="mb-3">
+        <label>Contacto:</label>
+        <div>
+            <InputText class="form-control" @bind-Value="@SupplierDTO.ContactName" />
+            <ValidationMessage For="@(() => SupplierDTO.ContactName)" />
+        </div>
+    </div>
+
+    <div class="mb-3">
+        <label>Dirección:</label>
+        <div>
+            <InputText class="form-control" @bind-Value="@SupplierDTO.Address" />
+            <ValidationMessage For="@(() => SupplierDTO.Address)" />
+        </div>
+    </div>
+
+    <div class="mb-3">
+        <label>Teléfono Fijo:</label>
+        <div>
+            <InputText class="form-control" @bind-Value="@SupplierDTO.LandPhone" />
+            <ValidationMessage For="@(() => SupplierDTO.LandPhone)" />
+        </div>
+    </div>
+
+    <div class="mb-3">
+        <label>Celular:</label>
+        <div>
+            <InputText class="form-control" @bind-Value="@SupplierDTO.CellPhone" />
+            <ValidationMessage For="@(() => SupplierDTO.CellPhone)" />
+        </div>
+    </div>
+
+    <div class="mb-3">
+        <label>Email:</label>
+        <div>
+            <InputText class="form-control" @bind-Value="@SupplierDTO.Email" />
+            <ValidationMessage For="@(() => SupplierDTO.Email)" />
+        </div>
+    </div>
+
+    <div class="mb-3">
+        <label>Notas:</label>
+        <div>
+            <InputText class="form-control" @bind-Value="@SupplierDTO.Remarks" />
+            <ValidationMessage For="@(() => SupplierDTO.Remarks)" />
+        </div>
+    </div>
+
+   @*  <div class="mb-3">
+        <label>Aniversario:</label>
+        <div>
+            <InputDate class="form-control" @bind-Value="@SupplierDTO.Anniversary" />
+            <ValidationMessage For="@(() => SupplierDTO.Anniversary)" />
+        </div>
+    </div> *@
+
+
     <button class="btn btn-sm btn-outline-primary" type="submit">
         <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" fill="currentColor" class="bi bi-floppy-fill" viewBox="0 0 16 16">
             <path d="M0 1.5A1.5 1.5 0 0 1 1.5 0H3v5.5A1.5 1.5 0 0 0 4.5 7h7A1.5 1.5 0 0 0 13 5.5V0h.086a1.5 1.5 0 0 1 1.06.44l1.415 1.414A1.5 1.5 0 0 1 16 2.914V14.5a1.5 1.5 0 0 1-1.5 1.5H14v-5.5A1.5 1.5 0 0 0 12.5 9h-9A1.5 1.5 0 0 0 2 10.5V16h-.5A1.5 1.5 0 0 1 0 14.5z" />
@@ -28,10 +113,11 @@
 
 @code {
     private EditContext editContext = null!;
-    
+    private List<DocumentType>? documentTypes;
+
     [EditorRequired]
     [Parameter]
-    public Supplier Supplier { get; set; } = null!;
+    public SupplierDTO SupplierDTO { get; set; } = null!;
 
     [Parameter]
     [EditorRequired]    
@@ -45,7 +131,24 @@
 
     protected override void OnInitialized()
     {
-        editContext = new(Supplier);
+        editContext = new(SupplierDTO);
+    }
+
+    protected override async Task OnInitializedAsync()
+    {
+        await LoadDocumentTypesAsync();
+    }
+
+    private async Task LoadDocumentTypesAsync()
+    {
+        var responseHttp = await repository.Get<List<DocumentType>>("/api/documenttypes/combo");
+        if (responseHttp.Error)
+        {
+            var message = await responseHttp.GetErrorMessage();
+            await swal.FireAsync("Error", message, SweetAlertIcon.Error);
+            return;
+        }
+        documentTypes = responseHttp.Response;
     }
 
     private async Task OnBeforeInternalNavigation(LocationChangingContext context)

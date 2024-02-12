@@ -4,21 +4,23 @@
 @inject IRepository repository
 @inject SweetAlertService swal
 
-<h3>Editar Cliente</h3>
+<h3>Editar Proveedor</h3>
 
-@if (supplier is null)
+@if (loading)
 {
     <Spinner />
 }
 else
 {
-    <SupplierForm @ref="supplierForm" Supplier="supplier" OnValidSubmit="EditAsync" ReturnAction="Return" />
+    <SupplierForm @ref="supplierForm" SupplierDTO="supplierDTO" OnValidSubmit="EditAsync" ReturnAction="Return" />
 }
 
 
 @code {
-    private Supplier? supplier;
+    private SupplierDTO supplierDTO = new SupplierDTO();
     private SupplierForm? supplierForm;
+    private Supplier? supplier;
+    private bool loading = true;
 
     [CascadingParameter]
     BlazoredModalInstance BlazoredModal { get; set; } = default!;
@@ -28,6 +30,7 @@ else
 
     protected override async Task OnInitializedAsync()
     {
+        loading = true;
         var responseHTTP = await repository.Get<Supplier>($"/api/suppliers/{Id}");
         if (responseHTTP.Error)
         {
@@ -38,18 +41,38 @@ else
             }
             else
             {
+                loading = false;
                 var messageError = await responseHTTP.GetErrorMessage();
                 await swal.FireAsync("Error", messageError, SweetAlertIcon.Error);
                 return;
             }
 
         }
-        supplier = responseHTTP.Response;
+        supplier = responseHTTP.Response!;
+        supplierDTO = ToSupplierDTO(supplier);
+        loading = false;
+    }
+
+    private SupplierDTO ToSupplierDTO(Supplier supplier)
+    {
+        return new SupplierDTO
+            {
+                Id = supplier.Id,
+                Name = supplier.Name,
+                Address = supplier.Address,
+                CellPhone = supplier.CellPhone,
+                ContactName = supplier.ContactName,
+                Document = supplier.Document,
+                DocumentTypeId = supplier.DocumentTypeId,
+                Email = supplier.Email,
+                LandPhone = supplier.LandPhone,
+                Remarks = supplier.Remarks
+            };
     }
 
     private async Task EditAsync()
     {
-        var responseHTTP = await repository.Put("/api/suppliers", supplier);
+        var responseHTTP = await repository.Put("/api/suppliers", supplierDTO);
         if (responseHTTP.Error)
         {
             var mensajeError = await responseHTTP.GetErrorMessage();

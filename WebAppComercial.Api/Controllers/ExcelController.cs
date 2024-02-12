@@ -366,12 +366,24 @@ namespace GenerarExcel.Server.Controllers
 
                 table.Columns.Add("ID");
                 table.Columns.Add("NOMBRE");
+                table.Columns.Add("TIPO DOC");
+                table.Columns.Add("DOCUMENTO");
+                table.Columns.Add("DIRECCION");
+                table.Columns.Add("TELEFONO");
+                table.Columns.Add("CELULAR");
+                table.Columns.Add("EMAIL");
 
                 foreach (Supplier supplier in suppliers)
                 {
                     DataRow fila = table.NewRow();
                     fila["ID"] = supplier.Id;
                     fila["NOMBRE"] = supplier.Name;
+                    fila["TIPO DOC"] = supplier.DocumentType.Name;
+                    fila["DOCUMENTO"] = supplier.Document;
+                    fila["DIRECCION"] = supplier.Address;
+                    fila["TELEFONO"] = supplier.LandPhone;
+                    fila["CELULAR"] = supplier.CellPhone;
+                    fila["EMAIL"] = supplier.Email;
                     table.Rows.Add(fila);
                 }
 
