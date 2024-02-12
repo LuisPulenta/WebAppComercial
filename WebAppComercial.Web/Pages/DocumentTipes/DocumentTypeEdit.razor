@@ -1,0 +1,78 @@
+﻿@page "/documenttypes/edit/{Id:int}"
+@attribute [Authorize(Roles = "Admin")]
+@inject NavigationManager navigationManager
+@inject IRepository repository
+@inject SweetAlertService swal
+
+<h3>Editar Tipo de Documento</h3>
+
+@if (documentType is null)
+{
+    <Spinner />
+}
+else
+{
+    <DocumentTypeForm @ref="documentTypeForm" DocumentType="documentType" OnValidSubmit="EditAsync" ReturnAction="Return" />
+}
+
+
+@code {
+    private DocumentType? documentType;
+    private DocumentTypeForm? documentTypeForm;
+
+    [CascadingParameter]
+    BlazoredModalInstance BlazoredModal { get; set; } = default!;
+
+    [Parameter]
+    public int Id { get; set; }
+
+    protected override async Task OnInitializedAsync()
+    {
+        var responseHTTP = await repository.Get<DocumentType>($"/api/documenttypes/{Id}");
+        if (responseHTTP.Error)
+        {
+            if (responseHTTP.HttpResponseMessage.StatusCode == HttpStatusCode.NotFound)
+            {
+                navigationManager.NavigateTo("documenttypes");
+                return;
+            }
+            else
+            {
+                var messageError = await responseHTTP.GetErrorMessage();
+                await swal.FireAsync("Error", messageError, SweetAlertIcon.Error);
+                return;
+            }
+
+        }
+        documentType = responseHTTP.Response;
+    }
+
+    private async Task EditAsync()
+    {
+        var responseHTTP = await repository.Put("/api/documenttypes", documentType);
+        if (responseHTTP.Error)
+        {
+            var mensajeError = await responseHTTP.GetErrorMessage();
+            await swal.FireAsync("Error", mensajeError, SweetAlertIcon.Error);
+            return;
+        }
+        documentTypeForm!.FormPostedSuccessfully = true;
+        var toast = swal.Mixin(new SweetAlertOptions
+            {
+                Toast = true,
+                Position = SweetAlertPosition.Center,
+                ShowConfirmButton = true,
+                Timer = 3000
+            });
+        await toast.FireAsync(icon: SweetAlertIcon.Success, message: "Cambios guardados con éxito.");
+        
+        await BlazoredModal.CloseAsync(ModalResult.Ok());
+        navigationManager.NavigateTo("/documenttypes");
+    }
+
+    private void Return()
+    {
+        documentTypeForm!.FormPostedSuccessfully = true;
+        navigationManager.NavigateTo("/documenttypes");
+    }
+}

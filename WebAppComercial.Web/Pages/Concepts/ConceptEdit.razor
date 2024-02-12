@@ -1,0 +1,78 @@
+﻿@page "/concepts/edit/{Id:int}"
+@attribute [Authorize(Roles = "Admin")]
+@inject NavigationManager navigationManager
+@inject IRepository repository
+@inject SweetAlertService swal
+
+<h3>Editar Concepto</h3>
+
+@if (concept is null)
+{
+    <Spinner />
+}
+else
+{
+    <ConceptForm @ref="conceptForm" Concept="concept" OnValidSubmit="EditAsync" ReturnAction="Return" />
+}
+
+
+@code {
+    private Concept? concept;
+    private ConceptForm? conceptForm;
+
+    [CascadingParameter]
+    BlazoredModalInstance BlazoredModal { get; set; } = default!;
+
+    [Parameter]
+    public int Id { get; set; }
+
+    protected override async Task OnInitializedAsync()
+    {
+        var responseHTTP = await repository.Get<Concept>($"/api/concepts/{Id}");
+        if (responseHTTP.Error)
+        {
+            if (responseHTTP.HttpResponseMessage.StatusCode == HttpStatusCode.NotFound)
+            {
+                navigationManager.NavigateTo("concepts");
+                return;
+            }
+            else
+            {
+                var messageError = await responseHTTP.GetErrorMessage();
+                await swal.FireAsync("Error", messageError, SweetAlertIcon.Error);
+                return;
+            }
+
+        }
+        concept = responseHTTP.Response;
+    }
+
+    private async Task EditAsync()
+    {
+        var responseHTTP = await repository.Put("/api/concepts", concept);
+        if (responseHTTP.Error)
+        {
+            var mensajeError = await responseHTTP.GetErrorMessage();
+            await swal.FireAsync("Error", mensajeError, SweetAlertIcon.Error);
+            return;
+        }
+        conceptForm!.FormPostedSuccessfully = true;
+        var toast = swal.Mixin(new SweetAlertOptions
+            {
+                Toast = true,
+                Position = SweetAlertPosition.Center,
+                ShowConfirmButton = true,
+                Timer = 3000
+            });
+        await toast.FireAsync(icon: SweetAlertIcon.Success, message: "Cambios guardados con éxito.");
+        
+        await BlazoredModal.CloseAsync(ModalResult.Ok());
+        navigationManager.NavigateTo("/concepts");
+    }
+
+    private void Return()
+    {
+        conceptForm!.FormPostedSuccessfully = true;
+        navigationManager.NavigateTo("/concepts");
+    }
+}

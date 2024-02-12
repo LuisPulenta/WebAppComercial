@@ -1,0 +1,44 @@
+﻿@page "/concepts/create"
+@attribute [Authorize(Roles = "Admin")]
+@inject IRepository repository
+@inject NavigationManager navigationManager
+@inject SweetAlertService swal
+
+<h3>Crear Concepto</h3>
+
+<ConceptForm @ref="conceptForm" Concept="concept" OnValidSubmit="CreateAsync" ReturnAction="Return" />
+
+@code {
+    private Concept concept = new();
+    private ConceptForm? conceptForm;
+
+    [CascadingParameter]
+    BlazoredModalInstance BlazoredModal { get; set; } = default!;
+
+    private async Task CreateAsync()
+    {
+        var httpResponse = await repository.Post("/api/concepts", concept);
+        if (httpResponse.Error)
+        {
+            var message = await httpResponse.GetErrorMessage();
+            await swal.FireAsync("Error", message, SweetAlertIcon.Error);
+            return;
+        }
+        var toast = swal.Mixin(new SweetAlertOptions
+            {
+                Toast = true,
+                Position = SweetAlertPosition.Center,
+                ShowConfirmButton = true,
+                Timer = 3000
+            });
+        await toast.FireAsync(icon: SweetAlertIcon.Success, message: "Concepto creado con éxito.");
+        await BlazoredModal.CloseAsync(ModalResult.Ok());
+        Return();
+    }
+
+    private void Return()
+    {
+        conceptForm!.FormPostedSuccessfully = true;
+        navigationManager.NavigateTo("/concepts");
+    }
+}

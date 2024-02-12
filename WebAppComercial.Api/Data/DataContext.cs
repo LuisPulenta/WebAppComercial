@@ -14,6 +14,8 @@ namespace WebAppComercial.Api.Data
         public DbSet<Measure> Measures { get; set; }
         public DbSet<Iva> Ivas { get; set; }
         public DbSet<Product> Products { get; set; }
+        public DbSet<Concept> Concepts { get; set; }
+        public DbSet<DocumentType> DocumentTypes { get; set; }
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
@@ -23,6 +25,8 @@ namespace WebAppComercial.Api.Data
             modelBuilder.Entity<Measure>().HasIndex(c => c.Unit).IsUnique();
             modelBuilder.Entity<Iva>().HasIndex(c => c.Name).IsUnique();
             modelBuilder.Entity<Product>().HasIndex(c => c.Name).IsUnique();
+            modelBuilder.Entity<Concept>().HasIndex(c => c.Name).IsUnique();
+            modelBuilder.Entity<DocumentType>().HasIndex(c => c.Name).IsUnique();
         }
     }
 }

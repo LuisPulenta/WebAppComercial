@@ -220,5 +220,85 @@ namespace GenerarExcel.Server.Controllers
                 throw;
             }
         }
+
+        //-------------------------------------------------------------------------------------------
+        [HttpPost]
+        [Route("ExportExcelConcepts")]
+
+        public IActionResult ExportExcelConcepts([FromBody] List<Concept> concepts)
+        {
+            try
+            {
+                DataTable table = new DataTable();//tabla general
+
+                table.Columns.Add("ID");
+                table.Columns.Add("NOMBRE");
+
+                foreach (Concept concept in concepts)
+                {
+                    DataRow fila = table.NewRow();
+                    fila["ID"] = concept.Id;
+                    fila["NOMBRE"] = concept.Name;
+                    table.Rows.Add(fila);
+                }
+
+                using var libro = new XLWorkbook();
+                table.TableName = "Conceptos";
+
+                var hoja = libro.Worksheets.Add(table);
+
+                hoja.ColumnsUsed().AdjustToContents();
+
+                using var memoria = new MemoryStream();
+                libro.SaveAs(memoria);
+                var nombreExcel = "Reporte.xlsx";
+                var archivo = File(memoria.ToArray(), "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet", nombreExcel);
+                return archivo;
+            }
+            catch (Exception)
+            {
+                throw;
+            }
+        }
+
+        //-------------------------------------------------------------------------------------------
+        [HttpPost]
+        [Route("ExportExcelDocumentTypes")]
+
+        public IActionResult ExportExcelDocumentTypes([FromBody] List<DocumentType> documentTypes)
+        {
+            try
+            {
+                DataTable table = new DataTable();//tabla general
+
+                table.Columns.Add("ID");
+                table.Columns.Add("NOMBRE");
+
+                foreach (DocumentType concept in documentTypes)
+                {
+                    DataRow fila = table.NewRow();
+                    fila["ID"] = concept.Id;
+                    fila["NOMBRE"] = concept.Name;
+                    table.Rows.Add(fila);
+                }
+
+                using var libro = new XLWorkbook();
+                table.TableName = "Tipos de Documentos";
+
+                var hoja = libro.Worksheets.Add(table);
+
+                hoja.ColumnsUsed().AdjustToContents();
+
+                using var memoria = new MemoryStream();
+                libro.SaveAs(memoria);
+                var nombreExcel = "Reporte.xlsx";
+                var archivo = File(memoria.ToArray(), "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet", nombreExcel);
+                return archivo;
+            }
+            catch (Exception)
+            {
+                throw;
+            }
+        }
     }
 }
