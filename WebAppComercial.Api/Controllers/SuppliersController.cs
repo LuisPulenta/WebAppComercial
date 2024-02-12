@@ -10,23 +10,22 @@ using WebAppComercial.Shared.Entities;
 namespace WebAppComercial.Api.Controllers
 {
     [ApiController]
-    [Route("/api/documenttypes")]
+    [Route("/api/suppliers")]
     [Authorize(AuthenticationSchemes = JwtBearerDefaults.AuthenticationScheme)]
-    public class DocumentTypesController : ControllerBase
+    public class SuppliersController : ControllerBase
     {
         private readonly DataContext _context;
 
-        public DocumentTypesController(DataContext context)
+        public SuppliersController(DataContext context)
         {
             _context = context;
         }
 
         //---------------------------------------------------------------------------------------
-        [AllowAnonymous]
         [HttpGet]
         public async Task<IActionResult> GetAsync([FromQuery] PaginationDTO pagination)
         {
-            var queryable = _context.DocumentTypes
+            var queryable = _context.Suppliers
                 .AsQueryable();
 
             if (!string.IsNullOrWhiteSpace(pagination.Filter))
@@ -44,7 +43,7 @@ namespace WebAppComercial.Api.Controllers
         [HttpGet("all")]
         public async Task<IActionResult> GetAll([FromQuery] PaginationDTO pagination)
         {
-            var queryable = _context.DocumentTypes.AsQueryable();
+            var queryable = _context.Suppliers.AsQueryable();
             if (!string.IsNullOrWhiteSpace(pagination.Filter))
             {
                 queryable = queryable.Where(x => x.Name.ToLower().Contains(pagination.Filter.ToLower()));
@@ -59,7 +58,7 @@ namespace WebAppComercial.Api.Controllers
         [HttpGet("totalPages")]
         public async Task<ActionResult> GetPages([FromQuery] PaginationDTO pagination)
         {
-            var queryable = _context.DocumentTypes.AsQueryable();
+            var queryable = _context.Suppliers.AsQueryable();
             if (!string.IsNullOrWhiteSpace(pagination.Filter))
             {
                 queryable = queryable.Where(x => x.Name.ToLower().Contains(pagination.Filter.ToLower()));
@@ -74,7 +73,7 @@ namespace WebAppComercial.Api.Controllers
         [HttpGet("totalRegisters")]
         public async Task<ActionResult> GetRegisters([FromQuery] PaginationDTO pagination)
         {
-            var queryable = _context.DocumentTypes.AsQueryable();
+            var queryable = _context.Suppliers.AsQueryable();
             if (!string.IsNullOrWhiteSpace(pagination.Filter))
             {
                 queryable = queryable.Where(x => x.Name.ToLower().Contains(pagination.Filter.ToLower()));
@@ -86,19 +85,19 @@ namespace WebAppComercial.Api.Controllers
 
         //---------------------------------------------------------------------------------------
         [HttpPost]
-        public async Task<ActionResult> PostAsync(DocumentType documentType)
+        public async Task<ActionResult> PostAsync(Supplier supplier)
         {
-            _context.Add(documentType);
+            _context.Add(supplier);
             try
             {
                 await _context.SaveChangesAsync();
-                return Ok(documentType);
+                return Ok(supplier);
             }
             catch (DbUpdateException dbUpdateException)
             {
                 if (dbUpdateException.InnerException!.Message.Contains("duplica"))
                 {
-                    return BadRequest("Ya existe un Tipo de Documento con el mismo nombre.");
+                    return BadRequest("Ya existe un Proveedor con el mismo nombre.");
                 }
                 else
                 {
@@ -116,30 +115,30 @@ namespace WebAppComercial.Api.Controllers
         [HttpGet("{id:int}")]
         public async Task<ActionResult> Get(int id)
         {
-            var documentType = await _context.DocumentTypes.FirstOrDefaultAsync(x => x.Id == id);
-            if (documentType is null)
+            var supplier = await _context.Suppliers.FirstOrDefaultAsync(x => x.Id == id);
+            if (supplier is null)
             {
                 return NotFound();
             }
 
-            return Ok(documentType);
+            return Ok(supplier);
         }
 
         //---------------------------------------------------------------------------------------
         [HttpPut]
-        public async Task<ActionResult> Put(DocumentType documentType)
+        public async Task<ActionResult> Put(Supplier supplier)
         {
-            _context.Update(documentType);
+            _context.Update(supplier);
             try
             {
                 await _context.SaveChangesAsync();
-                return Ok(documentType);
+                return Ok(supplier);
             }
             catch (DbUpdateException dbUpdateException)
             {
                 if (dbUpdateException.InnerException!.Message.Contains("duplica"))
                 {
-                    return BadRequest("Ya existe un Tipo de Documento con el mismo nombre.");
+                    return BadRequest("Ya existe un Proveedor con el mismo nombre.");
                 }
                 else
                 {
@@ -156,24 +155,14 @@ namespace WebAppComercial.Api.Controllers
         [HttpDelete("{id:int}")]
         public async Task<IActionResult> DeleteAsync(int id)
         {
-            var documentType = await _context.DocumentTypes.FirstOrDefaultAsync(x => x.Id == id);
-            if (documentType == null)
+            var supplier = await _context.Suppliers.FirstOrDefaultAsync(x => x.Id == id);
+            if (supplier == null)
             {
                 return NotFound();
             }
-            _context.Remove(documentType);
+            _context.Remove(supplier);
             await _context.SaveChangesAsync();
             return NoContent();
-        }
-
-        //---------------------------------------------------------------------------------------
-        [AllowAnonymous]
-        [HttpGet("combo")]
-        public async Task<ActionResult> GetCombo()
-        {
-            return Ok(await _context.DocumentTypes
-                  .OrderBy(c => c.Name)
-                  .ToListAsync());
         }
     }
 }

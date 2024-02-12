@@ -1,0 +1,45 @@
+﻿@page "/customers/create"
+@attribute [Authorize(Roles = "Admin")]
+@inject IRepository repository
+@inject NavigationManager navigationManager
+@inject SweetAlertService swal
+
+<h3>Crear Cliente</h3>
+
+<CustomerForm @ref="customerForm" CustomerDTO="customerDTO" OnValidSubmit="CreateAsync" ReturnAction="Return" />
+
+@code {
+    private CustomerDTO customerDTO = new CustomerDTO();
+    
+    private CustomerForm? customerForm;
+
+    [CascadingParameter]
+    BlazoredModalInstance BlazoredModal { get; set; } = default!;
+
+    private async Task CreateAsync()
+    {
+        var httpResponse = await repository.Post("/api/customers", customerDTO);
+        if (httpResponse.Error)
+        {
+            var message = await httpResponse.GetErrorMessage();
+            await swal.FireAsync("Error", message, SweetAlertIcon.Error);
+            return;
+        }
+        var toast = swal.Mixin(new SweetAlertOptions
+            {
+                Toast = true,
+                Position = SweetAlertPosition.Center,
+                ShowConfirmButton = true,
+                Timer = 3000
+            });
+        await toast.FireAsync(icon: SweetAlertIcon.Success, message: "Cliente creado con éxito.");
+        await BlazoredModal.CloseAsync(ModalResult.Ok());
+        Return();
+    }
+
+    private void Return()
+    {
+        customerForm!.FormPostedSuccessfully = true;
+        navigationManager.NavigateTo("/customers");
+    }
+}

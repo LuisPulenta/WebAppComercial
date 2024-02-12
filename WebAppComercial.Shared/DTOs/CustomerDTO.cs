@@ -1,19 +1,15 @@
 ﻿using System.ComponentModel.DataAnnotations;
 
-namespace WebAppComercial.Shared.Entities
+namespace WebAppComercial.Shared.DTOs
 {
-    public class Supplier
+    public class CustomerDTO
     {
         public int Id { get; set; }
 
-        [Display(Name = "Razón Social")]
+        [Display(Name = "Nombre")]
         [MaxLength(100, ErrorMessage = "El campo {0} debe tener máximo {1} caracteres.")]
         [Required(ErrorMessage = "El campo {0} es obligatorio.")]
         public string Name { get; set; } = null!;
-
-        [Display(Name = "Tipo de Documento")]
-        [Required(ErrorMessage = "El campo {0} es obligatorio.")]
-        public DocumentType DocumentType { get; set; } = null!;
 
         [Display(Name = "Tipo de Documento")]
         [Range(1, int.MaxValue, ErrorMessage = "Debes seleccionar una {0}.")]
@@ -47,9 +43,5 @@ namespace WebAppComercial.Shared.Entities
         [Display(Name = "Notas")]
         [MaxLength(100, ErrorMessage = "El campo {0} debe tener máximo {1} caracteres.")]
         public string Remarks { get; set; } = null!;
-
-        [Display(Name = "Aniversario")]
-        [MaxLength(100, ErrorMessage = "El campo {0} debe tener máximo {1} caracteres.")]
-        public DateOnly Anniversary { get; set; }
     }
 }

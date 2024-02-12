@@ -1,0 +1,44 @@
+﻿@page "/suppliers/create"
+@attribute [Authorize(Roles = "Admin")]
+@inject IRepository repository
+@inject NavigationManager navigationManager
+@inject SweetAlertService swal
+
+<h3>Crear Proveedor</h3>
+
+<SupplierForm @ref="supplierForm" Supplier="supplier" OnValidSubmit="CreateAsync" ReturnAction="Return" />
+
+@code {
+    private Supplier supplier = new();
+    private SupplierForm? supplierForm;
+
+    [CascadingParameter]
+    BlazoredModalInstance BlazoredModal { get; set; } = default!;
+
+    private async Task CreateAsync()
+    {
+        var httpResponse = await repository.Post("/api/suppliers", supplier);
+        if (httpResponse.Error)
+        {
+            var message = await httpResponse.GetErrorMessage();
+            await swal.FireAsync("Error", message, SweetAlertIcon.Error);
+            return;
+        }
+        var toast = swal.Mixin(new SweetAlertOptions
+            {
+                Toast = true,
+                Position = SweetAlertPosition.Center,
+                ShowConfirmButton = true,
+                Timer = 3000
+            });
+        await toast.FireAsync(icon: SweetAlertIcon.Success, message: "Proveedor creado con éxito.");
+        await BlazoredModal.CloseAsync(ModalResult.Ok());
+        Return();
+    }
+
+    private void Return()
+    {
+        supplierForm!.FormPostedSuccessfully = true;
+        navigationManager.NavigateTo("/suppliers");
+    }
+}

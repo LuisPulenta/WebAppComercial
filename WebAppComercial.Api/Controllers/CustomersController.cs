@@ -1,4 +1,6 @@
-﻿using Microsoft.AspNetCore.Authentication.JwtBearer;
+﻿using DocumentFormat.OpenXml.Office2013.Excel;
+using DocumentFormat.OpenXml.Vml;
+using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
@@ -10,23 +12,23 @@ using WebAppComercial.Shared.Entities;
 namespace WebAppComercial.Api.Controllers
 {
     [ApiController]
-    [Route("/api/documenttypes")]
+    [Route("/api/customers")]
     [Authorize(AuthenticationSchemes = JwtBearerDefaults.AuthenticationScheme)]
-    public class DocumentTypesController : ControllerBase
+    public class CustomersController : ControllerBase
     {
         private readonly DataContext _context;
 
-        public DocumentTypesController(DataContext context)
+        public CustomersController(DataContext context)
         {
             _context = context;
         }
 
         //---------------------------------------------------------------------------------------
-        [AllowAnonymous]
         [HttpGet]
         public async Task<IActionResult> GetAsync([FromQuery] PaginationDTO pagination)
         {
-            var queryable = _context.DocumentTypes
+            var queryable = _context.Customers
+                .Include(x => x.DocumentType!)
                 .AsQueryable();
 
             if (!string.IsNullOrWhiteSpace(pagination.Filter))
@@ -44,7 +46,9 @@ namespace WebAppComercial.Api.Controllers
         [HttpGet("all")]
         public async Task<IActionResult> GetAll([FromQuery] PaginationDTO pagination)
         {
-            var queryable = _context.DocumentTypes.AsQueryable();
+            var queryable = _context.Customers
+                .Include(x => x.DocumentType!)
+                .AsQueryable();
             if (!string.IsNullOrWhiteSpace(pagination.Filter))
             {
                 queryable = queryable.Where(x => x.Name.ToLower().Contains(pagination.Filter.ToLower()));
@@ -59,7 +63,9 @@ namespace WebAppComercial.Api.Controllers
         [HttpGet("totalPages")]
         public async Task<ActionResult> GetPages([FromQuery] PaginationDTO pagination)
         {
-            var queryable = _context.DocumentTypes.AsQueryable();
+            var queryable = _context.Customers
+                .Include(x => x.DocumentType!)
+                .AsQueryable();
             if (!string.IsNullOrWhiteSpace(pagination.Filter))
             {
                 queryable = queryable.Where(x => x.Name.ToLower().Contains(pagination.Filter.ToLower()));
@@ -74,7 +80,9 @@ namespace WebAppComercial.Api.Controllers
         [HttpGet("totalRegisters")]
         public async Task<ActionResult> GetRegisters([FromQuery] PaginationDTO pagination)
         {
-            var queryable = _context.DocumentTypes.AsQueryable();
+            var queryable = _context.Customers
+                .Include(x => x.DocumentType!)
+                .AsQueryable();
             if (!string.IsNullOrWhiteSpace(pagination.Filter))
             {
                 queryable = queryable.Where(x => x.Name.ToLower().Contains(pagination.Filter.ToLower()));
@@ -86,19 +94,35 @@ namespace WebAppComercial.Api.Controllers
 
         //---------------------------------------------------------------------------------------
         [HttpPost]
-        public async Task<ActionResult> PostAsync(DocumentType documentType)
+        public async Task<ActionResult> PostAsync(CustomerDTO customerDTO)
         {
-            _context.Add(documentType);
             try
             {
+                DocumentType doc = await _context.DocumentTypes!.FindAsync(customerDTO.DocumentTypeId);
+
+                Customer newCustomer = new()
+                {
+                    Id = customerDTO.Id,
+                    Name = customerDTO.Name,
+                    DocumentType= doc!,
+                    DocumentTypeId = customerDTO.DocumentTypeId,
+                    Document = customerDTO.Document,
+                    ContactName = customerDTO.ContactName,
+                    Address = customerDTO.Address,
+                    LandPhone = customerDTO.LandPhone,
+                    CellPhone = customerDTO.CellPhone,
+                    Email = customerDTO.Email,
+                    Remarks = customerDTO.Remarks
+                };
+                _context.Add(newCustomer);
                 await _context.SaveChangesAsync();
-                return Ok(documentType);
+                return Ok(newCustomer);
             }
             catch (DbUpdateException dbUpdateException)
             {
                 if (dbUpdateException.InnerException!.Message.Contains("duplica"))
                 {
-                    return BadRequest("Ya existe un Tipo de Documento con el mismo nombre.");
+                    return BadRequest("Ya existe un Cliente con el mismo nombre.");
                 }
                 else
                 {
@@ -109,37 +133,52 @@ namespace WebAppComercial.Api.Controllers
             {
                 return BadRequest(exception.Message);
             }
-
         }
 
         //---------------------------------------------------------------------------------------
         [HttpGet("{id:int}")]
         public async Task<ActionResult> Get(int id)
         {
-            var documentType = await _context.DocumentTypes.FirstOrDefaultAsync(x => x.Id == id);
-            if (documentType is null)
+            var customer = await _context.Customers.FirstOrDefaultAsync(x => x.Id == id);
+            if (customer is null)
             {
                 return NotFound();
             }
 
-            return Ok(documentType);
+            return Ok(customer);
         }
 
         //---------------------------------------------------------------------------------------
         [HttpPut]
-        public async Task<ActionResult> Put(DocumentType documentType)
+        public async Task<ActionResult> Put(CustomerDTO customerDTO)
         {
-            _context.Update(documentType);
             try
             {
+                Customer customer = await _context.Customers
+                    .FirstOrDefaultAsync(x => x.Id == customerDTO.Id);
+                if (customer == null)
+                {
+                    return NotFound();
+                }
+                customer.Address = customerDTO.Address;
+                customer.Document = customerDTO.Document;
+                customer.DocumentType = await _context.DocumentTypes.FirstOrDefaultAsync(x => x.Id == customerDTO.DocumentTypeId);
+                customer.DocumentTypeId = customerDTO.DocumentTypeId;
+                customer.CellPhone = customerDTO.CellPhone;
+                customer.LandPhone = customerDTO.LandPhone;
+                customer.Email = customerDTO.Email;
+                customer.Remarks = customerDTO.Remarks;
+                customer.Name=customerDTO.Name;
+
+                _context.Update(customer);
                 await _context.SaveChangesAsync();
-                return Ok(documentType);
+                return Ok(customerDTO);
             }
             catch (DbUpdateException dbUpdateException)
             {
                 if (dbUpdateException.InnerException!.Message.Contains("duplica"))
                 {
-                    return BadRequest("Ya existe un Tipo de Documento con el mismo nombre.");
+                    return BadRequest("Ya existe un Cliente con el mismo nombre.");
                 }
                 else
                 {
@@ -156,24 +195,14 @@ namespace WebAppComercial.Api.Controllers
         [HttpDelete("{id:int}")]
         public async Task<IActionResult> DeleteAsync(int id)
         {
-            var documentType = await _context.DocumentTypes.FirstOrDefaultAsync(x => x.Id == id);
-            if (documentType == null)
+            var customer = await _context.Customers.FirstOrDefaultAsync(x => x.Id == id);
+            if (customer == null)
             {
                 return NotFound();
             }
-            _context.Remove(documentType);
+            _context.Remove(customer);
             await _context.SaveChangesAsync();
             return NoContent();
-        }
-
-        //---------------------------------------------------------------------------------------
-        [AllowAnonymous]
-        [HttpGet("combo")]
-        public async Task<ActionResult> GetCombo()
-        {
-            return Ok(await _context.DocumentTypes
-                  .OrderBy(c => c.Name)
-                  .ToListAsync());
         }
     }
 }
