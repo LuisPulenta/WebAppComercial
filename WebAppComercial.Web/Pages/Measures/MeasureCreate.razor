@@ -12,6 +12,9 @@
     private Measure measure = new();
     private MeasureForm? measureForm;
 
+    [CascadingParameter]
+    BlazoredModalInstance BlazoredModal { get; set; } = default!;
+
     private async Task CreateAsync()
     {
         var httpResponse = await repository.Post("/api/measures", measure);
@@ -29,6 +32,7 @@
                 Timer = 3000
             });
         await toast.FireAsync(icon: SweetAlertIcon.Success, message: "Medida creada con éxito.");
+        await BlazoredModal.CloseAsync(ModalResult.Ok());
         Return();
     }
 

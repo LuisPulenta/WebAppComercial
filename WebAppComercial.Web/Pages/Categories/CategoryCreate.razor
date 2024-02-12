@@ -12,6 +12,9 @@
     private Category category = new();
     private CategoryForm? categoryForm;
 
+    [CascadingParameter]
+    BlazoredModalInstance BlazoredModal { get; set; } = default!;
+
     private async Task CreateAsync()
     {
         var httpResponse = await repository.Post("/api/categories", category);
@@ -29,6 +32,7 @@
                 Timer = 3000
             });
         await toast.FireAsync(icon: SweetAlertIcon.Success, message: "Categoría creada con éxito.");
+        await BlazoredModal.CloseAsync(ModalResult.Ok());
         Return();
     }
 

@@ -65,6 +65,9 @@ else
     private User? user;
     private List<UserType>? userTypes;
 
+    [CascadingParameter]
+    BlazoredModalInstance BlazoredModal { get; set; } = default!;
+
     [Parameter]
     public string Id { get; set; }
 
@@ -117,6 +120,8 @@ else
                 Timer = 3000
             });
         await toast.FireAsync(icon: SweetAlertIcon.Success, message: "Cambios guardados con éxito.");
+
+        await BlazoredModal.CloseAsync(ModalResult.Ok());
         navigationManager.NavigateTo("/users");
     }
 

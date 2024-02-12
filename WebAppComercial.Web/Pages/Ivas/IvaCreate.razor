@@ -12,6 +12,9 @@
     private Iva iva = new();
     private IvaForm? ivaForm;
 
+    [CascadingParameter]
+    BlazoredModalInstance BlazoredModal { get; set; } = default!;
+
     private async Task CreateAsync()
     {
         var httpResponse = await repository.Post("/api/ivas", iva);
@@ -29,6 +32,7 @@
                 Timer = 3000
             });
         await toast.FireAsync(icon: SweetAlertIcon.Success, message: "Iva creado con éxito.");
+        await BlazoredModal.CloseAsync(ModalResult.Ok());
         Return();
     }
 

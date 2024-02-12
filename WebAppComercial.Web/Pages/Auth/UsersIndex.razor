@@ -23,7 +23,7 @@ else
                                 <path d="M7 14s-1 0-1-1 1-4 5-4 5 3 5 4-1 1-1 1zm4-6a3 3 0 1 0 0-6 3 3 0 0 0 0 6m-5.784 6A2.24 2.24 0 0 1 5 13c0-1.355.68-2.75 1.936-3.72A6.3 6.3 0 0 0 5 9c-4 0-5 3-5 4s1 1 1 1zM4.5 8a2.5 2.5 0 1 0 0-5 2.5 2.5 0 0 0 0 5" />
                             </svg>
                              Usuarios
-                            <a class="btn btn-sm btn-outline-primary float-end" href="/accounts/register">
+                            <a class="btn btn-sm btn-outline-primary float-end" @onclick=@(() => ShowModal())>
                                 <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" fill="currentColor" class="bi bi-plus-circle-fill" viewBox="0 0 16 16">
                                     <path d="M16 8A8 8 0 1 1 0 8a8 8 0 0 1 16 0M8.5 4.5a.5.5 0 0 0-1 0v3h-3a.5.5 0 0 0 0 1h3v3a.5.5 0 0 0 1 0v-3h3a.5.5 0 0 0 0-1h-3z" />
                                 </svg>
@@ -100,7 +100,7 @@ else
                                             <input type="checkbox" onclick="return false" @bind="@user.Active">
                                         </td>
                                         <td>
-                                            <a href="/accounts/edit/@user.Id" class="btn btn-sm btn-warning btn-sm">
+                                            <a @onclick=@(() => ShowModal(user.Id, true)) class="btn btn-sm btn-warning btn-sm">
                                                 <i class="bi bi-pencil-square" />
                                                 <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" fill="white" class="bi bi-pencil-square" viewBox="0 0 16 16">
                                                     <path d="M15.502 1.94a.5.5 0 0 1 0 .706L14.459 3.69l-2-2L13.502.646a.5.5 0 0 1 .707 0l1.293 1.293zm-1.75 2.456-2-2L4.939 9.21a.5.5 0 0 0-.121.196l-.805 2.414a.25.25 0 0 0 .316.316l2.414-.805a.5.5 0 0 0 .196-.12l6.813-6.814z" />
@@ -139,6 +139,9 @@ else
     private int currentPage = 1;
     private int totalPages;
     private int totalRegisters;
+
+    [CascadingParameter]
+    IModalService Modal { get; set; } = default!;
 
     [Parameter]
     [SupplyParameterFromQuery]
@@ -274,4 +277,25 @@ else
         await LoadAsync(page);
         await SelectedPage(page);
     }
+
+    private async Task ShowModal(string id = "", bool isEdit = false)
+    {
+        IModalReference modalReference;
+
+        if (isEdit)
+        {
+            modalReference = Modal.Show<EditUser>(string.Empty, new ModalParameters().Add("Id", id));
+        }
+        else
+        {
+            modalReference = Modal.Show<Register>();
+        }
+
+        var result = await modalReference.Result;
+        if (result.Confirmed)
+        {
+            await LoadAsync();
+        }
+    }
+
 }

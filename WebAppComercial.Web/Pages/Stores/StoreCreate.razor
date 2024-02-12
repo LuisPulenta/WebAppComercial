@@ -12,6 +12,9 @@
     private Store store = new();
     private StoreForm? storeFormForm;
 
+    [CascadingParameter]
+    BlazoredModalInstance BlazoredModal { get; set; } = default!;
+
     private async Task CreateAsync()
     {
         var httpResponse = await repository.Post("/api/stores", store);
@@ -29,6 +32,7 @@
                 Timer = 3000
             });
         await toast.FireAsync(icon: SweetAlertIcon.Success, message: "Almacén creado con éxito.");
+        await BlazoredModal.CloseAsync(ModalResult.Ok());
         Return();
     }
 

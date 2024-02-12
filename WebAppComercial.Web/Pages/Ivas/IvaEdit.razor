@@ -20,6 +20,8 @@ else
     private Iva? iva;
     private IvaForm? ivaForm;
 
+    [CascadingParameter]
+    BlazoredModalInstance BlazoredModal { get; set; } = default!;
 
     [Parameter]
     public int Id { get; set; }
@@ -63,8 +65,9 @@ else
                 Timer = 3000
             });
         await toast.FireAsync(icon: SweetAlertIcon.Success, message: "Cambios guardados con éxito.");
-        navigationManager.NavigateTo("/ivas");
 
+        await BlazoredModal.CloseAsync(ModalResult.Ok());
+        navigationManager.NavigateTo("/ivas");
     }
 
     private void Return()

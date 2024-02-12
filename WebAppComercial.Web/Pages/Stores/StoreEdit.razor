@@ -20,6 +20,8 @@ else
     private Store? store;
     private StoreForm? storeForm;
 
+    [CascadingParameter]
+    BlazoredModalInstance BlazoredModal { get; set; } = default!;
 
     [Parameter]
     public int Id { get; set; }
@@ -63,8 +65,9 @@ else
                 Timer = 3000
             });
         await toast.FireAsync(icon: SweetAlertIcon.Success, message: "Cambios guardados con éxito.");
-        navigationManager.NavigateTo("/stores");
 
+        await BlazoredModal.CloseAsync(ModalResult.Ok());
+        navigationManager.NavigateTo("/stores");
     }
 
     private void Return()

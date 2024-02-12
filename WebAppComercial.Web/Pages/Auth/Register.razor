@@ -111,6 +111,9 @@
 @code {
     private UserDTO userDTO = new();
 
+    [CascadingParameter]
+    BlazoredModalInstance BlazoredModal { get; set; } = default!;
+
     private void UserTypeChanged(ChangeEventArgs e)
     {
         if (Convert.ToInt32(e.Value!) == 0)
@@ -153,6 +156,7 @@
                 Timer = 3000
             });
         await swal.FireAsync("Confirmación", "Su cuenta ha sido creada con éxito. Se te ha enviado un correo electrónico con las instrucciones para activar tu usuario.", SweetAlertIcon.Info);
+        await BlazoredModal.CloseAsync(ModalResult.Ok());
         navigationManager.NavigateTo("/users");
     }
 

@@ -20,6 +20,8 @@ else
     private Category? category;
     private CategoryForm? categoryForm;
 
+    [CascadingParameter]
+    BlazoredModalInstance BlazoredModal { get; set; } = default!;
 
     [Parameter]
     public int Id { get; set; }
@@ -63,8 +65,9 @@ else
                 Timer = 3000
             });
         await toast.FireAsync(icon: SweetAlertIcon.Success, message: "Cambios guardados con éxito.");
+        
+        await BlazoredModal.CloseAsync(ModalResult.Ok());
         navigationManager.NavigateTo("/categories");
-
     }
 
     private void Return()
