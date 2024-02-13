@@ -13,11 +13,13 @@ namespace WebAppComercial.Api.Data
         public DbSet<Store> Stores { get; set; }
         public DbSet<Measure> Measures { get; set; }
         public DbSet<Iva> Ivas { get; set; }
-        public DbSet<Product> Products { get; set; }
         public DbSet<Concept> Concepts { get; set; }
         public DbSet<DocumentType> DocumentTypes { get; set; }
         public DbSet<Customer> Customers { get; set; }
         public DbSet<Supplier> Suppliers { get; set; }
+        public DbSet<Product> Products { get; set; }
+        public DbSet<ProductImage> ProductImages { get; set; }
+
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {

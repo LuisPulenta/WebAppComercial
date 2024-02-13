@@ -7,7 +7,7 @@ namespace WebAppComercial.Shared.Entities
     {
         public int Id { get; set; }
 
-        [Display(Name = "Producto")]
+        [Display(Name = "Nombre")]
         [MaxLength(100, ErrorMessage = "El campo {0} debe tener máximo {1} caracteres.")]
         [Required(ErrorMessage = "El campo {0} es obligatorio.")]
         public string Name { get; set; } = null!;
@@ -26,7 +26,7 @@ namespace WebAppComercial.Shared.Entities
         [Required(ErrorMessage = "El campo {0} es obligatorio.")]
         public decimal Price { get; set; }
 
-        [Display(Name = "Notas")]
+        [Display(Name = "Descripción")]
         [MaxLength(255, ErrorMessage = "El campo {0} debe tener máximo {1} caracteres.")]
         public string Remarks { get; set; } = null!;
 
@@ -41,6 +41,14 @@ namespace WebAppComercial.Shared.Entities
         [Display(Name = "Medida")]
         [Required(ErrorMessage = "El campo {0} es obligatorio.")]
         public decimal Quantity { get; set; }
+        public ICollection<ProductImage>? ProductImages { get; set; }
+
+        [Display(Name = "Imágenes")]
+        public int ProductImagesNumber => ProductImages == null ? 0 : ProductImages.Count;
+
+        [Display(Name = "Imagén")]
+        public string MainImage => ProductImages == null ? string.Empty : ProductImages.FirstOrDefault()!.Image;
+
 
     }
 }

@@ -25,8 +25,7 @@ namespace WebAppComercial.Api.Migrations
                     LandPhone = table.Column<string>(type: "nvarchar(100)", maxLength: 100, nullable: false),
                     CellPhone = table.Column<string>(type: "nvarchar(100)", maxLength: 100, nullable: false),
                     Email = table.Column<string>(type: "nvarchar(100)", maxLength: 100, nullable: false),
-                    Remarks = table.Column<string>(type: "nvarchar(100)", maxLength: 100, nullable: false),
-                    Anniversary = table.Column<DateOnly>(type: "date", maxLength: 100, nullable: false)
+                    Remarks = table.Column<string>(type: "nvarchar(100)", maxLength: 100, nullable: false)
                 },
                 constraints: table =>
                 {
@@ -53,8 +52,7 @@ namespace WebAppComercial.Api.Migrations
                     LandPhone = table.Column<string>(type: "nvarchar(100)", maxLength: 100, nullable: false),
                     CellPhone = table.Column<string>(type: "nvarchar(100)", maxLength: 100, nullable: false),
                     Email = table.Column<string>(type: "nvarchar(100)", maxLength: 100, nullable: false),
-                    Remarks = table.Column<string>(type: "nvarchar(100)", maxLength: 100, nullable: false),
-                    Anniversary = table.Column<DateOnly>(type: "date", maxLength: 100, nullable: false)
+                    Remarks = table.Column<string>(type: "nvarchar(100)", maxLength: 100, nullable: false)
                 },
                 constraints: table =>
                 {

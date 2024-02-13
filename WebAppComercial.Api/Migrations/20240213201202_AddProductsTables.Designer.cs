@@ -12,8 +12,8 @@ using WebAppComercial.Api.Data;
 namespace WebAppComercial.Api.Migrations
 {
     [DbContext(typeof(DataContext))]
-    [Migration("20240212143633_addTablesCostumersAndSuppliers")]
-    partial class addTablesCostumersAndSuppliers
+    [Migration("20240213201202_AddProductsTables")]
+    partial class AddProductsTables
     {
         /// <inheritdoc />
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
@@ -213,7 +213,6 @@ namespace WebAppComercial.Api.Migrations
                         .HasMaxLength(100)
                         .HasColumnType("nvarchar(100)");
 
-                    
                     b.Property<string>("CellPhone")
                         .IsRequired()
                         .HasMaxLength(100)
@@ -384,6 +383,28 @@ namespace WebAppComercial.Api.Migrations
                     b.ToTable("Products");
                 });
 
+            modelBuilder.Entity("WebAppComercial.Shared.Entities.ProductImage", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int");
+
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
+
+                    b.Property<string>("Image")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<int>("ProductId")
+                        .HasColumnType("int");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("ProductId");
+
+                    b.ToTable("ProductImages");
+                });
+
             modelBuilder.Entity("WebAppComercial.Shared.Entities.Store", b =>
                 {
                     b.Property<int>("Id")
@@ -418,7 +439,6 @@ namespace WebAppComercial.Api.Migrations
                         .HasMaxLength(100)
                         .HasColumnType("nvarchar(100)");
 
-                    
                     b.Property<string>("CellPhone")
                         .IsRequired()
                         .HasMaxLength(100)
@@ -602,7 +622,7 @@ namespace WebAppComercial.Api.Migrations
             modelBuilder.Entity("WebAppComercial.Shared.Entities.Customer", b =>
                 {
                     b.HasOne("WebAppComercial.Shared.Entities.DocumentType", "DocumentType")
-                        .WithMany()
+                        .WithMany("Customers")
                         .HasForeignKey("DocumentTypeId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
@@ -637,15 +657,38 @@ namespace WebAppComercial.Api.Migrations
                     b.Navigation("Measure");
                 });
 
+            modelBuilder.Entity("WebAppComercial.Shared.Entities.ProductImage", b =>
+                {
+                    b.HasOne("WebAppComercial.Shared.Entities.Product", "Product")
+                        .WithMany("ProductImages")
+                        .HasForeignKey("ProductId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("Product");
+                });
+
             modelBuilder.Entity("WebAppComercial.Shared.Entities.Supplier", b =>
                 {
                     b.HasOne("WebAppComercial.Shared.Entities.DocumentType", "DocumentType")
-                        .WithMany()
+                        .WithMany("Suppliers")
                         .HasForeignKey("DocumentTypeId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
                     b.Navigation("DocumentType");
+                });
+
+            modelBuilder.Entity("WebAppComercial.Shared.Entities.DocumentType", b =>
+                {
+                    b.Navigation("Customers");
+
+                    b.Navigation("Suppliers");
+                });
+
+            modelBuilder.Entity("WebAppComercial.Shared.Entities.Product", b =>
+                {
+                    b.Navigation("ProductImages");
                 });
 #pragma warning restore 612, 618
         }
