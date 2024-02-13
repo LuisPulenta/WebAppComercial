@@ -305,8 +305,8 @@ namespace GenerarExcel.Server.Controllers
         //-------------------------------------------------------------------------------------------
         [HttpPost]
         [Route("ExportExcelCustomers")]
-
-        public IActionResult ExportExcelCustomers([FromBody] List<Customer> customers)
+        
+        public IActionResult ExportExcelCustomers([FromBody] List<CustomerDTO> customers)
         {
             try
             {
@@ -321,12 +321,12 @@ namespace GenerarExcel.Server.Controllers
                 table.Columns.Add("CELULAR");
                 table.Columns.Add("EMAIL");
 
-                foreach (Customer customer in customers)
+                foreach (CustomerDTO customer in customers)
                 {
                     DataRow fila = table.NewRow();
                     fila["ID"] = customer.Id;
                     fila["NOMBRE"] = customer.Name;
-                    fila["TIPO DOC"] = customer.DocumentType.Name;
+                    fila["TIPO DOC"] = customer.DocumentType;
                     fila["DOCUMENTO"] = customer.Document;
                     fila["DIRECCION"] = customer.Address;
                     fila["TELEFONO"] = customer.LandPhone;
@@ -358,7 +358,7 @@ namespace GenerarExcel.Server.Controllers
         [HttpPost]
         [Route("ExportExcelSuppliers")]
 
-        public IActionResult ExportExcelSuppliers([FromBody] List<Supplier> suppliers)
+        public IActionResult ExportExcelSuppliers([FromBody] List<SupplierDTO> suppliers)
         {
             try
             {
@@ -373,12 +373,12 @@ namespace GenerarExcel.Server.Controllers
                 table.Columns.Add("CELULAR");
                 table.Columns.Add("EMAIL");
 
-                foreach (Supplier supplier in suppliers)
+                foreach (SupplierDTO supplier in suppliers)
                 {
                     DataRow fila = table.NewRow();
                     fila["ID"] = supplier.Id;
                     fila["NOMBRE"] = supplier.Name;
-                    fila["TIPO DOC"] = supplier.DocumentType.Name;
+                    fila["TIPO DOC"] = supplier.DocumentType;
                     fila["DOCUMENTO"] = supplier.Document;
                     fila["DIRECCION"] = supplier.Address;
                     fila["TELEFONO"] = supplier.LandPhone;

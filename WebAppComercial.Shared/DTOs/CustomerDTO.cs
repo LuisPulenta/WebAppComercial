@@ -15,6 +15,9 @@ namespace WebAppComercial.Shared.DTOs
         [Range(1, int.MaxValue, ErrorMessage = "Debes seleccionar una {0}.")]
         public int DocumentTypeId { get; set; }
 
+        [Display(Name = "Tipo de Documento")]
+        public string DocumentType { get; set; } = null!;
+
         [Display(Name = "Documento")]
         [MaxLength(20, ErrorMessage = "El campo {0} debe tener máximo {1} caracteres.")]
         [Required(ErrorMessage = "El campo {0} es obligatorio.")]
