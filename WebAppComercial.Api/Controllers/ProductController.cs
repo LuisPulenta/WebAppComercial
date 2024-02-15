@@ -1,4 +1,5 @@
 ﻿using DocumentFormat.OpenXml;
+using DocumentFormat.OpenXml.ExtendedProperties;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
@@ -38,7 +39,10 @@ namespace WebAppComercial.Api.Controllers
 
             if (!string.IsNullOrWhiteSpace(pagination.Filter))
             {
-                queryable = queryable.Where(x => x.Name.ToLower().Contains(pagination.Filter.ToLower()));
+                queryable = queryable.Where(x => 
+                x.Name.ToLower().Contains(pagination.Filter.ToLower())
+                || x.Category.Name.ToLower().Contains(pagination.Filter.ToLower())
+                );
             }
 
             return Ok(await queryable
@@ -60,7 +64,10 @@ namespace WebAppComercial.Api.Controllers
                 .AsQueryable();
             if (!string.IsNullOrWhiteSpace(pagination.Filter))
             {
-                queryable = queryable.Where(x => x.Name.ToLower().Contains(pagination.Filter.ToLower()));
+                queryable = queryable.Where(x => 
+                x.Name.ToLower().Contains(pagination.Filter.ToLower())
+                || x.Category.Name.ToLower().Contains(pagination.Filter.ToLower())
+                );
             }
                         
             return Ok(await queryable
@@ -81,7 +88,10 @@ namespace WebAppComercial.Api.Controllers
                 .AsQueryable();
             if (!string.IsNullOrWhiteSpace(pagination.Filter))
             {
-                queryable = queryable.Where(x => x.Name.ToLower().Contains(pagination.Filter.ToLower()));
+                queryable = queryable.Where(x => 
+                x.Name.ToLower().Contains(pagination.Filter.ToLower())
+                || x.Category.Name.ToLower().Contains(pagination.Filter.ToLower())
+                );
             }
 
             double count = await queryable.CountAsync();
@@ -101,7 +111,10 @@ namespace WebAppComercial.Api.Controllers
                 .AsQueryable();
             if (!string.IsNullOrWhiteSpace(pagination.Filter))
             {
-                queryable = queryable.Where(x => x.Name.ToLower().Contains(pagination.Filter.ToLower()));
+                queryable = queryable.Where(x => 
+                x.Name.ToLower().Contains(pagination.Filter.ToLower())
+                || x.Category.Name.ToLower().Contains(pagination.Filter.ToLower())
+                );
             }
 
             double count = await queryable.CountAsync();
@@ -112,6 +125,37 @@ namespace WebAppComercial.Api.Controllers
         [HttpPost]
         public async Task<ActionResult> PostAsync(ProductDTO productDTO)
         {
+            if (!ModelState.IsValid)
+            {
+                return BadRequest(ModelState);
+            }
+
+            //Foto
+
+            if (productDTO.Image != null)
+            {
+                byte[] imageArray = Convert.FromBase64String(productDTO.Image!);
+                var stream = new MemoryStream(imageArray);
+                var guid = Guid.NewGuid().ToString();
+                var file = $"{guid}.jpg";
+                var folder = "wwwroot\\images\\products";
+                var fullPath = $"~/images/products/{file}";
+                var response = _filesHelper.UploadPhoto(stream, folder, file);
+
+                if (response)
+                {
+                    productDTO.Image = fullPath;
+                }
+                else
+                {
+                    productDTO.Image = string.Empty;
+                }
+            }
+            else
+            {
+                productDTO.Image = string.Empty;
+            }
+
             try
             {
                 Category? cat = await _context.Categories!.FindAsync(productDTO.CategoryId);
@@ -148,7 +192,7 @@ namespace WebAppComercial.Api.Controllers
             {
                 if (dbUpdateException.InnerException!.Message.Contains("duplica"))
                 {
-                    return BadRequest("Ya existe un Cliente con el mismo nombre.");
+                    return BadRequest("Ya existe un Producto con el mismo nombre.");
                 }
                 else
                 {
@@ -181,17 +225,44 @@ namespace WebAppComercial.Api.Controllers
         [HttpPut]
         public async Task<ActionResult> Put(ProductDTO productDTO)
         {
+            if (!ModelState.IsValid)
+            {
+                return BadRequest(ModelState);
+            }
+
+            Product? product = await _context.Products
+                       .Include(x => x.Category)
+               .Include(x => x.ProductImages)
+                   .FirstOrDefaultAsync(x => x.Id == productDTO.Id);
+
+            if (product == null)
+            {
+                return NotFound();
+            }
+
+            //Foto
+            string imageUrl = string.Empty;
+            if (productDTO.Image != null && productDTO.Image.Length > 0)
+            {
+                imageUrl = string.Empty;
+                byte[] imageArray = Convert.FromBase64String(productDTO.Image);
+                var stream = new MemoryStream(imageArray);
+                var guid = Guid.NewGuid().ToString();
+                var file = $"{guid}.jpg";
+                var folder = "wwwroot\\images\\products";
+                var fullPath = $"~/images/products/{file}";
+                var response = _filesHelper.UploadPhoto(stream, folder, file);
+
+                if (response)
+                {
+                    imageUrl = fullPath;
+                    product.Image = imageUrl;
+                }
+            }
+
             try
             {
-                Product? product = await _context.Products
-                        .Include(x => x.Category)
-                .Include(x => x.ProductImages)
-                    .FirstOrDefaultAsync(x => x.Id == productDTO.Id);
-
-                if (product == null)
-                {
-                    return NotFound();
-                }
+               
 
                 var category = await _context.Categories.FirstOrDefaultAsync(x => x.Id == productDTO.CategoryId);
                 var iva = await _context.Ivas.FirstOrDefaultAsync(x => x.Id == productDTO.IvaId);
@@ -205,7 +276,6 @@ namespace WebAppComercial.Api.Controllers
                 product.Remarks = productDTO.Remarks;
                 product.Category = category!;
                 product.CategoryId = productDTO.CategoryId;
-                product.Image = productDTO.Image;
                 product.Measure = measure!;
                 product.MeasureId = productDTO.MeasureId;
                 
@@ -217,7 +287,7 @@ namespace WebAppComercial.Api.Controllers
             {
                 if (dbUpdateException.InnerException!.Message.Contains("duplica"))
                 {
-                    return BadRequest("Ya existe un Cliente con el mismo nombre.");
+                    return BadRequest("Ya existe un Producto con el mismo nombre.");
                 }
                 else
                 {
@@ -234,7 +304,7 @@ namespace WebAppComercial.Api.Controllers
         [HttpDelete("{id:int}")]
         public async Task<IActionResult> DeleteAsync(int id)
         {
-            var customer = await _context.Customers.FirstOrDefaultAsync(x => x.Id == id);
+            var customer = await _context.Products.FirstOrDefaultAsync(x => x.Id == id);
             if (customer == null)
             {
                 return NotFound();

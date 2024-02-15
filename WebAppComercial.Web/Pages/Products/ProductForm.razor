@@ -6,17 +6,22 @@
 <EditForm EditContext="editContext" OnValidSubmit="OnValidSubmit">
     <DataAnnotationsValidator />
 
-    <div class="mb-3">
-        <label>Nombre:</label>
-        <div>
+
+    <div class="row g-3 align-items-center">
+        <div class="col-2">
+            <label class="col-form-label fw-bold">Nombre:</label>
+        </div>
+        <div class="col-10">
             <InputText class="form-control" @bind-Value="@ProductDTO.Name" />
             <ValidationMessage For="@(() => ProductDTO.Name)" />
         </div>
     </div>
 
-    <div class="mb-3">
-        <label>Categoría:</label>
-        <div>
+    <div class="row g-3 align-items-center">
+        <div class="col-2">
+            <label class="col-form-label fw-bold">Categoría:</label>
+        </div>
+        <div class="col-10">
             <select class="form-select" @bind="@ProductDTO.CategoryId">
                 <option value="0">-- Seleccione una Categoría --</option>
                 @if (categories is not null)
@@ -31,9 +36,11 @@
         </div>
     </div>
 
-    <div class="mb-3">
-        <label>Unidad:</label>
-        <div>
+    <div class="row g-3 align-items-center">
+        <div class="col-2">
+            <label class="col-form-label fw-bold">Unidad:</label>
+        </div>
+        <div class="col-10">
             <select class="form-select" @bind="@ProductDTO.MeasureId">
                 <option value="0">-- Seleccione una Unidad --</option>
                 @if (measures is not null)
@@ -48,17 +55,21 @@
         </div>
     </div>
 
-    <div class="mb-3">
-        <label>Cantidad:</label>
-        <div>
+    <div class="row g-3 align-items-center">
+        <div class="col-2">
+            <label class="col-form-label fw-bold">Medida:</label>
+        </div>
+        <div class="col-10">
             <InputNumber class="form-control" @bind-Value="@ProductDTO.Quantity" />
             <ValidationMessage For="@(() => ProductDTO.Quantity)" />
         </div>
     </div>
 
-    <div class="mb-3">
-        <label>Iva:</label>
-        <div>
+    <div class="row g-3 align-items-center">
+        <div class="col-2">
+            <label class="col-form-label fw-bold">Iva:</label>
+        </div>
+        <div class="col-10">
             <select class="form-select" @bind="@ProductDTO.IvaId">
                 <option value="0">-- Seleccione un IVA --</option>
                 @if (measures is not null)
@@ -73,22 +84,34 @@
         </div>
     </div>
 
-    <div class="mb-3">
-        <label>Precio:</label>
-        <div>
+    <div class="row g-3 align-items-center">
+        <div class="col-2">
+            <label class="col-form-label fw-bold">Precio:</label>
+        </div>
+        <div class="col-10">
             <InputNumber class="form-control" @bind-Value="@ProductDTO.Price" />
             <ValidationMessage For="@(() => ProductDTO.Price)" />
         </div>
     </div>
 
-    <div class="mb-3">
-        <label>Notas:</label>
-        <div>
-            <InputText class="form-control" @bind-Value="@ProductDTO.Remarks" />
+    <div class="row g-3 align-items-center">
+        <div class="col-2">
+            <label class="col-form-label fw-bold">Notas:</label>
+        </div>
+        <div class="col-10">
+            <InputTextArea class="form-control" @bind-Value="@ProductDTO.Remarks" />
             <ValidationMessage For="@(() => ProductDTO.Remarks)" />
         </div>
     </div>
 
+    <div class="row g-3 align-items-center">
+        <div class="col-2">
+            <label class="col-form-label fw-bold">Imagen:</label>
+        </div>
+        <div class="col-10">
+            <InputImg Label="" ImageSelected="ImageSelected" ImageURL="@imageUrl" />
+        </div>
+    </div>
 
     <button class="btn btn-sm btn-outline-primary" type="submit">
         <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" fill="currentColor" class="bi bi-floppy-fill" viewBox="0 0 16 16">
@@ -103,13 +126,20 @@
         </svg>
         Regresar
     </button>
-</EditForm> 
+</EditForm>
 
 @code {
     private EditContext editContext = null!;
     private List<Category>? categories;
     private List<Measure>? measures;
     private List<Iva>? ivas;
+    private string? imageUrl;
+
+    private void ImageSelected(string imagenBase64)
+    {
+        ProductDTO.Image = imagenBase64;
+        imageUrl = null;
+    }
 
     [EditorRequired]
     [Parameter]
@@ -128,6 +158,11 @@
     protected override void OnInitialized()
     {
         editContext = new(ProductDTO);
+        if (!string.IsNullOrEmpty(ProductDTO.Image))
+        {
+            imageUrl = ProductDTO.ImageFullPath;
+            ProductDTO.Image = null;
+        }
     }
 
     protected override async Task OnInitializedAsync()

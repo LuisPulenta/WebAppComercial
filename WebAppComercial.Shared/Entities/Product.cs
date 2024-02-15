@@ -57,11 +57,9 @@ namespace WebAppComercial.Shared.Entities
 
 
 
-        public string Image { get; set; } = null!;
+        public string? Image { get; set; }
 
-
-
-       
+            
 
 
 
@@ -84,6 +82,9 @@ namespace WebAppComercial.Shared.Entities
         //[Display(Name = "Imagén")]
         //public string MainImage => ProductImages == null ? string.Empty : ProductImages.FirstOrDefault()!.Image;
 
+        public string ImageFullPath => string.IsNullOrEmpty(Image)
+       ? $"https://localhost:7020/images/products/noimage.png"
+       : $"https://localhost:7020{Image[1..]}";
 
     }
 }

@@ -341,7 +341,6 @@ namespace WebAppComercial.Api.Migrations
                         .HasColumnType("int");
 
                     b.Property<string>("Image")
-                        .IsRequired()
                         .HasColumnType("nvarchar(max)");
 
                     b.Property<int>("IvaId")

@@ -12,7 +12,7 @@ using WebAppComercial.Api.Data;
 namespace WebAppComercial.Api.Migrations
 {
     [DbContext(typeof(DataContext))]
-    [Migration("20240215151127_InitialDb")]
+    [Migration("20240215155744_InitialDb")]
     partial class InitialDb
     {
         /// <inheritdoc />
@@ -344,7 +344,6 @@ namespace WebAppComercial.Api.Migrations
                         .HasColumnType("int");
 
                     b.Property<string>("Image")
-                        .IsRequired()
                         .HasColumnType("nvarchar(max)");
 
                     b.Property<int>("IvaId")

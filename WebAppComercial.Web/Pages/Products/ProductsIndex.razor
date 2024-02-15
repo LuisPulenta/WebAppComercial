@@ -69,8 +69,9 @@ else
                                     <th>Nombre</th>
                                     <th>Unidad</th>
                                     <th>Cantidad</th>
-                                    <th>      Precio</th>
-                                    <th>      Iva</th>
+                                    <th>Precio</th>
+                                    <th>Iva</th>
+                                    <th>Imagen</th>
                                     <th style="width:60px"></th>
                                 </tr>
                             </thead>
@@ -96,7 +97,7 @@ else
                                         <td>
                                             @product.Iva.Name
                                         </td>
-                                       
+                                        <td><img src="@product.ImageFullPath" width="80" /></td>
 
                                         <td>
                                             <a @onclick=@(() => ShowModal(product.Id, true)) class="btn btn-sm btn-warning btn-sm">
