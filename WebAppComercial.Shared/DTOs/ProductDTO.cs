@@ -1,9 +1,10 @@
 ﻿using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
+using WebAppComercial.Shared.Entities;
 
-namespace WebAppComercial.Shared.Entities
+namespace WebAppComercial.Shared.DTOs
 {
-    public class Product
+    public class ProductDTO
     {
         public int Id { get; set; }
 
@@ -16,9 +17,7 @@ namespace WebAppComercial.Shared.Entities
 
 
 
-        [Display(Name = "Categoría")]
-        [Required(ErrorMessage = "El campo {0} es obligatorio.")]
-        public Category Category { get; set; } = null!;
+
         [Display(Name = "Categoría")]
         [Range(1, int.MaxValue, ErrorMessage = "Debes seleccionar una {0}.")]
         public int CategoryId { get; set; }
@@ -26,20 +25,9 @@ namespace WebAppComercial.Shared.Entities
 
 
         [Display(Name = "Iva")]
-        [Required(ErrorMessage = "El campo {0} es obligatorio.")]
-        public Iva Iva { get; set; } = new Iva();
-        [Display(Name = "Iva")]
-        [Range(1, int.MaxValue, ErrorMessage = "Debes seleccionar una {0}.")]
+        [Range(1, int.MaxValue, ErrorMessage = "Debes seleccionar un {0}.")]
         public int IvaId { get; set; }
 
-
-        [Display(Name = "Unidad")]
-        [Required(ErrorMessage = "El campo {0} es obligatorio.")]
-        public Measure Measure { get; set; } = new Measure();
-        [Display(Name = "Unidad")]
-        [Range(1, int.MaxValue, ErrorMessage = "Debes seleccionar una {0}.")]
-        public int MeasureId { get; set; }
-        
 
 
 
@@ -47,7 +35,8 @@ namespace WebAppComercial.Shared.Entities
         [DisplayFormat(DataFormatString = "{0:C2}")]
         [Display(Name = "Precio")]
         [Required(ErrorMessage = "El campo {0} es obligatorio.")]
-        public decimal Price { get; set; }
+        public decimal? Price { get; set; } = null!;
+
 
 
 
@@ -61,15 +50,19 @@ namespace WebAppComercial.Shared.Entities
 
 
 
-       
+
+        [Display(Name = "Unidad")]
+        [Range(1, int.MaxValue, ErrorMessage = "Debes seleccionar una {0}.")]
+        public int MeasureId { get; set; }
+
 
 
 
         [Column(TypeName = "decimal(18,2)")]
         [DisplayFormat(DataFormatString = "{0:N2}")]
-        [Display(Name = "Cantidad")]
+        [Display(Name = "Medida")]
         [Required(ErrorMessage = "El campo {0} es obligatorio.")]
-        public decimal Quantity { get; set; }
+        public decimal? Quantity { get; set; } = null!;
 
 
 
@@ -77,13 +70,17 @@ namespace WebAppComercial.Shared.Entities
 
 
 
+        public List<string>? Images { get; set; }
+
+
 
         [Display(Name = "Imágenes")]
-        public int ProductImagesNumber => ProductImages == null ? 0 : ProductImages.Count;
-
-        //[Display(Name = "Imagén")]
-        //public string MainImage => ProductImages == null ? string.Empty : ProductImages.FirstOrDefault()!.Image;
+        public int ImagesNumber => ProductImages == null ? 0 : ProductImages.Count;
 
 
+
+
+        [Display(Name = "Imagén")]
+        public string MainImage => ProductImages == null ? string.Empty : ProductImages.FirstOrDefault()!.Image;
     }
 }

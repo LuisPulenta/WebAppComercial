@@ -630,19 +630,19 @@ namespace WebAppComercial.Api.Migrations
             modelBuilder.Entity("WebAppComercial.Shared.Entities.Product", b =>
                 {
                     b.HasOne("WebAppComercial.Shared.Entities.Category", "Category")
-                        .WithMany()
+                        .WithMany("Products")
                         .HasForeignKey("CategoryId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
                     b.HasOne("WebAppComercial.Shared.Entities.Iva", "Iva")
-                        .WithMany()
+                        .WithMany("Products")
                         .HasForeignKey("IvaId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
                     b.HasOne("WebAppComercial.Shared.Entities.Measure", "Measure")
-                        .WithMany()
+                        .WithMany("Products")
                         .HasForeignKey("MeasureId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
@@ -676,11 +676,26 @@ namespace WebAppComercial.Api.Migrations
                     b.Navigation("DocumentType");
                 });
 
+            modelBuilder.Entity("WebAppComercial.Shared.Entities.Category", b =>
+                {
+                    b.Navigation("Products");
+                });
+
             modelBuilder.Entity("WebAppComercial.Shared.Entities.DocumentType", b =>
                 {
                     b.Navigation("Customers");
 
                     b.Navigation("Suppliers");
+                });
+
+            modelBuilder.Entity("WebAppComercial.Shared.Entities.Iva", b =>
+                {
+                    b.Navigation("Products");
+                });
+
+            modelBuilder.Entity("WebAppComercial.Shared.Entities.Measure", b =>
+                {
+                    b.Navigation("Products");
                 });
 
             modelBuilder.Entity("WebAppComercial.Shared.Entities.Product", b =>

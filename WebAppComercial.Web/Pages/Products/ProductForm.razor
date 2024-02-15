@@ -1,0 +1,202 @@
+﻿@inject SweetAlertService swal
+@inject IRepository repository
+
+<NavigationLock OnBeforeInternalNavigation="OnBeforeInternalNavigation"></NavigationLock>
+
+<EditForm EditContext="editContext" OnValidSubmit="OnValidSubmit">
+    <DataAnnotationsValidator />
+
+    <div class="mb-3">
+        <label>Nombre:</label>
+        <div>
+            <InputText class="form-control" @bind-Value="@ProductDTO.Name" />
+            <ValidationMessage For="@(() => ProductDTO.Name)" />
+        </div>
+    </div>
+
+    <div class="mb-3">
+        <label>Categoría:</label>
+        <div>
+            <select class="form-select" @bind="@ProductDTO.CategoryId">
+                <option value="0">-- Seleccione una Categoría --</option>
+                @if (categories is not null)
+                {
+                    @foreach (var category in categories)
+                    {
+                        <option value="@category.Id">@category.Name</option>
+                    }
+                }
+            </select>
+            <ValidationMessage For="@(() => ProductDTO.CategoryId)" />
+        </div>
+    </div>
+
+    <div class="mb-3">
+        <label>Unidad:</label>
+        <div>
+            <select class="form-select" @bind="@ProductDTO.MeasureId">
+                <option value="0">-- Seleccione una Unidad --</option>
+                @if (measures is not null)
+                {
+                    @foreach (var measure in measures)
+                    {
+                        <option value="@measure.Id">@measure.Name</option>
+                    }
+                }
+            </select>
+            <ValidationMessage For="@(() => ProductDTO.MeasureId)" />
+        </div>
+    </div>
+
+    <div class="mb-3">
+        <label>Cantidad:</label>
+        <div>
+            <InputNumber class="form-control" @bind-Value="@ProductDTO.Quantity" />
+            <ValidationMessage For="@(() => ProductDTO.Quantity)" />
+        </div>
+    </div>
+
+    <div class="mb-3">
+        <label>Iva:</label>
+        <div>
+            <select class="form-select" @bind="@ProductDTO.IvaId">
+                <option value="0">-- Seleccione un IVA --</option>
+                @if (measures is not null)
+                {
+                    @foreach (var iva in ivas)
+                    {
+                        <option value="@iva.Id">@iva.Name</option>
+                    }
+                }
+            </select>
+            <ValidationMessage For="@(() => ProductDTO.IvaId)" />
+        </div>
+    </div>
+
+    <div class="mb-3">
+        <label>Precio:</label>
+        <div>
+            <InputNumber class="form-control" @bind-Value="@ProductDTO.Price" />
+            <ValidationMessage For="@(() => ProductDTO.Price)" />
+        </div>
+    </div>
+
+    <div class="mb-3">
+        <label>Notas:</label>
+        <div>
+            <InputText class="form-control" @bind-Value="@ProductDTO.Remarks" />
+            <ValidationMessage For="@(() => ProductDTO.Remarks)" />
+        </div>
+    </div>
+
+
+    <button class="btn btn-sm btn-outline-primary" type="submit">
+        <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" fill="currentColor" class="bi bi-floppy-fill" viewBox="0 0 16 16">
+            <path d="M0 1.5A1.5 1.5 0 0 1 1.5 0H3v5.5A1.5 1.5 0 0 0 4.5 7h7A1.5 1.5 0 0 0 13 5.5V0h.086a1.5 1.5 0 0 1 1.06.44l1.415 1.414A1.5 1.5 0 0 1 16 2.914V14.5a1.5 1.5 0 0 1-1.5 1.5H14v-5.5A1.5 1.5 0 0 0 12.5 9h-9A1.5 1.5 0 0 0 2 10.5V16h-.5A1.5 1.5 0 0 1 0 14.5z" />
+            <path d="M3 16h10v-5.5a.5.5 0 0 0-.5-.5h-9a.5.5 0 0 0-.5.5zm9-16H4v5.5a.5.5 0 0 0 .5.5h7a.5.5 0 0 0 .5-.5zM9 1h2v4H9z" />
+        </svg>
+        Guardar Cambios
+    </button>
+    <button class="btn btn-sm btn-outline-success" @onclick="ReturnAction">
+        <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-arrow-left-circle-fill" viewBox="0 0 16 16">
+            <path d="M8 0a8 8 0 1 0 0 16A8 8 0 0 0 8 0m3.5 7.5a.5.5 0 0 1 0 1H5.707l2.147 2.146a.5.5 0 0 1-.708.708l-3-3a.5.5 0 0 1 0-.708l3-3a.5.5 0 1 1 .708.708L5.707 7.5z" />
+        </svg>
+        Regresar
+    </button>
+</EditForm> 
+
+@code {
+    private EditContext editContext = null!;
+    private List<Category>? categories;
+    private List<Measure>? measures;
+    private List<Iva>? ivas;
+
+    [EditorRequired]
+    [Parameter]
+    public ProductDTO ProductDTO { get; set; } = null!;
+
+    [Parameter]
+    [EditorRequired]
+    public EventCallback OnValidSubmit { get; set; }
+
+    [EditorRequired]
+    [Parameter]
+    public EventCallback ReturnAction { get; set; }
+
+    public bool FormPostedSuccessfully { get; set; } = false;
+
+    protected override void OnInitialized()
+    {
+        editContext = new(ProductDTO);
+    }
+
+    protected override async Task OnInitializedAsync()
+    {
+        await LoadCategoriesAsync();
+        await LoadMeasuresAsync();
+        await LoadIvasAsync();
+    }
+
+    private async Task LoadCategoriesAsync()
+    {
+        var responseHttp = await repository.Get<List<Category>>("/api/categories/combo");
+        if (responseHttp.Error)
+        {
+            var message = await responseHttp.GetErrorMessage();
+            await swal.FireAsync("Error", message, SweetAlertIcon.Error);
+            return;
+        }
+        categories = responseHttp.Response;
+    }
+
+    private async Task LoadMeasuresAsync()
+    {
+        var responseHttp = await repository.Get<List<Measure>>("/api/measures/combo");
+        if (responseHttp.Error)
+        {
+            var message = await responseHttp.GetErrorMessage();
+            await swal.FireAsync("Error", message, SweetAlertIcon.Error);
+            return;
+        }
+        measures = responseHttp.Response;
+    }
+
+    private async Task LoadIvasAsync()
+    {
+        var responseHttp = await repository.Get<List<Iva>>("/api/ivas/combo");
+        if (responseHttp.Error)
+        {
+            var message = await responseHttp.GetErrorMessage();
+            await swal.FireAsync("Error", message, SweetAlertIcon.Error);
+            return;
+        }
+        ivas = responseHttp.Response;
+    }
+
+    private async Task OnBeforeInternalNavigation(LocationChangingContext context)
+    {
+        var formWasMofied = editContext.IsModified();
+        if (!formWasMofied || FormPostedSuccessfully)
+        {
+            return;
+        }
+
+        var result = await swal.FireAsync(new SweetAlertOptions
+            {
+                Title = "Confirmación",
+                Text = "¿Deseas abandonar la página y perder los cambios?",
+                Icon = SweetAlertIcon.Question,
+                ShowCancelButton = true,
+                CancelButtonText = "No",
+                ConfirmButtonText = "Si"
+            });
+
+        var confirm = !string.IsNullOrEmpty(result.Value);
+
+        if (confirm)
+        {
+            return;
+        }
+        context.PreventNavigation();
+    }
+}

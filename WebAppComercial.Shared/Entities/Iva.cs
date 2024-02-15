@@ -16,6 +16,8 @@ namespace WebAppComercial.Shared.Entities
         [DisplayFormat(DataFormatString = "{0:P2}")]
         [Display(Name = "%")]
         [Required(ErrorMessage = "El campo {0} es obligatorio.")]
-        public decimal Percentage { get; set; } 
+        public decimal Percentage { get; set; }
+
+        public ICollection<Product>? Products { get; set; }
     }
 }

@@ -10,6 +10,7 @@ using WebAppComercial.Api.Data;
 using WebAppComercial.Api.Helpers;
 using WebAppComercial.API.Data;
 using WebAppComercial.Shared.Entities;
+using WebAppComercial.Shared.Helpers;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -56,6 +57,7 @@ builder.Services.AddDbContext<DataContext>(x => x.UseSqlServer("name=DefaultConn
 builder.Services.AddTransient<SeedDb>();
 
 builder.Services.AddScoped<IUserHelper, UserHelper>();
+builder.Services.AddScoped<IFilesHelper, FilesHelper>();
 builder.Services.AddScoped<IMailHelper, MailHelper>();
 
 builder.Services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
