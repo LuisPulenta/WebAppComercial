@@ -6,7 +6,7 @@
 
 <h3>Crear Producto</h3>
 
-<ProductForm @ref="productForm" ProductDTO="productDTO" OnValidSubmit="CreateAsync" ReturnAction="Return" />
+<ProductForm @ref="productForm" ProductDTO="productDTO" OnValidSubmit="CreateAsync" ReturnAction="Return" IsEdit=false />
 
 @code {
     private ProductDTO productDTO = new ProductDTO();

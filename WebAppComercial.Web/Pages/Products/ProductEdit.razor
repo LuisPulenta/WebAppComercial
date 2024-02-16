@@ -12,7 +12,8 @@
 }
 else
 {
-    <ProductForm @ref="productForm" ProductDTO="productDTO" OnValidSubmit="EditAsync" ReturnAction="Return" />
+    <ProductForm @ref="productForm" ProductDTO="productDTO" OnValidSubmit="EditAsync" ReturnAction="Return"
+                 IsEdit=true AddImageAction="AddImageAsync" RemoveImageAction="RemoveImageAsync" />
 }
 
 
@@ -66,6 +67,7 @@ else
                 Price = product.Price,
                 Quantity = product.Quantity,
                 Remarks = product.Remarks,
+                ProductImages = product.ProductImages!.Select(x => x.ImageFullPath).ToList()
             };
     }
 
@@ -97,4 +99,71 @@ else
         productForm!.FormPostedSuccessfully = true;
         navigationManager.NavigateTo("/products");
     }
+
+    private async Task AddImageAsync()
+    {
+        if (productDTO.ProductImages is null || productDTO.ProductImages.Count == 0)
+        {
+            return;
+        }
+
+        var imageDTO = new ImageDTO
+            {
+                ProductId = Id,
+                Images = productDTO.ProductImages!
+            };
+
+        var httpResponse = await repository.Post<ImageDTO, ImageDTO>("/api/products/addImages", imageDTO);
+        if (httpResponse.Error)
+        {
+            var message = await httpResponse.GetErrorMessage();
+            await swal.FireAsync("Error", message, SweetAlertIcon.Error);
+            return;
+        }
+
+        productDTO.ProductImages = httpResponse.Response!.Images;
+        var toast = swal.Mixin(new SweetAlertOptions
+            {
+                Toast = true,
+                Position = SweetAlertPosition.TopEnd,
+                ShowConfirmButton = false,
+                Timer = 5000
+            });
+        await toast.FireAsync(icon: SweetAlertIcon.Success, message: "Imagenes agregadas con éxito.");
+    }
+
+    private async Task RemoveImageAsync()
+    {
+        if (productDTO.ProductImages is null || productDTO.ProductImages.Count == 0)
+        {
+            return;
+        }
+
+        var imageDTO = new ImageDTO
+            {
+                ProductId = Id,
+                Images = productDTO.ProductImages!
+            };
+
+        var httpResponse = await repository.Post<ImageDTO, ImageDTO>("/api/products/removeLastImage", imageDTO);
+        if (httpResponse.Error)
+        {
+            var message = await httpResponse.GetErrorMessage();
+            await swal.FireAsync("Error", message, SweetAlertIcon.Error);
+            return;
+        }
+
+        productDTO.ProductImages = httpResponse.Response!.Images;
+        var toast = swal.Mixin(new SweetAlertOptions
+            {
+                Toast = true,
+                Position = SweetAlertPosition.TopEnd,
+                ShowConfirmButton = false,
+                Timer = 5000
+            });
+        await toast.FireAsync(icon: SweetAlertIcon.Success, message: "Imagén eliminada con éxito.");
+    }
+
+
+
 }

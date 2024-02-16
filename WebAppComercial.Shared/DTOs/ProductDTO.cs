@@ -1,6 +1,5 @@
 ﻿using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
-using WebAppComercial.Shared.Entities;
 
 namespace WebAppComercial.Shared.DTOs
 {
@@ -66,22 +65,12 @@ namespace WebAppComercial.Shared.DTOs
 
 
 
-        public ICollection<ProductImage>? ProductImages { get; set; }
-
-
-
-        public List<string>? Images { get; set; }
+        public List<string>? ProductImages { get; set; }
 
 
 
         [Display(Name = "Imágenes")]
         public int ImagesNumber => ProductImages == null ? 0 : ProductImages.Count;
-
-
-
-
-        [Display(Name = "Imagén")]
-        public string MainImage => ProductImages == null ? string.Empty : ProductImages.FirstOrDefault()!.Image;
 
 
         public string ImageFullPath => string.IsNullOrEmpty(Image)
