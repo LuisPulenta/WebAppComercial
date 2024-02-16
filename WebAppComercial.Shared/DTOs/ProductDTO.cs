@@ -1,5 +1,6 @@
 ﻿using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
+using WebAppComercial.Shared.Entities;
 
 namespace WebAppComercial.Shared.DTOs
 {
@@ -20,12 +21,14 @@ namespace WebAppComercial.Shared.DTOs
         [Display(Name = "Categoría")]
         [Range(1, int.MaxValue, ErrorMessage = "Debes seleccionar una {0}.")]
         public int CategoryId { get; set; }
+        public Category Category { get; set; }
 
 
 
         [Display(Name = "Iva")]
         [Range(1, int.MaxValue, ErrorMessage = "Debes seleccionar un {0}.")]
         public int IvaId { get; set; }
+        public Iva Iva { get; set; }
 
 
 
@@ -53,6 +56,7 @@ namespace WebAppComercial.Shared.DTOs
         [Display(Name = "Unidad")]
         [Range(1, int.MaxValue, ErrorMessage = "Debes seleccionar una {0}.")]
         public int MeasureId { get; set; }
+        public Measure Measure { get; set; }
 
 
 

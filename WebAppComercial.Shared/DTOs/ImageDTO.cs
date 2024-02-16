@@ -8,6 +8,6 @@ namespace WebAppComercial.Shared.DTOs
         public int ProductId { get; set; }
 
         [Required]
-        public List<string> Images { get; set; } = null!;
+        public string? Image { get; set; }
     }
 }

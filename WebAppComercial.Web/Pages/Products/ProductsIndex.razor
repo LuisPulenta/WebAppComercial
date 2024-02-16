@@ -71,6 +71,7 @@ else
                                     <th>Cantidad</th>
                                     <th>Precio</th>
                                     <th>Iva</th>
+                                    <th>Galería</th>
                                     <th>Imagen</th>
                                     <th style="width:60px"></th>
                                 </tr>
@@ -96,6 +97,9 @@ else
                                         </td>
                                         <td>
                                             @product.Iva.Name
+                                        </td>
+                                        <td>
+                                            @product.ProductImagesNumber
                                         </td>
                                         <td><img src="@product.ImageFullPath" width="80" /></td>
 
@@ -151,7 +155,7 @@ else
     private int currentPage = 1;
     private int totalPages;
     private int totalRegisters;
-    
+
     private bool loading = true;
 
     [CascadingParameter]
@@ -208,7 +212,7 @@ else
             responseHttp = await repository.Get<List<Product>>(url1);
             responseHttp2 = await repository.Get<int>(url2);
             responseHttp3 = await repository.Get<int>(url3);
-            
+
             Products = responseHttp.Response!;
             totalPages = responseHttp2.Response!;
             totalRegisters = responseHttp3.Response!;
@@ -273,7 +277,7 @@ else
         {
             ProductsDTO.Add(ToProductDTO(product));
         }
-        
+
         var response = await repository.Post("/api/Excel/ExportExcelProducts", ProductsDTO);
         var fileStream = response.HttpResponseMessage.Content.ReadAsStream();
         using var streamRef = new DotNetStreamReference(stream: fileStream);
@@ -287,7 +291,7 @@ else
         Filter = string.Empty;
         await ApplyFilterAsync();
     }
-    
+
     //---------------------------------------------------------------------------
     private async Task ApplyFilterAsync()
     {
@@ -325,14 +329,17 @@ else
                 Id = product.Id,
                 Name = product.Name,
                 CategoryId = product.CategoryId,
+                Category = product.Category,
                 Image = product.Image,
                 IvaId = product.IvaId,
+                Iva = product.Iva,
                 MeasureId = product.MeasureId,
+                Measure = product.Measure,
                 Price = product.Price,
                 Quantity = product.Quantity,
             };
     }
-
+     
     //---------------------------------------------------------------------------
     private async Task ExportarTodo()
     {

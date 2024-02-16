@@ -318,6 +318,10 @@ namespace WebAppComercial.Api.Controllers
         [HttpPost("addImages")]
         public async Task<ActionResult> PostAddImagesAsync(ImageDTO imageDTO)
         {
+
+            ProductImage productImage = new ProductImage();
+            productImage.ProductId=imageDTO.ProductId;
+
             var product = await _context.Products
                 .Include(x => x.ProductImages)
                 .FirstOrDefaultAsync(x => x.Id == imageDTO.ProductId);
@@ -325,26 +329,44 @@ namespace WebAppComercial.Api.Controllers
             {
                 return NotFound();
             }
+               
+                    //Foto
+                    string imageUrl = string.Empty;
+                    if (imageDTO.Image != null)
+                    {
+                        imageUrl = string.Empty;
+                        byte[] imageArray = Convert.FromBase64String(imageDTO.Image);
+                        var stream = new MemoryStream(imageArray);
+                        var guid = Guid.NewGuid().ToString();
+                        var file = $"{guid}.jpg";
+                        var folder = "wwwroot\\images\\products";
+                        var fullPath = $"~/images/products/{file}";
+                        var response = _filesHelper.UploadPhoto(stream, folder, file);
 
-            if (product.ProductImages is null)
-            {
-                product.ProductImages = new List<ProductImage>();
-            }
+                        if (response)
+                        {
+                            productImage.Image = fullPath;
+                            _context.ProductImages.Add(productImage);
+                            await _context.SaveChangesAsync();
+                        }
+                    }
 
-            for (int i = 0; i < imageDTO.Images.Count; i++)
-            {
-                if (!imageDTO.Images[i].StartsWith("https://"))
-                {
-                    var photoProduct = Convert.FromBase64String(imageDTO.Images[i]);
-                    //imageDTO.Images[i] = await _fileStorage.SaveFileAsync(photoProduct, ".jpg", "products");
-                    product.ProductImages!.Add(new ProductImage { Image = imageDTO.Images[i] });
-                }
-            }
-
-            _context.Update(product);
-            await _context.SaveChangesAsync();
+               
+            
             return Ok(imageDTO);
         }
+
+
+         
+
+
+
+
+
+
+
+
+
 
         //---------------------------------------------------------------------------------------
         [HttpPost("removeLastImage")]
@@ -358,17 +380,15 @@ namespace WebAppComercial.Api.Controllers
                 return NotFound();
             }
 
-            if (product.ProductImages is null || product.ProductImages.Count == 0)
-            {
-                return Ok();
-            }
 
             var lastImage = product.ProductImages.LastOrDefault();
             product.ProductImages.Remove(lastImage);
             _context.Update(product);
             await _context.SaveChangesAsync();
-            imageDTO.Images = product.ProductImages.Select(x => x.Image).ToList();
+            //imageDTO.Images = product.ProductImages.Select(x => x.Image).ToList();
             return Ok(imageDTO);
         }
     }
 }
+
+

@@ -405,5 +405,60 @@ namespace GenerarExcel.Server.Controllers
                 throw;
             }
         }
+
+        //-------------------------------------------------------------------------------------------
+        [HttpPost]
+        [Route("ExportExcelProducts")]
+
+        public IActionResult ExportExcelProducts([FromBody] List<ProductDTO> products)
+        {
+            try
+            {
+                DataTable table = new DataTable();//tabla general
+
+                table.Columns.Add("ID");
+                //table.Columns.Add("CATEGORIA");
+                //table.Columns.Add("NOMBRE");
+                //table.Columns.Add("UNIDAD");
+                //table.Columns.Add("CANTIDAD");
+                //table.Columns.Add("PRECIO");
+                //table.Columns.Add("IVA");
+                //table.Columns.Add("GALERIA");
+                //table.Columns.Add("NOTAS");
+
+                foreach (ProductDTO product in products)
+                {
+                    DataRow fila = table.NewRow();
+                    fila["ID"] = product.Id;
+                    //fila["CATEGORIA"] = product.Category.Name;
+                    //fila["NOMBRE"] = product.Name;
+                    //fila["UNIDAD"] = product.Measure.Unit;
+                    //fila["CANTIDAD"] = product.Quantity;
+                    //fila["PRECIO"] = product.Price;
+                    //fila["IVA"] = product.Iva.Name;
+                    //fila["GALERIA"] = product.ProductImages != null ? product.ProductImages.Count() : 0;
+                    //fila["NOTAS"] = product.Remarks;
+                    table.Rows.Add(fila);
+                }
+
+                using var libro = new XLWorkbook();
+                table.TableName = "Productos";
+
+                var hoja = libro.Worksheets.Add(table);
+
+                hoja.ColumnsUsed().AdjustToContents();
+
+                using var memoria = new MemoryStream();
+                libro.SaveAs(memoria);
+                var nombreExcel = "Reporte.xlsx";
+                var archivo = File(memoria.ToArray(), "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet", nombreExcel);
+                return archivo;
+            }
+            catch (Exception)
+            {
+                throw;
+            }
+        }
     }
 }
+

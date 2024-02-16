@@ -117,12 +117,12 @@
 
     @if (IsEdit)
     {
-        <div class="mb-3">
+        <div class="mb-3 fw-bold">
             <InputImg Label="Galería de Imágenes" ImageSelected="ImageSelected2" ImageURL="@imageUrl2" />
         </div>
         <div class="mb-3">
-            <button type="button" class="btn btn-outline-primary" @onclick="AddImageAction"><i class="oi oi-plus" /> Agregar Imagenes</button>
-            <button type="button" class="btn btn-outline-danger" @onclick="RemoveImageAction"><i class="oi oi-trash" /> Eliminar Última Imagén</button>
+            <button type="button" class="btn btn-outline-primary" @onclick="AddImageAction"><i class="oi oi-plus" /> Agregar imagen</button>
+            <button type="button" class="btn btn-outline-danger" @onclick="RemoveImageAction"><i class="oi oi-trash" /> Eliminar última imagen</button>
         </div>
     }
 

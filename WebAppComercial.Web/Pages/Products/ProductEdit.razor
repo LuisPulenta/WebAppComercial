@@ -29,8 +29,16 @@ else
     [Parameter]
     public int Id { get; set; }
 
+    //-------------------------------------------------------------------------------------------------
     protected override async Task OnInitializedAsync()
     {
+        await LoadAsync();
+    }
+
+    //-------------------------------------------------------------------------------------------------
+    private async Task LoadAsync()
+    {
+
         loading = true;
         var responseHTTP = await repository.Get<Product>($"/api/products/{Id}");
         if (responseHTTP.Error)
@@ -54,6 +62,7 @@ else
         loading = false;
     }
 
+    //-------------------------------------------------------------------------------------------------
     private ProductDTO ToProductDTO(Product product)
     {
         return new ProductDTO
@@ -71,6 +80,7 @@ else
             };
     }
 
+    //-------------------------------------------------------------------------------------------------
     private async Task EditAsync()
     {
         var responseHTTP = await repository.Put("/api/products", productDTO);
@@ -89,20 +99,22 @@ else
                 Timer = 3000
             });
         await toast.FireAsync(icon: SweetAlertIcon.Success, message: "Cambios guardados con éxito.");
-        
+
         await BlazoredModal.CloseAsync(ModalResult.Ok());
         navigationManager.NavigateTo("/products");
     }
 
+    //-------------------------------------------------------------------------------------------------
     private void Return()
     {
         productForm!.FormPostedSuccessfully = true;
         navigationManager.NavigateTo("/products");
     }
 
+    //-------------------------------------------------------------------------------------------------
     private async Task AddImageAsync()
     {
-        if (productDTO.ProductImages is null || productDTO.ProductImages.Count == 0)
+        if (productDTO.Image is null)
         {
             return;
         }
@@ -110,7 +122,7 @@ else
         var imageDTO = new ImageDTO
             {
                 ProductId = Id,
-                Images = productDTO.ProductImages!
+                Image = productDTO.Image!
             };
 
         var httpResponse = await repository.Post<ImageDTO, ImageDTO>("/api/products/addImages", imageDTO);
@@ -121,17 +133,19 @@ else
             return;
         }
 
-        productDTO.ProductImages = httpResponse.Response!.Images;
         var toast = swal.Mixin(new SweetAlertOptions
             {
                 Toast = true,
-                Position = SweetAlertPosition.TopEnd,
-                ShowConfirmButton = false,
-                Timer = 5000
+                Position = SweetAlertPosition.Center,
+                ShowConfirmButton = true,
+                Timer = 3000
             });
-        await toast.FireAsync(icon: SweetAlertIcon.Success, message: "Imagenes agregadas con éxito.");
+        await LoadAsync();
+        productDTO.Image = null;
+        await toast.FireAsync(icon: SweetAlertIcon.Success, message: "Imagen agregada con éxito.");
     }
 
+    //-------------------------------------------------------------------------------------------------
     private async Task RemoveImageAsync()
     {
         if (productDTO.ProductImages is null || productDTO.ProductImages.Count == 0)
@@ -142,7 +156,7 @@ else
         var imageDTO = new ImageDTO
             {
                 ProductId = Id,
-                Images = productDTO.ProductImages!
+                Image = productDTO.ProductImages.LastOrDefault()!
             };
 
         var httpResponse = await repository.Post<ImageDTO, ImageDTO>("/api/products/removeLastImage", imageDTO);
@@ -153,17 +167,15 @@ else
             return;
         }
 
-        productDTO.ProductImages = httpResponse.Response!.Images;
         var toast = swal.Mixin(new SweetAlertOptions
             {
                 Toast = true,
-                Position = SweetAlertPosition.TopEnd,
-                ShowConfirmButton = false,
-                Timer = 5000
+                Position = SweetAlertPosition.Center,
+                ShowConfirmButton = true,
+                Timer = 3000
             });
-        await toast.FireAsync(icon: SweetAlertIcon.Success, message: "Imagén eliminada con éxito.");
+        await LoadAsync();
+        productDTO.Image = null;
+        await toast.FireAsync(icon: SweetAlertIcon.Success, message: "Imagen eliminada con éxito.");
     }
-
-
-
 }
