@@ -329,14 +329,16 @@ else
                 Id = product.Id,
                 Name = product.Name,
                 CategoryId = product.CategoryId,
-                Category = product.Category,
+                Category = product.Category.Name,
                 Image = product.Image,
                 IvaId = product.IvaId,
-                Iva = product.Iva,
+                Iva = product.Iva.Name,
                 MeasureId = product.MeasureId,
-                Measure = product.Measure,
+                Measure = product.Measure.Unit,
                 Price = product.Price,
                 Quantity = product.Quantity,
+                Remarks=product.Remarks,
+                ProductImages=[]
             };
     }
      

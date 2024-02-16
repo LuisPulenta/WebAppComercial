@@ -96,13 +96,13 @@ namespace WebAppComercial.Api.Controllers
         {
             try
             {
-                DocumentType doc = await _context.DocumentTypes!.FindAsync(supplierDTO.DocumentTypeId);
+                DocumentType? documentType = await _context.DocumentTypes!.FindAsync(supplierDTO.DocumentTypeId);
 
                 Supplier newSupplier = new()
                 {
                     Id = supplierDTO.Id,
                     Name = supplierDTO.Name,
-                    DocumentType = doc!,
+                    DocumentType = documentType!,
                     DocumentTypeId = supplierDTO.DocumentTypeId,
                     Document = supplierDTO.Document,
                     ContactName = supplierDTO.ContactName,
@@ -152,15 +152,18 @@ namespace WebAppComercial.Api.Controllers
         {
             try
             {
-                Supplier supplier = await _context.Suppliers
+                Supplier? supplier = await _context.Suppliers
                     .FirstOrDefaultAsync(x => x.Id == supplierDTO.Id);
+
+                DocumentType? documentType = await _context.DocumentTypes.FirstOrDefaultAsync(x => x.Id == supplierDTO.DocumentTypeId);
+
                 if (supplier == null)
                 {
                     return NotFound();
                 }
                 supplier.Address = supplierDTO.Address;
                 supplier.Document = supplierDTO.Document;
-                supplier.DocumentType = await _context.DocumentTypes.FirstOrDefaultAsync(x => x.Id == supplierDTO.DocumentTypeId);
+                supplier.DocumentType = documentType;
                 supplier.DocumentTypeId = supplierDTO.DocumentTypeId;
                 supplier.CellPhone = supplierDTO.CellPhone;
                 supplier.LandPhone = supplierDTO.LandPhone;

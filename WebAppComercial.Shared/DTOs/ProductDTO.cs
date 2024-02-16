@@ -21,14 +21,14 @@ namespace WebAppComercial.Shared.DTOs
         [Display(Name = "Categoría")]
         [Range(1, int.MaxValue, ErrorMessage = "Debes seleccionar una {0}.")]
         public int CategoryId { get; set; }
-        public Category Category { get; set; }
+        public string Category { get; set; } = null!;
 
 
 
         [Display(Name = "Iva")]
         [Range(1, int.MaxValue, ErrorMessage = "Debes seleccionar un {0}.")]
         public int IvaId { get; set; }
-        public Iva Iva { get; set; }
+        public string Iva { get; set; } = null!;
 
 
 
@@ -56,7 +56,7 @@ namespace WebAppComercial.Shared.DTOs
         [Display(Name = "Unidad")]
         [Range(1, int.MaxValue, ErrorMessage = "Debes seleccionar una {0}.")]
         public int MeasureId { get; set; }
-        public Measure Measure { get; set; }
+        public string Measure { get; set; } = null!;
 
 
 

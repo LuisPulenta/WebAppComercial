@@ -417,27 +417,25 @@ namespace GenerarExcel.Server.Controllers
                 DataTable table = new DataTable();//tabla general
 
                 table.Columns.Add("ID");
-                //table.Columns.Add("CATEGORIA");
-                //table.Columns.Add("NOMBRE");
-                //table.Columns.Add("UNIDAD");
-                //table.Columns.Add("CANTIDAD");
-                //table.Columns.Add("PRECIO");
-                //table.Columns.Add("IVA");
-                //table.Columns.Add("GALERIA");
-                //table.Columns.Add("NOTAS");
+                table.Columns.Add("CATEGORIA");
+                table.Columns.Add("NOMBRE");
+                table.Columns.Add("UNIDAD");
+                table.Columns.Add("CANTIDAD");
+                table.Columns.Add("PRECIO");
+                table.Columns.Add("IVA");
+                table.Columns.Add("NOTAS");
 
                 foreach (ProductDTO product in products)
                 {
                     DataRow fila = table.NewRow();
                     fila["ID"] = product.Id;
-                    //fila["CATEGORIA"] = product.Category.Name;
-                    //fila["NOMBRE"] = product.Name;
-                    //fila["UNIDAD"] = product.Measure.Unit;
-                    //fila["CANTIDAD"] = product.Quantity;
-                    //fila["PRECIO"] = product.Price;
-                    //fila["IVA"] = product.Iva.Name;
-                    //fila["GALERIA"] = product.ProductImages != null ? product.ProductImages.Count() : 0;
-                    //fila["NOTAS"] = product.Remarks;
+                    fila["CATEGORIA"] = product.Category;
+                    fila["NOMBRE"] = product.Name;
+                    fila["UNIDAD"] = product.Measure;
+                    fila["CANTIDAD"] = product.Quantity;
+                    fila["PRECIO"] = product.Price;
+                    fila["IVA"] = product.Iva;
+                    fila["NOTAS"] = product.Remarks;
                     table.Rows.Add(fila);
                 }
 
