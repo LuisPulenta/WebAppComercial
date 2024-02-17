@@ -1,6 +1,4 @@
-﻿using DocumentFormat.OpenXml;
-using DocumentFormat.OpenXml.ExtendedProperties;
-using Microsoft.AspNetCore.Authentication.JwtBearer;
+﻿using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
@@ -31,22 +29,20 @@ namespace WebAppComercial.Api.Controllers
         public async Task<IActionResult> GetAsync([FromQuery] PaginationDTO pagination)
         {
             var queryable = _context.Products
-                .Include(x => x.Category!)
-                .Include(x => x.Measure!)
-                .Include(x => x.Iva!)
-                .Include(x => x.ProductImages)
+                .Include(c => c.Category!)
+                .Include(pi => pi.ProductImages)
                 .AsQueryable();
 
             if (!string.IsNullOrWhiteSpace(pagination.Filter))
             {
                 queryable = queryable.Where(x => 
                 x.Name.ToLower().Contains(pagination.Filter.ToLower())
-                || x.Category.Name.ToLower().Contains(pagination.Filter.ToLower())
+                || x.Category!.Name.ToLower().Contains(pagination.Filter.ToLower())
                 );
             }
 
             return Ok(await queryable
-                .OrderBy(x => x.Category.Name)
+                .OrderBy(x => x.Category!.Name)
                 .ThenBy(x => x.Name)
                 .Paginate(pagination)
                 .ToListAsync());
@@ -58,20 +54,17 @@ namespace WebAppComercial.Api.Controllers
         {
             var queryable = _context.Products
                 .Include(x => x.Category!)
-                .Include(x => x.Measure!)
-                .Include(x => x.Iva!)
-                .Include(x => x.ProductImages)
                 .AsQueryable();
             if (!string.IsNullOrWhiteSpace(pagination.Filter))
             {
                 queryable = queryable.Where(x => 
                 x.Name.ToLower().Contains(pagination.Filter.ToLower())
-                || x.Category.Name.ToLower().Contains(pagination.Filter.ToLower())
+                || x.Category!.Name.ToLower().Contains(pagination.Filter.ToLower())
                 );
             }
                         
             return Ok(await queryable
-                .OrderBy(x => x.Category.Name)
+                .OrderBy(x => x.Category!.Name)
                 .ThenBy(x => x.Name)
                 .ToListAsync());
         }
@@ -82,15 +75,12 @@ namespace WebAppComercial.Api.Controllers
         {
             var queryable = _context.Products
                 .Include(x => x.Category!)
-                .Include(x => x.Measure!)
-                .Include(x => x.Iva!)
-                .Include(x => x.ProductImages)
                 .AsQueryable();
             if (!string.IsNullOrWhiteSpace(pagination.Filter))
             {
                 queryable = queryable.Where(x => 
                 x.Name.ToLower().Contains(pagination.Filter.ToLower())
-                || x.Category.Name.ToLower().Contains(pagination.Filter.ToLower())
+                || x.Category!.Name.ToLower().Contains(pagination.Filter.ToLower())
                 );
             }
 
@@ -105,15 +95,12 @@ namespace WebAppComercial.Api.Controllers
         {
             var queryable = _context.Products
                 .Include(x => x.Category!)
-                .Include(x => x.Measure!)
-                .Include(x => x.Iva!)
-                .Include(x => x.ProductImages)
                 .AsQueryable();
             if (!string.IsNullOrWhiteSpace(pagination.Filter))
             {
                 queryable = queryable.Where(x => 
                 x.Name.ToLower().Contains(pagination.Filter.ToLower())
-                || x.Category.Name.ToLower().Contains(pagination.Filter.ToLower())
+                || x.Category!.Name.ToLower().Contains(pagination.Filter.ToLower())
                 );
             }
 
@@ -159,8 +146,6 @@ namespace WebAppComercial.Api.Controllers
             try
             {
                 Category? cat = await _context.Categories!.FindAsync(productDTO.CategoryId);
-                Measure? mea = await _context.Measures!.FindAsync(productDTO.MeasureId);
-                Iva? iva = await _context.Ivas!.FindAsync(productDTO.IvaId);
 
                 Product newProduct = new()
                 {
@@ -168,21 +153,14 @@ namespace WebAppComercial.Api.Controllers
                     Name = productDTO.Name,
                     Category = cat!,
                     CategoryId = productDTO.CategoryId,
-                    Iva = iva!,
                     Price = (decimal)productDTO.Price!,
                     Remarks = productDTO.Remarks,
                     Image = productDTO.Image,
                     MeasureId = productDTO.MeasureId,
-                    Measure = mea!,
+                    Unit=productDTO.Unit,
                     Quantity = (decimal)productDTO.Quantity!,
                     ProductImages = new List<ProductImage>()
                 };
-                    
-                    //foreach (var productImage in productDTO.ProductImages!)
-                    //    {
-                    //        var photoProduct = Convert.FromBase64String(productImage);
-                    //        newProduct.ProductImages.Add(new ProductImage { Image = await  n.SaveFileAsync(photoProduct, ".jpg", "products") });
-                    //    }
 
                 _context.Add(newProduct);
                 await _context.SaveChangesAsync();
@@ -262,21 +240,16 @@ namespace WebAppComercial.Api.Controllers
 
             try
             {
-               
-
                 var category = await _context.Categories.FirstOrDefaultAsync(x => x.Id == productDTO.CategoryId);
-                var iva = await _context.Ivas.FirstOrDefaultAsync(x => x.Id == productDTO.IvaId);
                 var measure = await _context.Measures.FirstOrDefaultAsync(x => x.Id == productDTO.MeasureId);
 
                 product.Name = productDTO.Name;
-                product.Iva = iva!;
-                product.IvaId = productDTO.IvaId;
                 product.Quantity = (decimal)productDTO.Quantity!;
                 product.Price = (decimal)productDTO.Price!;
                 product.Remarks = productDTO.Remarks;
                 product.Category = category!;
                 product.CategoryId = productDTO.CategoryId;
-                product.Measure = measure!;
+                product.Unit = measure!.Unit;
                 product.MeasureId = productDTO.MeasureId;
                 
                 _context.Update(product);
@@ -350,24 +323,9 @@ namespace WebAppComercial.Api.Controllers
                             await _context.SaveChangesAsync();
                         }
                     }
-
-               
-            
             return Ok(imageDTO);
         }
-
-
-         
-
-
-
-
-
-
-
-
-
-
+        
         //---------------------------------------------------------------------------------------
         [HttpPost("removeLastImage")]
         public async Task<ActionResult> PostRemoveLastImageAsync(ImageDTO imageDTO)
@@ -380,15 +338,12 @@ namespace WebAppComercial.Api.Controllers
                 return NotFound();
             }
 
-
-            var lastImage = product.ProductImages.LastOrDefault();
-            product.ProductImages.Remove(lastImage);
+            var lastImage = product.ProductImages!.LastOrDefault();
+            product.ProductImages!.Remove(lastImage!);
             _context.Update(product);
             await _context.SaveChangesAsync();
-            //imageDTO.Images = product.ProductImages.Select(x => x.Image).ToList();
+
             return Ok(imageDTO);
         }
     }
 }
-
-

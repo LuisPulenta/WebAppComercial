@@ -343,7 +343,7 @@ namespace WebAppComercial.Api.Migrations
                     b.Property<string>("Image")
                         .HasColumnType("nvarchar(max)");
 
-                    b.Property<int>("IvaId")
+                    b.Property<int?>("IvaId")
                         .HasColumnType("int");
 
                     b.Property<int>("MeasureId")
@@ -364,6 +364,11 @@ namespace WebAppComercial.Api.Migrations
                         .IsRequired()
                         .HasMaxLength(255)
                         .HasColumnType("nvarchar(255)");
+
+                    b.Property<string>("Unit")
+                        .IsRequired()
+                        .HasMaxLength(2)
+                        .HasColumnType("nvarchar(2)");
 
                     b.HasKey("Id");
 
@@ -634,23 +639,17 @@ namespace WebAppComercial.Api.Migrations
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
-                    b.HasOne("WebAppComercial.Shared.Entities.Iva", "Iva")
+                    b.HasOne("WebAppComercial.Shared.Entities.Iva", null)
                         .WithMany("Products")
-                        .HasForeignKey("IvaId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
+                        .HasForeignKey("IvaId");
 
-                    b.HasOne("WebAppComercial.Shared.Entities.Measure", "Measure")
+                    b.HasOne("WebAppComercial.Shared.Entities.Measure", null)
                         .WithMany("Products")
                         .HasForeignKey("MeasureId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
                     b.Navigation("Category");
-
-                    b.Navigation("Iva");
-
-                    b.Navigation("Measure");
                 });
 
             modelBuilder.Entity("WebAppComercial.Shared.Entities.ProductImage", b =>

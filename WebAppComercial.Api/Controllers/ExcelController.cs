@@ -422,7 +422,6 @@ namespace GenerarExcel.Server.Controllers
                 table.Columns.Add("UNIDAD");
                 table.Columns.Add("CANTIDAD");
                 table.Columns.Add("PRECIO");
-                table.Columns.Add("IVA");
                 table.Columns.Add("NOTAS");
 
                 foreach (ProductDTO product in products)
@@ -431,10 +430,9 @@ namespace GenerarExcel.Server.Controllers
                     fila["ID"] = product.Id;
                     fila["CATEGORIA"] = product.Category;
                     fila["NOMBRE"] = product.Name;
-                    fila["UNIDAD"] = product.Measure;
+                    fila["UNIDAD"] = product.Unit;
                     fila["CANTIDAD"] = product.Quantity;
                     fila["PRECIO"] = product.Price;
-                    fila["IVA"] = product.Iva;
                     fila["NOTAS"] = product.Remarks;
                     table.Rows.Add(fila);
                 }

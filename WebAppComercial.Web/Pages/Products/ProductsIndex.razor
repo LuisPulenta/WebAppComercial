@@ -23,7 +23,7 @@ else
                             </svg>
                              Productos
 
-                            <a class="btn btn-sm btn-outline-primary float-end" @onclick=@(() => ShowModal())>
+                            <a class="btn btn-sm btn-outline-primary float-end" @onclick=@(() => ShowModal(page:@currentPage))>
                                 <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" fill="currentColor" class="bi bi-plus-circle-fill" viewBox="0 0 16 16">
                                     <path d="M16 8A8 8 0 1 1 0 8a8 8 0 0 1 16 0M8.5 4.5a.5.5 0 0 0-1 0v3h-3a.5.5 0 0 0 0 1h3v3a.5.5 0 0 0 1 0v-3h3a.5.5 0 0 0 0-1h-3z" />
                                 </svg>
@@ -70,7 +70,6 @@ else
                                     <th>Unidad</th>
                                     <th>Cantidad</th>
                                     <th>Precio</th>
-                                    <th>Iva</th>
                                     <th>Galería</th>
                                     <th>Imagen</th>
                                     <th style="width:60px"></th>
@@ -81,13 +80,13 @@ else
                                 {
                                     <tr>
                                         <td>
-                                            @product.Category.Name
+                                            @product.Category!.Name
                                         </td>
                                         <td>
                                             @product.Name
                                         </td>
                                         <td >
-                                            @product.Measure.Unit
+                                            @product.Unit
                                         </td>
                                         <td>
                                             @($"{product.Quantity:N2}")
@@ -96,15 +95,20 @@ else
                                             @($"$ {product.Price:N2}")
                                         </td>
                                         <td>
-                                            @product.Iva.Name
-                                        </td>
-                                        <td>
                                             @product.ProductImagesNumber
                                         </td>
-                                        <td><img src="@product.ImageFullPath" width="80" /></td>
+
+                                        @if (@product.Image == null || @product.Image == "" || @product.Image == string.Empty)
+                                        {
+                                            <td></td>
+                                        }else
+
+                                        {
+                                            <td><img src="@product.ImageFullPath" width="80" /></td>
+                                        }
 
                                         <td>
-                                            <a @onclick=@(() => ShowModal(product.Id, true)) class="btn btn-sm btn-warning btn-sm">
+                                            <a @onclick=@(() => ShowModal(product.Id, true,page:@currentPage)) class="btn btn-sm btn-warning btn-sm">
                                                 <i class="bi bi-pencil-square" />
                                                 <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" fill="white" class="bi bi-pencil-square" viewBox="0 0 16 16">
                                                     <path d="M15.502 1.94a.5.5 0 0 1 0 .706L14.459 3.69l-2-2L13.502.646a.5.5 0 0 1 .707 0l1.293 1.293zm-1.75 2.456-2-2L4.939 9.21a.5.5 0 0 0-.121.196l-.805 2.414a.25.25 0 0 0 .316.316l2.414-.805a.5.5 0 0 0 .196-.12l6.813-6.814z" />
@@ -301,7 +305,7 @@ else
     }
 
     //---------------------------------------------------------------------------
-    private async Task ShowModal(int id = 0, bool isEdit = false)
+    private async Task ShowModal(int id = 0, bool isEdit = false, int page=1)
     {
         IModalReference modalReference;
 
@@ -316,9 +320,10 @@ else
 
         var result = await modalReference.Result;
         if (result.Confirmed)
-        {
-            await LoadAsync();
-        }
+         {
+        //     await LoadAsync();
+         }
+        await LoadAsync(page);
     }
 
     //---------------------------------------------------------------------------
@@ -329,12 +334,10 @@ else
                 Id = product.Id,
                 Name = product.Name,
                 CategoryId = product.CategoryId,
-                Category = product.Category.Name,
+                Category = product.Category!.Name,
                 Image = product.Image,
-                IvaId = product.IvaId,
-                Iva = product.Iva.Name,
                 MeasureId = product.MeasureId,
-                Measure = product.Measure.Unit,
+                Unit = product.Unit,
                 Price = product.Price,
                 Quantity = product.Quantity,
                 Remarks=product.Remarks,

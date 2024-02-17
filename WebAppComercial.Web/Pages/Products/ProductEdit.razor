@@ -65,14 +65,16 @@ else
     //-------------------------------------------------------------------------------------------------
     private ProductDTO ToProductDTO(Product product)
     {
+
         return new ProductDTO
             {
                 Id = product.Id,
                 Name = product.Name,
                 CategoryId = product.CategoryId,
+                Category = product.Category!.Name,
                 Image = product.Image,
-                IvaId = product.IvaId,
                 MeasureId = product.MeasureId,
+                Unit=product.Unit,
                 Price = product.Price,
                 Quantity = product.Quantity,
                 Remarks = product.Remarks,

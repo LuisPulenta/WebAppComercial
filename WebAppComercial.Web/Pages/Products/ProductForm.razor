@@ -67,25 +67,6 @@
 
     <div class="row g-3 align-items-center">
         <div class="col-2">
-            <label class="col-form-label fw-bold">Iva:</label>
-        </div>
-        <div class="col-10">
-            <select class="form-select" @bind="@ProductDTO.IvaId">
-                <option value="0">-- Seleccione un IVA --</option>
-                @if (measures is not null)
-                {
-                    @foreach (var iva in ivas)
-                    {
-                        <option value="@iva.Id">@iva.Name</option>
-                    }
-                }
-            </select>
-            <ValidationMessage For="@(() => ProductDTO.IvaId)" />
-        </div>
-    </div>
-
-    <div class="row g-3 align-items-center">
-        <div class="col-2">
             <label class="col-form-label fw-bold">Precio:</label>
         </div>
         <div class="col-10">
@@ -152,7 +133,6 @@
     private EditContext editContext = null!;
     private List<Category>? categories;
     private List<Measure>? measures;
-    private List<Iva>? ivas;
     private string? imageUrl;
     private string? imageUrl2;
 
@@ -205,7 +185,6 @@
     {
         await LoadCategoriesAsync();
         await LoadMeasuresAsync();
-        await LoadIvasAsync();
     }
 
     private async Task LoadCategoriesAsync()
@@ -230,18 +209,6 @@
             return;
         }
         measures = responseHttp.Response;
-    }
-
-    private async Task LoadIvasAsync()
-    {
-        var responseHttp = await repository.Get<List<Iva>>("/api/ivas/combo");
-        if (responseHttp.Error)
-        {
-            var message = await responseHttp.GetErrorMessage();
-            await swal.FireAsync("Error", message, SweetAlertIcon.Error);
-            return;
-        }
-        ivas = responseHttp.Response;
     }
 
     private async Task OnBeforeInternalNavigation(LocationChangingContext context)
