@@ -12,7 +12,7 @@ using WebAppComercial.Api.Data;
 namespace WebAppComercial.Api.Migrations
 {
     [DbContext(typeof(DataContext))]
-    [Migration("20240217131845_Initial-Db")]
+    [Migration("20240220214616_InitialDb")]
     partial class InitialDb
     {
         /// <inheritdoc />
@@ -156,6 +156,30 @@ namespace WebAppComercial.Api.Migrations
                     b.HasKey("UserId", "LoginProvider", "Name");
 
                     b.ToTable("AspNetUserTokens", (string)null);
+                });
+
+            modelBuilder.Entity("WebAppComercial.Shared.Entities.Barcode", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int");
+
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
+
+                    b.Property<int>("Code")
+                        .HasColumnType("int");
+
+                    b.Property<int>("ProductId")
+                        .HasColumnType("int");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("Code")
+                        .IsUnique();
+
+                    b.HasIndex("ProductId");
+
+                    b.ToTable("Barcodes");
                 });
 
             modelBuilder.Entity("WebAppComercial.Shared.Entities.Category", b =>
@@ -430,6 +454,45 @@ namespace WebAppComercial.Api.Migrations
                     b.ToTable("Stores");
                 });
 
+            modelBuilder.Entity("WebAppComercial.Shared.Entities.Storeproduct", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int");
+
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
+
+                    b.Property<double>("Maximum")
+                        .HasColumnType("float");
+
+                    b.Property<double>("Minimum")
+                        .HasColumnType("float");
+
+                    b.Property<double>("Minimumquantity")
+                        .HasColumnType("float");
+
+                    b.Property<int>("ProductId")
+                        .HasColumnType("int");
+
+                    b.Property<int>("Replacementdays")
+                        .HasColumnType("int");
+
+                    b.Property<double>("Stock")
+                        .HasColumnType("float");
+
+                    b.Property<int>("StoreId")
+                        .HasColumnType("int");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("ProductId");
+
+                    b.HasIndex("StoreId", "ProductId")
+                        .IsUnique();
+
+                    b.ToTable("Storeproducts");
+                });
+
             modelBuilder.Entity("WebAppComercial.Shared.Entities.Supplier", b =>
                 {
                     b.Property<int>("Id")
@@ -623,6 +686,17 @@ namespace WebAppComercial.Api.Migrations
                         .IsRequired();
                 });
 
+            modelBuilder.Entity("WebAppComercial.Shared.Entities.Barcode", b =>
+                {
+                    b.HasOne("WebAppComercial.Shared.Entities.Product", "Product")
+                        .WithMany("Barcodes")
+                        .HasForeignKey("ProductId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("Product");
+                });
+
             modelBuilder.Entity("WebAppComercial.Shared.Entities.Customer", b =>
                 {
                     b.HasOne("WebAppComercial.Shared.Entities.DocumentType", "DocumentType")
@@ -666,6 +740,25 @@ namespace WebAppComercial.Api.Migrations
                     b.Navigation("Product");
                 });
 
+            modelBuilder.Entity("WebAppComercial.Shared.Entities.Storeproduct", b =>
+                {
+                    b.HasOne("WebAppComercial.Shared.Entities.Product", "Product")
+                        .WithMany("Storeproducts")
+                        .HasForeignKey("ProductId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.HasOne("WebAppComercial.Shared.Entities.Store", "Store")
+                        .WithMany("Storeproducts")
+                        .HasForeignKey("StoreId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("Product");
+
+                    b.Navigation("Store");
+                });
+
             modelBuilder.Entity("WebAppComercial.Shared.Entities.Supplier", b =>
                 {
                     b.HasOne("WebAppComercial.Shared.Entities.DocumentType", "DocumentType")
@@ -701,7 +794,16 @@ namespace WebAppComercial.Api.Migrations
 
             modelBuilder.Entity("WebAppComercial.Shared.Entities.Product", b =>
                 {
+                    b.Navigation("Barcodes");
+
                     b.Navigation("ProductImages");
+
+                    b.Navigation("Storeproducts");
+                });
+
+            modelBuilder.Entity("WebAppComercial.Shared.Entities.Store", b =>
+                {
+                    b.Navigation("Storeproducts");
                 });
 #pragma warning restore 612, 618
         }

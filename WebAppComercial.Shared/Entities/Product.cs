@@ -47,6 +47,8 @@ namespace WebAppComercial.Shared.Entities
         public decimal Quantity { get; set; }
 
         public ICollection<ProductImage>? ProductImages { get; set; }
+        public ICollection<Storeproduct>? Storeproducts { get; set; }
+        public ICollection<Barcode>? Barcodes { get; set; }
 
         [Display(Name = "Imágenes")]
         public int ProductImagesNumber => ProductImages == null ? 0 : ProductImages.Count;

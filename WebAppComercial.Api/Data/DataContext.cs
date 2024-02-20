@@ -19,6 +19,8 @@ namespace WebAppComercial.Api.Data
         public DbSet<Supplier> Suppliers { get; set; }
         public DbSet<Product> Products { get; set; }
         public DbSet<ProductImage> ProductImages { get; set; }
+        public DbSet<Barcode> Barcodes { get; set; }
+        public DbSet<Storeproduct> Storeproducts { get; set; }
 
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)
@@ -33,6 +35,8 @@ namespace WebAppComercial.Api.Data
             modelBuilder.Entity<DocumentType>().HasIndex(c => c.Name).IsUnique();
             modelBuilder.Entity<Customer>().HasIndex("Name", "Document").IsUnique();
             modelBuilder.Entity<Supplier>().HasIndex("Name", "Document").IsUnique();
+            modelBuilder.Entity<Barcode>().HasIndex(c => c.Code).IsUnique();
+            modelBuilder.Entity<Storeproduct>().HasIndex("StoreId", "ProductId").IsUnique();
         }
     }
 }

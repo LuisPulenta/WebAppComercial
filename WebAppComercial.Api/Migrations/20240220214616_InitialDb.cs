@@ -333,6 +333,26 @@ namespace WebAppComercial.Api.Migrations
                 });
 
             migrationBuilder.CreateTable(
+                name: "Barcodes",
+                columns: table => new
+                {
+                    Id = table.Column<int>(type: "int", nullable: false)
+                        .Annotation("SqlServer:Identity", "1, 1"),
+                    ProductId = table.Column<int>(type: "int", nullable: false),
+                    Code = table.Column<int>(type: "int", nullable: false)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_Barcodes", x => x.Id);
+                    table.ForeignKey(
+                        name: "FK_Barcodes_Products_ProductId",
+                        column: x => x.ProductId,
+                        principalTable: "Products",
+                        principalColumn: "Id",
+                        onDelete: ReferentialAction.Cascade);
+                });
+
+            migrationBuilder.CreateTable(
                 name: "ProductImages",
                 columns: table => new
                 {
@@ -348,6 +368,37 @@ namespace WebAppComercial.Api.Migrations
                         name: "FK_ProductImages_Products_ProductId",
                         column: x => x.ProductId,
                         principalTable: "Products",
+                        principalColumn: "Id",
+                        onDelete: ReferentialAction.Cascade);
+                });
+
+            migrationBuilder.CreateTable(
+                name: "Storeproducts",
+                columns: table => new
+                {
+                    Id = table.Column<int>(type: "int", nullable: false)
+                        .Annotation("SqlServer:Identity", "1, 1"),
+                    StoreId = table.Column<int>(type: "int", nullable: false),
+                    ProductId = table.Column<int>(type: "int", nullable: false),
+                    Stock = table.Column<double>(type: "float", nullable: false),
+                    Minimum = table.Column<double>(type: "float", nullable: false),
+                    Maximum = table.Column<double>(type: "float", nullable: false),
+                    Replacementdays = table.Column<int>(type: "int", nullable: false),
+                    Minimumquantity = table.Column<double>(type: "float", nullable: false)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_Storeproducts", x => x.Id);
+                    table.ForeignKey(
+                        name: "FK_Storeproducts_Products_ProductId",
+                        column: x => x.ProductId,
+                        principalTable: "Products",
+                        principalColumn: "Id",
+                        onDelete: ReferentialAction.Cascade);
+                    table.ForeignKey(
+                        name: "FK_Storeproducts_Stores_StoreId",
+                        column: x => x.StoreId,
+                        principalTable: "Stores",
                         principalColumn: "Id",
                         onDelete: ReferentialAction.Cascade);
                 });
@@ -390,6 +441,17 @@ namespace WebAppComercial.Api.Migrations
                 column: "NormalizedUserName",
                 unique: true,
                 filter: "[NormalizedUserName] IS NOT NULL");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_Barcodes_Code",
+                table: "Barcodes",
+                column: "Code",
+                unique: true);
+
+            migrationBuilder.CreateIndex(
+                name: "IX_Barcodes_ProductId",
+                table: "Barcodes",
+                column: "ProductId");
 
             migrationBuilder.CreateIndex(
                 name: "IX_Categories_Name",
@@ -459,6 +521,17 @@ namespace WebAppComercial.Api.Migrations
                 unique: true);
 
             migrationBuilder.CreateIndex(
+                name: "IX_Storeproducts_ProductId",
+                table: "Storeproducts",
+                column: "ProductId");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_Storeproducts_StoreId_ProductId",
+                table: "Storeproducts",
+                columns: new[] { "StoreId", "ProductId" },
+                unique: true);
+
+            migrationBuilder.CreateIndex(
                 name: "IX_Stores_Name",
                 table: "Stores",
                 column: "Name",
@@ -495,6 +568,9 @@ namespace WebAppComercial.Api.Migrations
                 name: "AspNetUserTokens");
 
             migrationBuilder.DropTable(
+                name: "Barcodes");
+
+            migrationBuilder.DropTable(
                 name: "Concepts");
 
             migrationBuilder.DropTable(
@@ -504,7 +580,7 @@ namespace WebAppComercial.Api.Migrations
                 name: "ProductImages");
 
             migrationBuilder.DropTable(
-                name: "Stores");
+                name: "Storeproducts");
 
             migrationBuilder.DropTable(
                 name: "Suppliers");
@@ -517,6 +593,9 @@ namespace WebAppComercial.Api.Migrations
 
             migrationBuilder.DropTable(
                 name: "Products");
+
+            migrationBuilder.DropTable(
+                name: "Stores");
 
             migrationBuilder.DropTable(
                 name: "DocumentTypes");
