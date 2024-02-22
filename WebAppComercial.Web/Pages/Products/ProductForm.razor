@@ -6,127 +6,155 @@
 <EditForm EditContext="editContext" OnValidSubmit="OnValidSubmit">
     <DataAnnotationsValidator />
 
+    <div class="container">
+        <div class="row">
+            <div class="col-7">
+                <div class="row g-3 align-items-center">
+                    <div class="col-2">
+                        <label class="col-form-label fw-bold">Nombre:</label>
+                    </div>
+                    <div class="col-10">
+                        <InputText class="form-control" @bind-Value="@ProductDTO.Name" />
+                        <ValidationMessage For="@(() => ProductDTO.Name)" />
+                    </div>
+                </div>
 
-    <div class="row g-3 align-items-center">
-        <div class="col-2">
-            <label class="col-form-label fw-bold">Nombre:</label>
-        </div>
-        <div class="col-10">
-            <InputText class="form-control" @bind-Value="@ProductDTO.Name" />
-            <ValidationMessage For="@(() => ProductDTO.Name)" />
-        </div>
-    </div>
+                <div class="row g-3 align-items-center">
+                    <div class="col-2">
+                        <label class="col-form-label fw-bold">Categoría:</label>
+                    </div>
+                    <div class="col-10">
+                        <select class="form-select" @bind="@ProductDTO.CategoryId">
+                            <option value="0">-- Seleccione una Categoría --</option>
+                            @if (categories is not null)
+                            {
+                                @foreach (var category in categories)
+                                {
+                                    <option value="@category.Id">@category.Name</option>
+                                }
+                            }
+                        </select>
+                        <ValidationMessage For="@(() => ProductDTO.CategoryId)" />
+                    </div>
+                </div>
 
-    <div class="row g-3 align-items-center">
-        <div class="col-2">
-            <label class="col-form-label fw-bold">Categoría:</label>
-        </div>
-        <div class="col-10">
-            <select class="form-select" @bind="@ProductDTO.CategoryId">
-                <option value="0">-- Seleccione una Categoría --</option>
-                @if (categories is not null)
-                {
-                    @foreach (var category in categories)
-                    {
-                        <option value="@category.Id">@category.Name</option>
-                    }
-                }
-            </select>
-            <ValidationMessage For="@(() => ProductDTO.CategoryId)" />
-        </div>
-    </div>
+                <div class="row g-3 align-items-center">
+                    <div class="col-2">
+                        <label class="col-form-label fw-bold">Unidad:</label>
+                    </div>
+                    <div class="col-10">
+                        <select class="form-select" @bind="@ProductDTO.MeasureId">
+                            <option value="0">-- Seleccione una Unidad --</option>
+                            @if (measures is not null)
+                            {
+                                @foreach (var measure in measures)
+                                {
+                                    <option value="@measure.Id">@measure.Name</option>
+                                }
+                            }
+                        </select>
+                        <ValidationMessage For="@(() => ProductDTO.MeasureId)" />
+                    </div>
+                </div>
 
-    <div class="row g-3 align-items-center">
-        <div class="col-2">
-            <label class="col-form-label fw-bold">Unidad:</label>
-        </div>
-        <div class="col-10">
-            <select class="form-select" @bind="@ProductDTO.MeasureId">
-                <option value="0">-- Seleccione una Unidad --</option>
-                @if (measures is not null)
-                {
-                    @foreach (var measure in measures)
-                    {
-                        <option value="@measure.Id">@measure.Name</option>
-                    }
-                }
-            </select>
-            <ValidationMessage For="@(() => ProductDTO.MeasureId)" />
-        </div>
-    </div>
+                <div class="row g-3 align-items-center">
+                    <div class="col-2">
+                        <label class="col-form-label fw-bold">Medida:</label>
+                    </div>
+                    <div class="col-10">
+                        <InputNumber class="form-control" @bind-Value="@ProductDTO.Quantity" />
+                        <ValidationMessage For="@(() => ProductDTO.Quantity)" />
+                    </div>
+                </div>
 
-    <div class="row g-3 align-items-center">
-        <div class="col-2">
-            <label class="col-form-label fw-bold">Medida:</label>
-        </div>
-        <div class="col-10">
-            <InputNumber class="form-control" @bind-Value="@ProductDTO.Quantity" />
-            <ValidationMessage For="@(() => ProductDTO.Quantity)" />
-        </div>
-    </div>
+                <div class="row g-3 align-items-center">
+                    <div class="col-2">
+                        <label class="col-form-label fw-bold">Precio:</label>
+                    </div>
+                    <div class="col-10">
+                        <InputNumber class="form-control" @bind-Value="@ProductDTO.Price" />
+                        <ValidationMessage For="@(() => ProductDTO.Price)" />
+                    </div>
+                </div>
 
-    <div class="row g-3 align-items-center">
-        <div class="col-2">
-            <label class="col-form-label fw-bold">Precio:</label>
-        </div>
-        <div class="col-10">
-            <InputNumber class="form-control" @bind-Value="@ProductDTO.Price" />
-            <ValidationMessage For="@(() => ProductDTO.Price)" />
-        </div>
-    </div>
+                <div class="row g-3 align-items-center">
+                    <div class="col-2">
+                        <label class="col-form-label fw-bold">Notas:</label>
+                    </div>
+                    <div class="col-10">
+                        <InputTextArea class="form-control" @bind-Value="@ProductDTO.Remarks" />
+                        <ValidationMessage For="@(() => ProductDTO.Remarks)" />
+                    </div>
+                </div>
 
-    <div class="row g-3 align-items-center">
-        <div class="col-2">
-            <label class="col-form-label fw-bold">Notas:</label>
-        </div>
-        <div class="col-10">
-            <InputTextArea class="form-control" @bind-Value="@ProductDTO.Remarks" />
-            <ValidationMessage For="@(() => ProductDTO.Remarks)" />
-        </div>
-    </div>
+                <div class="row g-3 align-items-center">
+                    <div class="col-2">
+                        <label class="col-form-label fw-bold">Imagen:</label>
+                    </div>
+                    <div class="col-10">
+                        <InputImg Label="" ImageSelected="ImageSelected" ImageURL="@imageUrl" />
+                    </div>
+                </div>
 
-    <div class="row g-3 align-items-center">
-            <div class="col-2">
-                <label class="col-form-label fw-bold">Imagen:</label>
+                <button class="btn btn-sm btn-outline-primary" type="submit">
+                    <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" fill="currentColor" class="bi bi-floppy-fill" viewBox="0 0 16 16">
+                        <path d="M0 1.5A1.5 1.5 0 0 1 1.5 0H3v5.5A1.5 1.5 0 0 0 4.5 7h7A1.5 1.5 0 0 0 13 5.5V0h.086a1.5 1.5 0 0 1 1.06.44l1.415 1.414A1.5 1.5 0 0 1 16 2.914V14.5a1.5 1.5 0 0 1-1.5 1.5H14v-5.5A1.5 1.5 0 0 0 12.5 9h-9A1.5 1.5 0 0 0 2 10.5V16h-.5A1.5 1.5 0 0 1 0 14.5z" />
+                        <path d="M3 16h10v-5.5a.5.5 0 0 0-.5-.5h-9a.5.5 0 0 0-.5.5zm9-16H4v5.5a.5.5 0 0 0 .5.5h7a.5.5 0 0 0 .5-.5zM9 1h2v4H9z" />
+                    </svg>
+                    Guardar Cambios
+                </button>
+                <button class="btn btn-sm btn-outline-success" @onclick="ReturnAction">
+                    <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-arrow-left-circle-fill" viewBox="0 0 16 16">
+                        <path d="M8 0a8 8 0 1 0 0 16A8 8 0 0 0 8 0m3.5 7.5a.5.5 0 0 1 0 1H5.707l2.147 2.146a.5.5 0 0 1-.708.708l-3-3a.5.5 0 0 1 0-.708l3-3a.5.5 0 1 1 .708.708L5.707 7.5z" />
+                    </svg>
+                    Regresar
+                </button>
+
             </div>
-            <div class="col-10">
-                <InputImg Label="" ImageSelected="ImageSelected" ImageURL="@imageUrl" />
+
+
+            <div class="col-5">
+                @if (IsEdit)
+                {
+                    <div class="mb-3 fw-bold">
+                        <InputImg Label="Galería de Imágenes" ImageSelected="ImageSelected2" ImageURL="@imageUrl2" />
+                    </div>
+                    <div class="mb-3">
+                        <button type="button" class="btn btn-outline-primary" @onclick="AddImageAction"><i class="oi oi-plus" /> Agregar imagen</button>
+                        <button type="button" class="btn btn-outline-danger" @onclick="RemoveImageAction"><i class="oi oi-trash" /> Eliminar última imagen</button>
+                    </div>
+                }
+
+                @if (IsEdit && ProductDTO.ProductImages is not null)
+                {
+                    <CarouselView Images="ProductDTO.ProductImages" />
+                }
+
+                <div class="container">
+                    <div class="row">
+                        <div class="col-12">
+                            <p>Códigos de Barras</p>
+                        </div>
+                    </div>
+                </div>
+
+
             </div>
+        </div>
+
+      
+
+        <div class="container">
+            <div class="row">
+                <div class="col-12">
+                    <p>Parámetros de Almacenes</p>
+                </div>
+            </div>
+        </div>
     </div>
-    
-    
-
-    @if (IsEdit)
-    {
-        <div class="mb-3 fw-bold">
-            <InputImg Label="Galería de Imágenes" ImageSelected="ImageSelected2" ImageURL="@imageUrl2" />
-        </div>
-        <div class="mb-3">
-            <button type="button" class="btn btn-outline-primary" @onclick="AddImageAction"><i class="oi oi-plus" /> Agregar imagen</button>
-            <button type="button" class="btn btn-outline-danger" @onclick="RemoveImageAction"><i class="oi oi-trash" /> Eliminar última imagen</button>
-        </div>
-    }
-
-
-    <button class="btn btn-sm btn-outline-primary" type="submit">
-        <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" fill="currentColor" class="bi bi-floppy-fill" viewBox="0 0 16 16">
-            <path d="M0 1.5A1.5 1.5 0 0 1 1.5 0H3v5.5A1.5 1.5 0 0 0 4.5 7h7A1.5 1.5 0 0 0 13 5.5V0h.086a1.5 1.5 0 0 1 1.06.44l1.415 1.414A1.5 1.5 0 0 1 16 2.914V14.5a1.5 1.5 0 0 1-1.5 1.5H14v-5.5A1.5 1.5 0 0 0 12.5 9h-9A1.5 1.5 0 0 0 2 10.5V16h-.5A1.5 1.5 0 0 1 0 14.5z" />
-            <path d="M3 16h10v-5.5a.5.5 0 0 0-.5-.5h-9a.5.5 0 0 0-.5.5zm9-16H4v5.5a.5.5 0 0 0 .5.5h7a.5.5 0 0 0 .5-.5zM9 1h2v4H9z" />
-        </svg>
-        Guardar Cambios
-    </button>
-    <button class="btn btn-sm btn-outline-success" @onclick="ReturnAction">
-        <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-arrow-left-circle-fill" viewBox="0 0 16 16">
-            <path d="M8 0a8 8 0 1 0 0 16A8 8 0 0 0 8 0m3.5 7.5a.5.5 0 0 1 0 1H5.707l2.147 2.146a.5.5 0 0 1-.708.708l-3-3a.5.5 0 0 1 0-.708l3-3a.5.5 0 1 1 .708.708L5.707 7.5z" />
-        </svg>
-        Regresar
-    </button>
+       
 </EditForm>
 
-@if (IsEdit && ProductDTO.ProductImages is not null)
-{
-    <CarouselView Images="ProductDTO.ProductImages" />
-}
 
 
 @code {

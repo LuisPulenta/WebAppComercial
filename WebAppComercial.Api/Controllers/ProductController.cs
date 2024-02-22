@@ -35,7 +35,7 @@ namespace WebAppComercial.Api.Controllers
 
             if (!string.IsNullOrWhiteSpace(pagination.Filter))
             {
-                queryable = queryable.Where(x => 
+                queryable = queryable.Where(x =>
                 x.Name.ToLower().Contains(pagination.Filter.ToLower())
                 || x.Category!.Name.ToLower().Contains(pagination.Filter.ToLower())
                 );
@@ -57,12 +57,12 @@ namespace WebAppComercial.Api.Controllers
                 .AsQueryable();
             if (!string.IsNullOrWhiteSpace(pagination.Filter))
             {
-                queryable = queryable.Where(x => 
+                queryable = queryable.Where(x =>
                 x.Name.ToLower().Contains(pagination.Filter.ToLower())
                 || x.Category!.Name.ToLower().Contains(pagination.Filter.ToLower())
                 );
             }
-                        
+
             return Ok(await queryable
                 .OrderBy(x => x.Category!.Name)
                 .ThenBy(x => x.Name)
@@ -78,7 +78,7 @@ namespace WebAppComercial.Api.Controllers
                 .AsQueryable();
             if (!string.IsNullOrWhiteSpace(pagination.Filter))
             {
-                queryable = queryable.Where(x => 
+                queryable = queryable.Where(x =>
                 x.Name.ToLower().Contains(pagination.Filter.ToLower())
                 || x.Category!.Name.ToLower().Contains(pagination.Filter.ToLower())
                 );
@@ -98,7 +98,7 @@ namespace WebAppComercial.Api.Controllers
                 .AsQueryable();
             if (!string.IsNullOrWhiteSpace(pagination.Filter))
             {
-                queryable = queryable.Where(x => 
+                queryable = queryable.Where(x =>
                 x.Name.ToLower().Contains(pagination.Filter.ToLower())
                 || x.Category!.Name.ToLower().Contains(pagination.Filter.ToLower())
                 );
@@ -157,7 +157,7 @@ namespace WebAppComercial.Api.Controllers
                     Remarks = productDTO.Remarks,
                     Image = productDTO.Image,
                     MeasureId = productDTO.MeasureId,
-                    Unit=productDTO.Unit,
+                    Unit = productDTO.Unit,
                     Quantity = (decimal)productDTO.Quantity!,
                     ProductImages = new List<ProductImage>()
                 };
@@ -165,7 +165,7 @@ namespace WebAppComercial.Api.Controllers
                 _context.Add(newProduct);
                 await _context.SaveChangesAsync();
                 return Ok(productDTO);
-        }
+            }
             catch (DbUpdateException dbUpdateException)
             {
                 if (dbUpdateException.InnerException!.Message.Contains("duplica"))
@@ -251,7 +251,7 @@ namespace WebAppComercial.Api.Controllers
                 product.CategoryId = productDTO.CategoryId;
                 product.Unit = measure!.Unit;
                 product.MeasureId = productDTO.MeasureId;
-                
+
                 _context.Update(product);
                 await _context.SaveChangesAsync();
                 return Ok(productDTO);
@@ -293,7 +293,7 @@ namespace WebAppComercial.Api.Controllers
         {
 
             ProductImage productImage = new ProductImage();
-            productImage.ProductId=imageDTO.ProductId;
+            productImage.ProductId = imageDTO.ProductId;
 
             var product = await _context.Products
                 .Include(x => x.ProductImages)
@@ -302,30 +302,30 @@ namespace WebAppComercial.Api.Controllers
             {
                 return NotFound();
             }
-               
-                    //Foto
-                    string imageUrl = string.Empty;
-                    if (imageDTO.Image != null)
-                    {
-                        imageUrl = string.Empty;
-                        byte[] imageArray = Convert.FromBase64String(imageDTO.Image);
-                        var stream = new MemoryStream(imageArray);
-                        var guid = Guid.NewGuid().ToString();
-                        var file = $"{guid}.jpg";
-                        var folder = "wwwroot\\images\\products";
-                        var fullPath = $"~/images/products/{file}";
-                        var response = _filesHelper.UploadPhoto(stream, folder, file);
 
-                        if (response)
-                        {
-                            productImage.Image = fullPath;
-                            _context.ProductImages.Add(productImage);
-                            await _context.SaveChangesAsync();
-                        }
-                    }
+            //Foto
+            string imageUrl = string.Empty;
+            if (imageDTO.Image != null)
+            {
+                imageUrl = string.Empty;
+                byte[] imageArray = Convert.FromBase64String(imageDTO.Image);
+                var stream = new MemoryStream(imageArray);
+                var guid = Guid.NewGuid().ToString();
+                var file = $"{guid}.jpg";
+                var folder = "wwwroot\\images\\products";
+                var fullPath = $"~/images/products/{file}";
+                var response = _filesHelper.UploadPhoto(stream, folder, file);
+
+                if (response)
+                {
+                    productImage.Image = fullPath;
+                    _context.ProductImages.Add(productImage);
+                    await _context.SaveChangesAsync();
+                }
+            }
             return Ok(imageDTO);
         }
-        
+
         //---------------------------------------------------------------------------------------
         [HttpPost("removeLastImage")]
         public async Task<ActionResult> PostRemoveLastImageAsync(ImageDTO imageDTO)
