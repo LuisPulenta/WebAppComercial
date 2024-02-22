@@ -1,0 +1,78 @@
+﻿@* @page "/barcodes/create/{ProductId:int}" *@
+@page "/barcodes/create"
+@attribute [Authorize(Roles = "Admin")]
+@inject IRepository repository
+@inject NavigationManager navigationManager
+@inject SweetAlertService swal
+
+<h3>Crear Código de Barras</h3>
+
+<BarcodeForm @ref="barcodeForm" BarcodeDTO="barcodeDTO" OnValidSubmit="CreateAsync" ReturnAction="Return" />
+
+@code {
+    private Product? product;
+    private BarcodeDTO barcodeDTO = new();
+    private BarcodeForm? barcodeForm;
+
+    [CascadingParameter]
+    BlazoredModalInstance BlazoredModal { get; set; } = default!;
+
+    [Parameter]
+    public int ProductId { get; set; }
+
+    protected override async Task OnInitializedAsync()
+    {
+        var responseHttp = await repository.Get<Product>($"/api/products/{ProductId}");
+        if (responseHttp.Error)
+        {
+            if (responseHttp.HttpResponseMessage.StatusCode == HttpStatusCode.NotFound)
+            {
+                navigationManager.NavigateTo($"/products/edit/{ProductId}");
+                return;
+            }
+
+            var message = await responseHttp.GetErrorMessage();
+            await swal.FireAsync("Error", message, SweetAlertIcon.Error);
+            return;
+        }
+
+        product = responseHttp.Response;
+        var a = 1;
+    }
+
+    private async Task CreateAsync()
+    {
+        barcodeDTO.ProductId = ProductId;
+
+        if (barcodeDTO.Code<1000000)
+        {
+            await swal.FireAsync("Error", "El Código debe ser de al menos 7 cifras.", SweetAlertIcon.Error);
+            return;            
+        }
+
+
+        var httpResponse = await repository.Post("/api/barcodes", barcodeDTO);
+        if (httpResponse.Error)
+        {
+            var message = await httpResponse.GetErrorMessage();
+            await swal.FireAsync("Error", message, SweetAlertIcon.Error);
+            return;
+        }
+        var toast = swal.Mixin(new SweetAlertOptions
+            {
+                Toast = true,
+                Position = SweetAlertPosition.Center,
+                ShowConfirmButton = true,
+                Timer = 3000
+            });
+        await toast.FireAsync(icon: SweetAlertIcon.Success, message: "Código de Barra creado con éxito.");
+        await BlazoredModal.CloseAsync(ModalResult.Ok());
+        Return();
+    }
+
+    private void Return()
+    {
+        //barcodeForm!.FormPostedSuccessfully = true;
+        navigationManager.NavigateTo($"/products/edit/{ProductId}");
+    }
+}

@@ -1,8 +1,10 @@
-﻿using Microsoft.AspNetCore.Authentication.JwtBearer;
+﻿using DocumentFormat.OpenXml.Presentation;
+using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using WebAppComercial.Api.Data;
+using WebAppComercial.Shared.DTOs;
 using WebAppComercial.Shared.Entities;
 
 namespace WebAppComercial.Api.Controllers
@@ -34,13 +36,22 @@ namespace WebAppComercial.Api.Controllers
        
         //---------------------------------------------------------------------------------------
         [HttpPost]
-        public async Task<ActionResult> PostAsync(Barcode barcode)
+        public async Task<ActionResult> PostAsync(BarcodeDTO barcode)
         {
-            _context.Add(barcode);
             try
             {
+                Product? product = await _context.Products!.FindAsync(barcode.ProductId);
+
+                Barcode newBarcode = new()
+                {
+                    Id = barcode.Id,
+                    Code=barcode.Code,
+                    Product=product!,
+                    ProductId=barcode.ProductId,
+                };
+                _context.Add(newBarcode);
                 await _context.SaveChangesAsync();
-                return Ok(barcode);
+                return Ok(newBarcode);
             }
             catch (DbUpdateException dbUpdateException)
             {

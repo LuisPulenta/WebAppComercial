@@ -140,10 +140,8 @@
                                     <thead>
                                         <tr>
                                             <th>Códigos de Barra</th>
-
-                                            @* @onclick=@(() => ShowModal()) *@
                                             <th>
-                                                <a class="btn btn-sm btn-outline-primary float-end" >
+                                                <a class="btn btn-sm btn-outline-primary float-end" @onclick=@(() => ShowModal(ProductDTO.Id))>
                                                     <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" fill="currentColor" class="bi bi-plus-circle-fill" viewBox="0 0 16 16">
                                                         <path d="M16 8A8 8 0 1 1 0 8a8 8 0 0 1 16 0M8.5 4.5a.5.5 0 0 0-1 0v3h-3a.5.5 0 0 0 0 1h3v3a.5.5 0 0 0 1 0v-3h3a.5.5 0 0 0 0-1h-3z" />
                                                     </svg>
@@ -169,9 +167,8 @@
                                     <thead>
                                         <tr>
                                             <th>Códigos de Barra</th>
-                                            @* @onclick=@(() => ShowModal()) *@
                                             <th>
-                                                <a class="btn btn-sm btn-outline-primary float-end">
+                                                <a class="btn btn-sm btn-outline-primary float-end" @onclick=@(() => ShowModal(ProductDTO.Id))>
                                                     <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" fill="currentColor" class="bi bi-plus-circle-fill" viewBox="0 0 16 16">
                                                         <path d="M16 8A8 8 0 1 1 0 8a8 8 0 0 1 16 0M8.5 4.5a.5.5 0 0 0-1 0v3h-3a.5.5 0 0 0 0 1h3v3a.5.5 0 0 0 1 0v-3h3a.5.5 0 0 0 0-1h-3z" />
                                                     </svg>
@@ -337,6 +334,9 @@
     private string? imageUrl;
     private string? imageUrl2;
 
+    [CascadingParameter]
+    IModalService Modal { get; set; } = default!;
+
     [Parameter]
     public bool IsEdit { get; set; } = false;
 
@@ -467,22 +467,23 @@
 
     private async Task DeleteBarCodeAsync(int id)
     {
-        var result2 = await swal.FireAsync(new SweetAlertOptions
-            {
-                Title = "Confirmación",
-                Text = "¿Realmente deseas eliminar el registro?",
-                Icon = SweetAlertIcon.Question,
-                ShowCancelButton = true,
-                CancelButtonText = "No",
-                ConfirmButtonText = "Si"
-            });
+        // var result = await swal.FireAsync(new SweetAlertOptions
+        //     {
+        //         Title = "Confirmación",
+        //         Text = "¿Realmente deseas eliminar el registro?",
+        //         Icon = SweetAlertIcon.Question,
+        //         ShowCancelButton = true,
+        //         CancelButtonText = "No",
+        //         ConfirmButtonText = "Si"
+        //     });
 
-        var confirm2 = string.IsNullOrEmpty(result2.Value);
+        
+        // var confirm2 = string.IsNullOrEmpty(result.Value);
 
-        if (confirm2)
-        {
-            return;
-        }
+        // if (confirm2)
+        // {
+        //     return;
+        // }
 
         var responseHttp = await repository.Delete($"/api/barcodes/{id}");
 
@@ -504,5 +505,17 @@
             });
         await LoadBarcodesAsync();
         await toast.FireAsync(icon: SweetAlertIcon.Success, message: "Código de Barra eliminado con éxito.");
+    }
+
+    private async Task ShowModal(int id)
+    {
+        IModalReference modalReference;
+        modalReference = Modal.Show<BarcodeCreate>(string.Empty, new ModalParameters().Add("ProductId", id));
+        
+        var result = await modalReference.Result;
+        if (result.Confirmed)
+        {
+            await LoadBarcodesAsync();
+        }
     }
 }
