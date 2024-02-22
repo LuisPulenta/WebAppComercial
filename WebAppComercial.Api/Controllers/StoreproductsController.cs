@@ -20,17 +20,17 @@ namespace WebAppComercial.Api.Controllers
         }
 
         //---------------------------------------------------------------------------------------
-        [HttpGet]
-        public async Task<IActionResult> GetAsync(int storeid, int productid)
+        [HttpGet("{productid:int}")]
+        public async Task<IActionResult> GetAsync(int productid)
         {
             var queryable = _context.Storeproducts
+                .Include(x => x.Store!)
                 .AsQueryable();
-            queryable = queryable.Where(x => x.StoreId == storeid && x.ProductId == productid);
+            queryable = queryable.Where(x => x.ProductId == productid);
             return Ok(await queryable
                 .OrderBy(x => x.StoreId)
                 .ToListAsync());
         }
-
 
         //---------------------------------------------------------------------------------------
         [HttpPost]

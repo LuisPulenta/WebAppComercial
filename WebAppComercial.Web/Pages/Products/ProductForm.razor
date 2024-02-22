@@ -125,7 +125,7 @@
                     </div>
                 }
 
-                @if (IsEdit && ProductDTO.ProductImages is not null)
+                @if (IsEdit && ProductDTO.ProductImages.Count>0)
                 {
                     <CarouselView Images="ProductDTO.ProductImages" />
                 }
@@ -133,7 +133,80 @@
                 <div class="container">
                     <div class="row">
                         <div class="col-12">
-                            <p>Códigos de Barras</p>
+
+                            @if (barcodes is null || barcodes.Count == 0)
+                            {
+                                <table class="table table-sm table-info table-striped">
+                                    <thead>
+                                        <tr>
+                                            <th>Códigos de Barra</th>
+
+                                            @* @onclick=@(() => ShowModal()) *@
+                                            <th>
+                                                <a class="btn btn-sm btn-outline-primary float-end" >
+                                                    <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" fill="currentColor" class="bi bi-plus-circle-fill" viewBox="0 0 16 16">
+                                                        <path d="M16 8A8 8 0 1 1 0 8a8 8 0 0 1 16 0M8.5 4.5a.5.5 0 0 0-1 0v3h-3a.5.5 0 0 0 0 1h3v3a.5.5 0 0 0 1 0v-3h3a.5.5 0 0 0 0-1h-3z" />
+                                                    </svg>
+                                                    Nuevo
+                                                </a>
+                                            </th>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                        <tr>
+                                            <td>
+                                                Este producto no tiene Códigos de Barra
+                                            </td>
+                                            <td>
+                                            </td>
+                                        </tr>
+                                    </tbody>
+                                </table>
+                            }
+                            else
+                            {
+                                <table class="table table-sm table-info table-striped">
+                                    <thead>
+                                        <tr>
+                                            <th>Códigos de Barra</th>
+                                            @* @onclick=@(() => ShowModal()) *@
+                                            <th>
+                                                <a class="btn btn-sm btn-outline-primary float-end">
+                                                    <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" fill="currentColor" class="bi bi-plus-circle-fill" viewBox="0 0 16 16">
+                                                        <path d="M16 8A8 8 0 1 1 0 8a8 8 0 0 1 16 0M8.5 4.5a.5.5 0 0 0-1 0v3h-3a.5.5 0 0 0 0 1h3v3a.5.5 0 0 0 1 0v-3h3a.5.5 0 0 0 0-1h-3z" />
+                                                    </svg>
+                                                    Nuevo
+                                                </a>
+                                            </th>
+                                        </tr>
+                                    </thead>
+                                    <thead>
+                                        <tr>
+                                            <th>Código</th>
+                                            <th style="width:60px"></th>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                        @foreach (var barcode in barcodes!)
+                                        {
+                                            <tr>
+                                                <td>
+                                                    @barcode.Code
+                                                </td>
+                                                <td>
+                                                    <button class="btn btn-danger btn-sm" @onclick=@(() => DeleteBarCodeAsync(barcode.Code))>
+                                                        <i class="bi bi-trash3-fill" />
+                                                        <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" fill="white" class="bi bi-trash3-fill" viewBox="0 0 16 16">
+                                                            <path d="M11 1.5v1h3.5a.5.5 0 0 1 0 1h-.538l-.853 10.66A2 2 0 0 1 11.115 16h-6.23a2 2 0 0 1-1.994-1.84L2.038 3.5H1.5a.5.5 0 0 1 0-1H5v-1A1.5 1.5 0 0 1 6.5 0h3A1.5 1.5 0 0 1 11 1.5m-5 0v1h4v-1a.5.5 0 0 0-.5-.5h-3a.5.5 0 0 0-.5.5M4.5 5.029l.5 8.5a.5.5 0 1 0 .998-.06l-.5-8.5a.5.5 0 1 0-.998.06m6.53-.528a.5.5 0 0 0-.528.47l-.5 8.5a.5.5 0 0 0 .998.058l.5-8.5a.5.5 0 0 0-.47-.528M8 4.5a.5.5 0 0 0-.5.5v8.5a.5.5 0 0 0 1 0V5a.5.5 0 0 0-.5-.5" />
+                                                        </svg>
+                                                    </button>
+                                                </td>
+                                            </tr>
+                                        }
+                                    </tbody>
+                                </table>
+                            }
+                            
                         </div>
                     </div>
                 </div>
@@ -141,13 +214,111 @@
 
             </div>
         </div>
-
-      
+             
 
         <div class="container">
             <div class="row">
                 <div class="col-12">
-                    <p>Parámetros de Almacenes</p>
+                    @if (storeproducts is null || storeproducts.Count==0)
+                    {
+                        <table class="table table-sm table-info table-striped">
+                            <thead>
+                                <tr>
+                                    <th>Parámetros de Almacén</th>
+                                    @* @onclick=@(() => ShowModal()) *@
+                                    <th>
+                                        <a class="btn btn-sm btn-outline-primary float-end">
+                                            <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" fill="currentColor" class="bi bi-plus-circle-fill" viewBox="0 0 16 16">
+                                                <path d="M16 8A8 8 0 1 1 0 8a8 8 0 0 1 16 0M8.5 4.5a.5.5 0 0 0-1 0v3h-3a.5.5 0 0 0 0 1h3v3a.5.5 0 0 0 1 0v-3h3a.5.5 0 0 0 0-1h-3z" />
+                                            </svg>
+                                            Nuevo
+                                        </a>
+                                    </th>
+                                </tr>
+
+                            </thead>
+
+                            <tbody>
+                                <tr>
+                                    <td>
+                                        Este producto no tiene Parámetros de Almacén
+                                    </td>
+                                    <td>
+                                    </td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    }
+                    else
+                    {
+                        <table class="table table-sm table-info table-striped">
+                            <thead>
+                                <tr>
+                                    <th>Parámetros de Almacén</th>
+                                    <th></th>
+                                    <th></th>
+                                    <th></th>
+                                    <th></th>
+                                    <th></th>
+                                    @* @onclick=@(() => ShowModal()) *@
+                                    <th>
+                                        <a class="btn btn-sm btn-outline-primary float-end">
+                                            <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" fill="currentColor" class="bi bi-plus-circle-fill" viewBox="0 0 16 16">
+                                                <path d="M16 8A8 8 0 1 1 0 8a8 8 0 0 1 16 0M8.5 4.5a.5.5 0 0 0-1 0v3h-3a.5.5 0 0 0 0 1h3v3a.5.5 0 0 0 1 0v-3h3a.5.5 0 0 0 0-1h-3z" />
+                                            </svg>
+                                            Nuevo
+                                        </a>
+                                    </th>
+                                </tr>
+                            </thead>
+                            <thead>
+                                <tr>
+                                    <th>Almacén</th>
+                                    <th>Stock</th>
+                                    <th>Mínimo</th>
+                                    <th>Máximo</th>
+                                    <th>Días Repos.</th>
+                                    <th>Cant. Mín. a Ord.</th>
+                                    <th style="width:60px"></th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                @foreach (var storeproduct in storeproducts!)
+                                {
+                                    <tr>
+                                        <td>
+                                            @storeproduct.Store.Name
+                                        </td>
+                                        <td>
+                                            @storeproduct.Stock
+                                        </td>
+                                        <td>
+                                            @storeproduct.Minimum
+                                        </td>
+                                        <td>
+                                            @storeproduct.Maximum
+                                        </td>
+                                        <td>
+                                            @storeproduct.Replacementdays
+                                        </td>
+                                        <td>
+                                            @storeproduct.Minimumquantity
+                                        </td>
+                                        <td>
+                                            @* @onclick=@(() => ShowModal(category.Id, true)) *@
+                                            <a  class="btn btn-sm btn-warning btn-sm">
+                                                <i class="bi bi-pencil-square" />
+                                                <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" fill="white" class="bi bi-pencil-square" viewBox="0 0 16 16">
+                                                    <path d="M15.502 1.94a.5.5 0 0 1 0 .706L14.459 3.69l-2-2L13.502.646a.5.5 0 0 1 .707 0l1.293 1.293zm-1.75 2.456-2-2L4.939 9.21a.5.5 0 0 0-.121.196l-.805 2.414a.25.25 0 0 0 .316.316l2.414-.805a.5.5 0 0 0 .196-.12l6.813-6.814z" />
+                                                    <path fill-rule="evenodd" d="M1 13.5A1.5 1.5 0 0 0 2.5 15h11a1.5 1.5 0 0 0 1.5-1.5v-6a.5.5 0 0 0-1 0v6a.5.5 0 0 1-.5.5h-11a.5.5 0 0 1-.5-.5v-11a.5.5 0 0 1 .5-.5H9a.5.5 0 0 0 0-1H2.5A1.5 1.5 0 0 0 1 2.5z" />
+                                                </svg>
+                                            </a>
+                                        </td>
+                                    </tr>
+                                }
+                            </tbody>
+                        </table>
+                    }
                 </div>
             </div>
         </div>
@@ -161,6 +332,8 @@
     private EditContext editContext = null!;
     private List<Category>? categories;
     private List<Measure>? measures;
+    private List<Barcode>? barcodes;
+    private List<Storeproduct>? storeproducts;
     private string? imageUrl;
     private string? imageUrl2;
 
@@ -213,6 +386,8 @@
     {
         await LoadCategoriesAsync();
         await LoadMeasuresAsync();
+        await LoadBarcodesAsync();
+        await LoadStoreproductsAsync();
     }
 
     private async Task LoadCategoriesAsync()
@@ -237,6 +412,30 @@
             return;
         }
         measures = responseHttp.Response;
+    }
+
+    private async Task LoadBarcodesAsync()
+    {
+        var responseHttp = await repository.Get<List<Barcode>>($"/api/barcodes/{ProductDTO.Id}");
+        if (responseHttp.Error)
+        {
+            var message = await responseHttp.GetErrorMessage();
+            await swal.FireAsync("Error", message, SweetAlertIcon.Error);
+            return;
+        }
+        barcodes = responseHttp.Response;
+    }
+
+    private async Task LoadStoreproductsAsync()
+    {
+        var responseHttp = await repository.Get<List<Storeproduct>>($"/api/storeproducts/{ProductDTO.Id}");
+        if (responseHttp.Error)
+        {
+            var message = await responseHttp.GetErrorMessage();
+            await swal.FireAsync("Error", message, SweetAlertIcon.Error);
+            return;
+        }
+        storeproducts = responseHttp.Response;
     }
 
     private async Task OnBeforeInternalNavigation(LocationChangingContext context)
@@ -264,5 +463,46 @@
             return;
         }
         context.PreventNavigation();
+    }
+
+    private async Task DeleteBarCodeAsync(int id)
+    {
+        var result2 = await swal.FireAsync(new SweetAlertOptions
+            {
+                Title = "Confirmación",
+                Text = "¿Realmente deseas eliminar el registro?",
+                Icon = SweetAlertIcon.Question,
+                ShowCancelButton = true,
+                CancelButtonText = "No",
+                ConfirmButtonText = "Si"
+            });
+
+        var confirm2 = string.IsNullOrEmpty(result2.Value);
+
+        if (confirm2)
+        {
+            return;
+        }
+
+        var responseHttp = await repository.Delete($"/api/barcodes/{id}");
+
+        if (responseHttp.Error)
+        {
+            if (responseHttp.HttpResponseMessage.StatusCode != HttpStatusCode.NotFound)
+            {
+                var message = await responseHttp.GetErrorMessage();
+                await swal.FireAsync("Error", message, SweetAlertIcon.Error);
+                return;
+            }
+        }
+        var toast = swal.Mixin(new SweetAlertOptions
+            {
+                Toast = true,
+                Position = SweetAlertPosition.Center,
+                ShowConfirmButton = true,
+                Timer = 3000
+            });
+        await LoadBarcodesAsync();
+        await toast.FireAsync(icon: SweetAlertIcon.Success, message: "Código de Barra eliminado con éxito.");
     }
 }

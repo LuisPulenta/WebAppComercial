@@ -20,7 +20,7 @@ namespace WebAppComercial.Api.Controllers
         }
 
         //---------------------------------------------------------------------------------------
-        [HttpGet]
+        [HttpGet("{productid:int}")]
         public async Task<IActionResult> GetAsync(int productid)
         {
             var queryable = _context.Barcodes
