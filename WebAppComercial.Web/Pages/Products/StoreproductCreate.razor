@@ -1,0 +1,70 @@
+﻿@page "/storeproduct/create"
+@attribute [Authorize(Roles = "Admin")]
+@inject IRepository repository
+@inject NavigationManager navigationManager
+@inject SweetAlertService swal
+
+<h3>Crear Parámetro de Almacén</h3>
+
+<StoreproductForm @ref="storeproductForm" StoreproductDTO="storeproductDTO" OnValidSubmit="CreateAsync" ReturnAction="Return" />
+
+@code {
+    private Product? product;
+    private StoreproductDTO storeproductDTO = new();
+    private StoreproductForm? storeproductForm;
+
+    [CascadingParameter]
+    BlazoredModalInstance BlazoredModal { get; set; } = default!;
+
+    [Parameter]
+    public int ProductId { get; set; }
+
+    protected override async Task OnInitializedAsync()
+    {
+        var responseHttp = await repository.Get<Product>($"/api/products/{ProductId}");
+        if (responseHttp.Error)
+        {
+            if (responseHttp.HttpResponseMessage.StatusCode == HttpStatusCode.NotFound)
+            {
+                navigationManager.NavigateTo($"/products/edit/{ProductId}");
+                return;
+            }
+
+            var message = await responseHttp.GetErrorMessage();
+            await swal.FireAsync("Error", message, SweetAlertIcon.Error);
+            return;
+        }
+
+        product = responseHttp.Response;
+        var a = 1;
+    }
+
+    private async Task CreateAsync()
+    {
+        storeproductDTO.ProductId = ProductId;
+
+
+        var httpResponse = await repository.Post("/api/storeproducts", storeproductDTO);
+        if (httpResponse.Error)
+        {
+            var message = await httpResponse.GetErrorMessage();
+            await swal.FireAsync("Error", message, SweetAlertIcon.Error);
+            return;
+        }
+        var toast = swal.Mixin(new SweetAlertOptions
+            {
+                Toast = true,
+                Position = SweetAlertPosition.Center,
+                ShowConfirmButton = true,
+                Timer = 3000
+            });
+        await toast.FireAsync(icon: SweetAlertIcon.Success, message: "Parámetro de Almacén creado con éxito.");
+        await BlazoredModal.CloseAsync(ModalResult.Ok());
+        Return();
+    }
+
+    private void Return()
+    {
+        navigationManager.NavigateTo($"/products/edit/{ProductId}");
+    }
+}

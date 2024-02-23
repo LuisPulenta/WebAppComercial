@@ -1,16 +1,12 @@
 ﻿using System.ComponentModel.DataAnnotations;
 
-namespace WebAppComercial.Shared.Entities
+namespace WebAppComercial.Shared.DTOs
 {
-    public class Storeproduct
+    public class StoreproductDTO
     {
         public int Id { get; set; }
 
-        public Store Store { get; set; } = null!;
-            
         public int StoreId { get; set; }
-
-        public Product Product { get; set; } = null!;
 
         public int ProductId { get; set; }
 

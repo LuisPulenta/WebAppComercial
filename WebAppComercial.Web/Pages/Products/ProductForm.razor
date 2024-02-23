@@ -224,7 +224,7 @@
                                     <th>Parámetros de Almacén</th>
                                     @* @onclick=@(() => ShowModal()) *@
                                     <th>
-                                        <a class="btn btn-sm btn-outline-primary float-end">
+                                        <a @onclick=@(() => ShowModal2(ProductDTO.Id)) class="btn btn-sm btn-outline-primary float-end">
                                             <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" fill="currentColor" class="bi bi-plus-circle-fill" viewBox="0 0 16 16">
                                                 <path d="M16 8A8 8 0 1 1 0 8a8 8 0 0 1 16 0M8.5 4.5a.5.5 0 0 0-1 0v3h-3a.5.5 0 0 0 0 1h3v3a.5.5 0 0 0 1 0v-3h3a.5.5 0 0 0 0-1h-3z" />
                                             </svg>
@@ -259,7 +259,7 @@
                                     <th></th>
                                     @* @onclick=@(() => ShowModal()) *@
                                     <th>
-                                        <a class="btn btn-sm btn-outline-primary float-end">
+                                        <a @onclick=@(() => ShowModal2(ProductDTO.Id)) class="btn btn-sm btn-outline-primary float-end">
                                             <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" fill="currentColor" class="bi bi-plus-circle-fill" viewBox="0 0 16 16">
                                                 <path d="M16 8A8 8 0 1 1 0 8a8 8 0 0 1 16 0M8.5 4.5a.5.5 0 0 0-1 0v3h-3a.5.5 0 0 0 0 1h3v3a.5.5 0 0 0 1 0v-3h3a.5.5 0 0 0 0-1h-3z" />
                                             </svg>
@@ -516,6 +516,26 @@
         if (result.Confirmed)
         {
             await LoadBarcodesAsync();
+        }
+    }
+
+    private async Task ShowModal2(int id = 0, bool isEdit = false)
+    {
+        IModalReference modalReference;
+
+        if (isEdit)
+        {
+            modalReference = Modal.Show<StoreproductCreate>(string.Empty, new ModalParameters().Add("ProductId", id));
+        }
+        else
+        {
+            modalReference = Modal.Show<StoreproductCreate>(string.Empty, new ModalParameters().Add("ProductId", id));
+        }
+
+        var result = await modalReference.Result;
+        if (result.Confirmed)
+        {
+            await LoadStoreproductsAsync();
         }
     }
 }

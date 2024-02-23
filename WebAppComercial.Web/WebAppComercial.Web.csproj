@@ -21,4 +21,10 @@
     <ProjectReference Include="..\WebAppComercial.Shared\WebAppComercial.Shared.csproj" />
   </ItemGroup>
 
+  <ItemGroup>
+    <Content Update="Pages\Products\StoreproductForm.razor">
+      <ExcludeFromSingleFile>true</ExcludeFromSingleFile>
+    </Content>
+  </ItemGroup>
+
 </Project>
