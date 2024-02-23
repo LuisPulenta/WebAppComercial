@@ -3,6 +3,7 @@ using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using WebAppComercial.Api.Data;
+using WebAppComercial.Shared.DTOs;
 using WebAppComercial.Shared.Entities;
 
 namespace WebAppComercial.Api.Controllers
@@ -34,24 +35,35 @@ namespace WebAppComercial.Api.Controllers
 
         //---------------------------------------------------------------------------------------
         [HttpPost]
-        public async Task<ActionResult> PostAsync(Storeproduct storeproduct)
+        public async Task<ActionResult> PostAsync(StoreproductDTO storeproductDTO)
         {
-            if (storeproduct is null)
-            {
-                throw new ArgumentNullException(nameof(storeproduct));
-            }
-
-            _context.Add(storeproduct);
             try
             {
+                Product? product = await _context.Products!.FindAsync(storeproductDTO.ProductId);
+                Store? store = await _context.Stores!.FindAsync(storeproductDTO.StoreId);
+
+                Storeproduct newStoreproduct = new()
+                {
+                    Id = storeproductDTO.Id,
+                    Maximum = storeproductDTO.Maximum,
+                    Minimum = storeproductDTO.Minimum,
+                    Minimumquantity = storeproductDTO.Minimumquantity,
+                    Replacementdays = storeproductDTO.Replacementdays,
+                    Product=product!,
+                    Store=store!,
+                    StoreId= storeproductDTO.StoreId,
+                    Stock=0,
+                    ProductId = storeproductDTO.ProductId,
+                };
+                _context.Add(newStoreproduct);
                 await _context.SaveChangesAsync();
-                return Ok(storeproduct);
+                return Ok(newStoreproduct);
             }
             catch (DbUpdateException dbUpdateException)
             {
                 if (dbUpdateException.InnerException!.Message.Contains("duplica"))
                 {
-                    return BadRequest("Este código de barras ya existe.");
+                    return BadRequest("Ya existen parámetros de Almacén para este Almacén.");
                 }
                 else
                 {

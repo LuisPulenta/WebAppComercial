@@ -8,7 +8,7 @@
 
     <div class="container">
         <div class="row">
-            <div class="col-7">
+            <div class=@col>
                 <div class="row g-3 align-items-center">
                     <div class="col-2">
                         <label class="col-form-label fw-bold">Nombre:</label>
@@ -130,6 +130,8 @@
                     <CarouselView Images="ProductDTO.ProductImages" />
                 }
 
+                @if (IsEdit)
+                { 
                 <div class="container">
                     <div class="row">
                         <div class="col-12">
@@ -207,12 +209,13 @@
                         </div>
                     </div>
                 </div>
-
+                }
 
             </div>
         </div>
              
-
+        @if (IsEdit)
+        {
         <div class="container">
             <div class="row">
                 <div class="col-12">
@@ -319,6 +322,7 @@
                 </div>
             </div>
         </div>
+        }
     </div>
        
 </EditForm>
@@ -333,6 +337,7 @@
     private List<Storeproduct>? storeproducts;
     private string? imageUrl;
     private string? imageUrl2;
+    private string col="col-12";
 
     [CascadingParameter]
     IModalService Modal { get; set; } = default!;
@@ -392,6 +397,10 @@
 
     private async Task LoadCategoriesAsync()
     {
+        if (IsEdit)
+        {
+            col="col-7";
+        }
         var responseHttp = await repository.Get<List<Category>>("/api/categories/combo");
         if (responseHttp.Error)
         {

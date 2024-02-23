@@ -1,44 +1,78 @@
 ﻿@inject SweetAlertService swal
+@inject IRepository repository
 
 <NavigationLock OnBeforeInternalNavigation="OnBeforeInternalNavigation"></NavigationLock>
 
 <EditForm EditContext="editContext" OnValidSubmit="OnValidSubmit">
     <DataAnnotationsValidator />
-    <div class="mb-3">
-        <label>Mínimo:</label>
-        <div>
+
+    <div class="row g-3 align-items-center">
+        <div class="col-5">
+            <label class="col-form-label fw-bold">Almacén: </label>
+        </div>
+        <div class="col-7">
+            <select class="form-select" @bind="@StoreproductDTO.StoreId">
+                <option value="0">-- Seleccione un Almacén --</option>
+                @if (stores is not null)
+                {
+                    @foreach (var store in stores)
+                    {
+                        <option value="@store.Id">@store.Name</option>
+                    }
+                }
+            </select>
+            <ValidationMessage For="@(() => StoreproductDTO.StoreId)" />
+        </div>
+    </div>
+
+    <div class="row g-3 align-items-center">
+        <div class="col-5">
+            <label class="col-form-label fw-bold">Mínimo: </label>
+        </div>
+        <div class="col-7">
             <InputNumber class="form-control" @bind-Value="@StoreproductDTO.Minimum" />
             <ValidationMessage For="@(() => StoreproductDTO.Minimum)" />
         </div>
     </div>
-    <div class="mb-3">
-        <label>Máximo:</label>
-        <div>
+
+    <div class="row g-3 align-items-center">
+        <div class="col-5">
+            <label class="col-form-label fw-bold">Máximo: </label>
+        </div>
+        <div class="col-7">
             <InputNumber class="form-control" @bind-Value="@StoreproductDTO.Maximum" />
             <ValidationMessage For="@(() => StoreproductDTO.Maximum)" />
         </div>
     </div>
-    <div class="mb-3">
-        <label>Días de Reposición:</label>
-        <div>
+
+    <div class="row g-3 align-items-center">
+        <div class="col-5">
+            <label class="col-form-label fw-bold">Días de Reposición: </label>
+        </div>
+        <div class="col-7">
             <InputNumber class="form-control" @bind-Value="@StoreproductDTO.Replacementdays" />
             <ValidationMessage For="@(() => StoreproductDTO.Replacementdays)" />
         </div>
     </div>
-    <div class="mb-3">
-        <label>Cantidad Mínima a Ordenar:</label>
-        <div>
+
+    <div class="row g-3 align-items-center">
+        <div class="col-5">
+            <label class="col-form-label fw-bold">Cant. Mín. a Ordenar: </label>
+        </div>
+        <div class="col-7">
             <InputNumber class="form-control" @bind-Value="@StoreproductDTO.Minimumquantity" />
             <ValidationMessage For="@(() => StoreproductDTO.Minimumquantity)" />
         </div>
     </div>
-    <button class="btn btn-primary" type="submit">Guardar Cambios</button>
-    <button class="btn btn-success" @onclick="ReturnAction">Regresar</button>
+
+    <button class="btn btn-outline-primary" type="submit">Guardar Cambios</button>
+    <button class="btn btn-outline-success" @onclick="ReturnAction">Regresar</button>
 
 </EditForm>
 
 @code {
     private EditContext editContext = null!;
+    private List<Store>? stores;
 
     [EditorRequired]
     [Parameter]
@@ -57,6 +91,24 @@
     protected override void OnInitialized()
     {
         editContext = new(StoreproductDTO);
+    }
+
+    protected override async Task OnInitializedAsync()
+    {
+        await LoadStoresAsync();
+
+    }
+
+    private async Task LoadStoresAsync()
+    {
+        var responseHttp = await repository.Get<List<Store>>("/api/stores/combo");
+        if (responseHttp.Error)
+        {
+            var message = await responseHttp.GetErrorMessage();
+            await swal.FireAsync("Error", message, SweetAlertIcon.Error);
+            return;
+        }
+        stores = responseHttp.Response;
     }
 
     private async Task OnBeforeInternalNavigation(LocationChangingContext context)

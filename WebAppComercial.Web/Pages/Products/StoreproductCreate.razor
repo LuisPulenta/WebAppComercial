@@ -43,6 +43,11 @@
     {
         storeproductDTO.ProductId = ProductId;
 
+        if (storeproductDTO.StoreId ==0)
+        {
+            await swal.FireAsync("Error", "Debe seleccionar un Almacén", SweetAlertIcon.Error);
+            return;
+        }
 
         var httpResponse = await repository.Post("/api/storeproducts", storeproductDTO);
         if (httpResponse.Error)
