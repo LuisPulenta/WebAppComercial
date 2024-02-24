@@ -34,20 +34,6 @@ namespace WebAppComercial.Api.Controllers
         }
 
         //---------------------------------------------------------------------------------------
-        [HttpGet("{productid:int}/{storeid:int}")]
-        public async Task<IActionResult> GetByProductAndStoreAsync(int productid,int storeid)
-        {
-            var queryable = _context.Storeproducts
-                .Include(x => x.Store!)
-                .Include(x => x.Product!)
-                .AsQueryable();
-            queryable = queryable.Where(x => x.ProductId == productid && x.StoreId == storeid);
-            return Ok(await queryable
-                .OrderBy(x => x.StoreId)
-                .ToListAsync());
-        }
-
-        //---------------------------------------------------------------------------------------
         [HttpPost]
         public async Task<ActionResult> PostAsync(StoreproductDTO storeproductDTO)
         {
@@ -88,7 +74,49 @@ namespace WebAppComercial.Api.Controllers
             {
                 return BadRequest(exception.Message);
             }
+        }
 
+        //---------------------------------------------------------------------------------------
+        [HttpPut]
+        public async Task<ActionResult> PutAsync(StoreproductDTO storeproductDTO)
+        {
+            try
+            {
+                Product? product = await _context.Products!.FindAsync(storeproductDTO.ProductId);
+                Store? store = await _context.Stores!.FindAsync(storeproductDTO.StoreId);
+
+                Storeproduct oldStoreproduct = new()
+                {
+                    Id = storeproductDTO.Id,
+                    Maximum = storeproductDTO.Maximum,
+                    Minimum = storeproductDTO.Minimum,
+                    Minimumquantity = storeproductDTO.Minimumquantity,
+                    Replacementdays = storeproductDTO.Replacementdays,
+                    Product = product!,
+                    Store = store!,
+                    StoreId = storeproductDTO.StoreId,
+                    Stock = storeproductDTO.Stock,
+                    ProductId = storeproductDTO.ProductId,
+                };
+                _context.Update(oldStoreproduct);
+                await _context.SaveChangesAsync();
+                return Ok(oldStoreproduct);
+            }
+            catch (DbUpdateException dbUpdateException)
+            {
+                if (dbUpdateException.InnerException!.Message.Contains("duplica"))
+                {
+                    return BadRequest("Ha ocurrido un error inesperado.");
+                }
+                else
+                {
+                    return BadRequest(dbUpdateException.InnerException.Message);
+                }
+            }
+            catch (Exception exception)
+            {
+                return BadRequest(exception.Message);
+            }
         }
     }
 }

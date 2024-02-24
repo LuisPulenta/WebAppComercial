@@ -6,6 +6,9 @@
 <EditForm EditContext="editContext" OnValidSubmit="OnValidSubmit">
     <DataAnnotationsValidator />
 
+    @if (!IsEdit)
+    {
+    
     <div class="row g-3 align-items-center">
         <div class="col-5">
             <label class="col-form-label fw-bold">Almacén: </label>
@@ -23,8 +26,19 @@
             </select>
             <ValidationMessage For="@(() => StoreproductDTO.StoreId)" />
         </div>
-    </div>
-
+        </div>
+    }
+    else
+    {
+        <div class="row g-3 align-items-center">
+            <div class="col-5">
+                <label class="col-form-label fw-bold">Almacén: </label>
+            </div>
+            <div class="col-7">
+                @store!.Name
+            </div>
+        </div>
+    }
     <div class="row g-3 align-items-center">
         <div class="col-5">
             <label class="col-form-label fw-bold">Mínimo: </label>
@@ -73,6 +87,7 @@
 @code {
     private EditContext editContext = null!;
     private List<Store>? stores;
+    private Store? store;
 
     [EditorRequired]
     [Parameter]
@@ -85,6 +100,9 @@
     [EditorRequired]
     [Parameter]
     public EventCallback ReturnAction { get; set; }
+
+    [Parameter]
+    public bool IsEdit { get; set; } = false;
 
     public bool FormPostedSuccessfully { get; set; } = false;
 
@@ -109,6 +127,14 @@
             return;
         }
         stores = responseHttp.Response;
+
+        foreach (var alm in stores!)
+        {
+            if (alm.Id == StoreproductDTO.StoreId)
+            {
+                store = alm;   
+            }
+        }
     }
 
     private async Task OnBeforeInternalNavigation(LocationChangingContext context)

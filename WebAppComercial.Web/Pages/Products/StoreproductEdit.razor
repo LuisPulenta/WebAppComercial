@@ -6,7 +6,7 @@
 
 <h3>Editar Parámetro de Almacén</h3>
 
-<StoreproductForm @ref="storeproductForm" StoreproductDTO="storeproductDTO" OnValidSubmit="CreateAsync" ReturnAction="Return" />
+<StoreproductForm @ref="storeproductForm" StoreproductDTO="storeproductDTO" IsEdit=true OnValidSubmit="EditAsync" ReturnAction="Return" />
 
 @code {
     private Product? product;
@@ -52,11 +52,9 @@
 
     }
 
-    private async Task CreateAsync()
+    private async Task EditAsync()
     {
-
-
-        var httpResponse = await repository.Post("/api/storeproducts", storeproductDTO);
+        var httpResponse = await repository.Put("/api/storeproducts", storeproductDTO);
         if (httpResponse.Error)
         {
             var message = await httpResponse.GetErrorMessage();
@@ -70,7 +68,7 @@
                 ShowConfirmButton = true,
                 Timer = 3000
             });
-        await toast.FireAsync(icon: SweetAlertIcon.Success, message: "Parámetro de Almacén creado con éxito.");
+        await toast.FireAsync(icon: SweetAlertIcon.Success, message: "Parámetro de Almacén actualizado con éxito.");
         await BlazoredModal.CloseAsync(ModalResult.Ok());
         Return();
     }
