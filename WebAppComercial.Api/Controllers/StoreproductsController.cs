@@ -34,6 +34,20 @@ namespace WebAppComercial.Api.Controllers
         }
 
         //---------------------------------------------------------------------------------------
+        [HttpGet("{productid:int}/{storeid:int}")]
+        public async Task<IActionResult> GetByProductAndStoreAsync(int productid,int storeid)
+        {
+            var queryable = _context.Storeproducts
+                .Include(x => x.Store!)
+                .Include(x => x.Product!)
+                .AsQueryable();
+            queryable = queryable.Where(x => x.ProductId == productid && x.StoreId == storeid);
+            return Ok(await queryable
+                .OrderBy(x => x.StoreId)
+                .ToListAsync());
+        }
+
+        //---------------------------------------------------------------------------------------
         [HttpPost]
         public async Task<ActionResult> PostAsync(StoreproductDTO storeproductDTO)
         {
