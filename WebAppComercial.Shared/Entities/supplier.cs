@@ -48,6 +48,8 @@ namespace WebAppComercial.Shared.Entities
         [MaxLength(100, ErrorMessage = "El campo {0} debe tener máximo {1} caracteres.")]
         public string Remarks { get; set; } = null!;
 
+        public ICollection<Buy>? Buys { get; set; }
+
         //[Display(Name = "Aniversario")]
         //[MaxLength(100, ErrorMessage = "El campo {0} debe tener máximo {1} caracteres.")]
         //public DateOnly Anniversary { get; set; }

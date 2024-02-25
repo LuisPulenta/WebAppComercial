@@ -11,6 +11,5 @@ namespace WebAppComercial.Shared.Entities
         [Required(ErrorMessage = "El campo {0} es obligatorio.")]
         public string Name { get; set; } = null!;
 
-        public ICollection<Storeproduct>? Storeproducts { get; set; }
     }
 }
