@@ -10,14 +10,14 @@ namespace WebAppComercial.Shared.Entities
         public DateTime Date { get; set; }
 
         [Display(Name = "Proveedor")]
-        public int IdSupplier { get; set; }
+        public int SupplierId { get; set; }
 
         [Display(Name = "Proveedor")]
         [Required(ErrorMessage = "El campo {0} es obligatorio.")]
         public Supplier Supplier { get; set; } = null!;
 
         [Display(Name = "Almacén")]
-        public int IdStore { get; set; }
+        public int StoreId { get; set; }
 
         [Display(Name = "Almacén")]
         [Required(ErrorMessage = "El campo {0} es obligatorio.")]

@@ -8,7 +8,7 @@ namespace WebAppComercial.Shared.Entities
         public int Id { get; set; }
 
         [Display(Name = "Almacén")]
-        public int IdStore { get; set; }
+        public int StoreId { get; set; }
 
         [Display(Name = "Almacén")]
         [Required(ErrorMessage = "El campo {0} es obligatorio.")]
@@ -16,7 +16,7 @@ namespace WebAppComercial.Shared.Entities
 
 
         [Display(Name = "Producto")]
-        public int IdProduct { get; set; }
+        public int ProductId { get; set; }
 
         [Display(Name = "Producto")]
         [Required(ErrorMessage = "El campo {0} es obligatorio.")]
@@ -43,7 +43,7 @@ namespace WebAppComercial.Shared.Entities
         [DisplayFormat(DataFormatString = "{0:N2}")]
         [Display(Name = "Saldo")]
         [Required(ErrorMessage = "El campo {0} es obligatorio.")]
-        public decimal Balance { get; set; }
+        public double Balance { get; set; }
 
         [Column(TypeName = "decimal(18,3)")]
         [DisplayFormat(DataFormatString = "{0:C2}")]
@@ -56,5 +56,7 @@ namespace WebAppComercial.Shared.Entities
         [Display(Name = "Costo Promedio")]
         [Required(ErrorMessage = "El campo {0} es obligatorio.")]
         public decimal AverageCost { get; set; }
+
+        public ICollection<BuyDetail>? BuyDetails { get; set; }
     }
 }

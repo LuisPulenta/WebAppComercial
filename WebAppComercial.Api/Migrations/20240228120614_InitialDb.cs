@@ -333,6 +333,33 @@ namespace WebAppComercial.Api.Migrations
                 });
 
             migrationBuilder.CreateTable(
+                name: "Buys",
+                columns: table => new
+                {
+                    Id = table.Column<int>(type: "int", nullable: false)
+                        .Annotation("SqlServer:Identity", "1, 1"),
+                    Date = table.Column<DateTime>(type: "datetime2", nullable: false),
+                    SupplierId = table.Column<int>(type: "int", nullable: false),
+                    StoreId = table.Column<int>(type: "int", nullable: false)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_Buys", x => x.Id);
+                    table.ForeignKey(
+                        name: "FK_Buys_Stores_StoreId",
+                        column: x => x.StoreId,
+                        principalTable: "Stores",
+                        principalColumn: "Id",
+                        onDelete: ReferentialAction.Cascade);
+                    table.ForeignKey(
+                        name: "FK_Buys_Suppliers_SupplierId",
+                        column: x => x.SupplierId,
+                        principalTable: "Suppliers",
+                        principalColumn: "Id",
+                        onDelete: ReferentialAction.Cascade);
+                });
+
+            migrationBuilder.CreateTable(
                 name: "Barcodes",
                 columns: table => new
                 {
@@ -348,6 +375,39 @@ namespace WebAppComercial.Api.Migrations
                         name: "FK_Barcodes_Products_ProductId",
                         column: x => x.ProductId,
                         principalTable: "Products",
+                        principalColumn: "Id",
+                        onDelete: ReferentialAction.Cascade);
+                });
+
+            migrationBuilder.CreateTable(
+                name: "Moves",
+                columns: table => new
+                {
+                    Id = table.Column<int>(type: "int", nullable: false)
+                        .Annotation("SqlServer:Identity", "1, 1"),
+                    StoreId = table.Column<int>(type: "int", nullable: false),
+                    ProductId = table.Column<int>(type: "int", nullable: false),
+                    Date = table.Column<DateTime>(type: "datetime2", nullable: false),
+                    Document = table.Column<string>(type: "nvarchar(max)", nullable: false),
+                    Entrance = table.Column<double>(type: "float", nullable: false),
+                    Exit = table.Column<double>(type: "float", nullable: false),
+                    Balance = table.Column<double>(type: "float", nullable: false),
+                    LastCost = table.Column<decimal>(type: "decimal(18,3)", nullable: false),
+                    AverageCost = table.Column<decimal>(type: "decimal(18,3)", nullable: false)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_Moves", x => x.Id);
+                    table.ForeignKey(
+                        name: "FK_Moves_Products_ProductId",
+                        column: x => x.ProductId,
+                        principalTable: "Products",
+                        principalColumn: "Id",
+                        onDelete: ReferentialAction.Cascade);
+                    table.ForeignKey(
+                        name: "FK_Moves_Stores_StoreId",
+                        column: x => x.StoreId,
+                        principalTable: "Stores",
                         principalColumn: "Id",
                         onDelete: ReferentialAction.Cascade);
                 });
@@ -403,6 +463,43 @@ namespace WebAppComercial.Api.Migrations
                         onDelete: ReferentialAction.Cascade);
                 });
 
+            migrationBuilder.CreateTable(
+                name: "BuyDetails",
+                columns: table => new
+                {
+                    Id = table.Column<int>(type: "int", nullable: false)
+                        .Annotation("SqlServer:Identity", "1, 1"),
+                    BuyId = table.Column<int>(type: "int", nullable: false),
+                    ProductId = table.Column<int>(type: "int", nullable: false),
+                    Name = table.Column<string>(type: "nvarchar(100)", maxLength: 100, nullable: false),
+                    Cost = table.Column<decimal>(type: "decimal(18,3)", nullable: false),
+                    Quantity = table.Column<double>(type: "float", nullable: false),
+                    PercentageIVA = table.Column<double>(type: "float", nullable: false),
+                    PercentageDiscount = table.Column<double>(type: "float", nullable: false),
+                    MoveId = table.Column<int>(type: "int", nullable: true)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_BuyDetails", x => x.Id);
+                    table.ForeignKey(
+                        name: "FK_BuyDetails_Buys_BuyId",
+                        column: x => x.BuyId,
+                        principalTable: "Buys",
+                        principalColumn: "Id",
+                        onDelete: ReferentialAction.Cascade);
+                    table.ForeignKey(
+                        name: "FK_BuyDetails_Moves_MoveId",
+                        column: x => x.MoveId,
+                        principalTable: "Moves",
+                        principalColumn: "Id");
+                    table.ForeignKey(
+                        name: "FK_BuyDetails_Products_ProductId",
+                        column: x => x.ProductId,
+                        principalTable: "Products",
+                        principalColumn: "Id",
+                        onDelete: ReferentialAction.Cascade);
+                });
+
             migrationBuilder.CreateIndex(
                 name: "IX_AspNetRoleClaims_RoleId",
                 table: "AspNetRoleClaims",
@@ -454,6 +551,31 @@ namespace WebAppComercial.Api.Migrations
                 column: "ProductId");
 
             migrationBuilder.CreateIndex(
+                name: "IX_BuyDetails_BuyId",
+                table: "BuyDetails",
+                column: "BuyId");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_BuyDetails_MoveId",
+                table: "BuyDetails",
+                column: "MoveId");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_BuyDetails_ProductId",
+                table: "BuyDetails",
+                column: "ProductId");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_Buys_StoreId",
+                table: "Buys",
+                column: "StoreId");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_Buys_SupplierId",
+                table: "Buys",
+                column: "SupplierId");
+
+            migrationBuilder.CreateIndex(
                 name: "IX_Categories_Name",
                 table: "Categories",
                 column: "Name",
@@ -493,6 +615,16 @@ namespace WebAppComercial.Api.Migrations
                 table: "Measures",
                 column: "Unit",
                 unique: true);
+
+            migrationBuilder.CreateIndex(
+                name: "IX_Moves_ProductId",
+                table: "Moves",
+                column: "ProductId");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_Moves_StoreId",
+                table: "Moves",
+                column: "StoreId");
 
             migrationBuilder.CreateIndex(
                 name: "IX_ProductImages_ProductId",
@@ -571,6 +703,9 @@ namespace WebAppComercial.Api.Migrations
                 name: "Barcodes");
 
             migrationBuilder.DropTable(
+                name: "BuyDetails");
+
+            migrationBuilder.DropTable(
                 name: "Concepts");
 
             migrationBuilder.DropTable(
@@ -583,13 +718,19 @@ namespace WebAppComercial.Api.Migrations
                 name: "Storeproducts");
 
             migrationBuilder.DropTable(
-                name: "Suppliers");
-
-            migrationBuilder.DropTable(
                 name: "AspNetRoles");
 
             migrationBuilder.DropTable(
                 name: "AspNetUsers");
+
+            migrationBuilder.DropTable(
+                name: "Buys");
+
+            migrationBuilder.DropTable(
+                name: "Moves");
+
+            migrationBuilder.DropTable(
+                name: "Suppliers");
 
             migrationBuilder.DropTable(
                 name: "Products");

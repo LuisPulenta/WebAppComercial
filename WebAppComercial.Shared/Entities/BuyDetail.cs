@@ -9,18 +9,20 @@ namespace WebAppComercial.Shared.Entities
 
 
         [Display(Name = "N° Compra")]
-        public int IdBuy { get; set; }
-
-        [Display(Name = "N° Compra")]
         [Required(ErrorMessage = "El campo {0} es obligatorio.")]
         public Buy Buy { get; set; } = null!;
 
-        [Display(Name = "Producto")]
-        public int IdProduct { get; set; }
+        [Display(Name = "N° Compra")]
+        public int BuyId { get; set; }
+
 
         [Display(Name = "Producto")]
         [Required(ErrorMessage = "El campo {0} es obligatorio.")]
         public Product Product { get; set; } = null!;
+        [Display(Name = "Producto")]
+        public int ProductId { get; set; }
+
+        
 
         [Display(Name = "Nombre")]
         [MaxLength(100, ErrorMessage = "El campo {0} debe tener máximo {1} caracteres.")]
@@ -38,12 +40,14 @@ namespace WebAppComercial.Shared.Entities
         [Required(ErrorMessage = "El campo {0} es obligatorio.")]
         public double Quantity { get; set; }
 
-        [Display(Name = "Kardex")]
-        public int IdMove { get; set; }
+        //[Display(Name = "Kardex")]
+        //[Required(ErrorMessage = "El campo {0} es obligatorio.")]
+        //public Move Move { get; set; } = null!;
 
-        [Display(Name = "Kardex")]
-        [Required(ErrorMessage = "El campo {0} es obligatorio.")]
-        public Move Move { get; set; } = null!;
+        //[Display(Name = "Kardex")]
+        //public int MoveId { get; set; }
+
+
 
         [DisplayFormat(DataFormatString = "{0:P2}")]
         [Display(Name = "%IVA")]

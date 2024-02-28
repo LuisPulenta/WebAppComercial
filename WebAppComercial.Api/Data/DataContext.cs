@@ -21,6 +21,10 @@ namespace WebAppComercial.Api.Data
         public DbSet<ProductImage> ProductImages { get; set; }
         public DbSet<Barcode> Barcodes { get; set; }
         public DbSet<Storeproduct> Storeproducts { get; set; }
+        public DbSet<Move> Moves { get; set; }
+        public DbSet<Buy> Buys { get; set; }
+        public DbSet<BuyDetail> BuyDetails { get; set; }
+        
 
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)
