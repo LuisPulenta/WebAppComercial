@@ -1,23 +1,23 @@
-﻿@page "/stores/create"
+﻿@page "/buys/create"
 @attribute [Authorize(Roles = "Admin")]
 @inject IRepository repository
 @inject NavigationManager navigationManager
 @inject SweetAlertService swal
 
-<h3>Crear Almacén</h3>
+<h3>Crear Compra</h3>
 
-<StoreForm @ref="storeForm" Store="store" OnValidSubmit="CreateAsync" ReturnAction="Return" />
+<BuyForm @ref="buyForm" BuyDTO="buyDTO" OnValidSubmit="CreateAsync" ReturnAction="Return" />
 
 @code {
-    private Store store = new();
-    private StoreForm? storeForm;
+    private BuyDTO buyDTO = new();
+    private BuyForm? buyForm;
 
     [CascadingParameter]
     BlazoredModalInstance BlazoredModal { get; set; } = default!;
 
     private async Task CreateAsync()
     {
-        var httpResponse = await repository.Post("/api/stores", store);
+        var httpResponse = await repository.Post("/api/buys", buyDTO);
         if (httpResponse.Error)
         {
             var message = await httpResponse.GetErrorMessage();
@@ -31,14 +31,14 @@
                 ShowConfirmButton = true,
                 Timer = 3000
             });
-        await toast.FireAsync(icon: SweetAlertIcon.Success, message: "Almacén creado con éxito.");
+        await toast.FireAsync(icon: SweetAlertIcon.Success, message: "Compra creada con éxito.");
         await BlazoredModal.CloseAsync(ModalResult.Ok());
         Return();
     }
 
     private void Return()
     {
-        storeForm!.FormPostedSuccessfully = true;
-        navigationManager.NavigateTo("/stores");
+        buyForm!.FormPostedSuccessfully = true;
+        navigationManager.NavigateTo("/buys");
     }
 }

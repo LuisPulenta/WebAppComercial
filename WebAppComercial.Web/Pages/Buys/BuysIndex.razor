@@ -1,4 +1,4 @@
-﻿@page "/products"
+﻿@page "/buys"
 @attribute [Authorize(Roles = "Admin")]
 @inject IRepository repository
 @inject NavigationManager navigationManager
@@ -6,7 +6,7 @@
 @inject HttpClient Http
 @inject IJSRuntime JS
 
-@if (loading)
+@if (Buys is null)
 {
     <Spinner />
 }
@@ -14,28 +14,28 @@ else
 {
     <div class="container">
         <div class="row">
-            <div class="offset-1 col-10">    
+            <div class="offset-3 col-6">
                 <div class="card">
                     <div class="card-header">
                         <span>
-                            <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" fill="currentColor" class="bi bi-person-fill" viewBox="0 0 16 16">
-                                <path d="M3 14s-1 0-1-1 1-4 6-4 6 3 6 4-1 1-1 1zm5-6a3 3 0 1 0 0-6 3 3 0 0 0 0 6" />
+                            <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" fill="currentColor" class="bi bi-bag-fill" viewBox="0 0 16 16">
+                                <path d="M8 1a2.5 2.5 0 0 1 2.5 2.5V4h-5v-.5A2.5 2.5 0 0 1 8 1m3.5 3v-.5a3.5 3.5 0 1 0-7 0V4H1v10a2 2 0 0 0 2 2h10a2 2 0 0 0 2-2V4z" />
                             </svg>
-                             Productos
-
-                            <a class="btn btn-sm btn-outline-primary float-end" @onclick=@(() => ShowModal(page:@currentPage))>
+                            Compras
+                            @* @onclick=@(() => ShowModal() *@
+                            <a class="btn btn-sm btn-outline-primary float-end" href="/buys/create")>
                                 <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" fill="currentColor" class="bi bi-plus-circle-fill" viewBox="0 0 16 16">
                                     <path d="M16 8A8 8 0 1 1 0 8a8 8 0 0 1 16 0M8.5 4.5a.5.5 0 0 0-1 0v3h-3a.5.5 0 0 0 0 1h3v3a.5.5 0 0 0 1 0v-3h3a.5.5 0 0 0 0-1h-3z" />
                                 </svg>
-                                 Nuevo Producto
-                             </a>
+                                Nueva Compra
+                            </a>
                         </span>
                     </div>
                     <div class="card-body">
                         <div style="display: flex; justify-content:space-between; align-items: center;">
                             <div style="display: flex;  align-items: center;">
                                 <div>
-                                    <input style="width: 400px;" type="text" class="form-control" id="titulo" placeholder="Buscar Producto..." @bind-value="Filter" />
+                                    <input style="width: 400px;" type="text" class="form-control" id="titulo" placeholder="Buscar Proveedor o Almacén..." @bind-value="Filter" />
                                 </div>
                                 <div class="mx-1">
                                     <button type="button" class="btn btn-outline-primary" @onclick="ApplyFilterAsync"><i class="oi oi-layers" /> Filtrar</button>
@@ -44,13 +44,13 @@ else
 
                             </div>
                             <div>
-                                <button class="btn btn-sm btn-outline-success mb-3" data-toggle="tooltip" title="Exportar" @onclick="(()=> ExportarExcel(Products!))">
+                                <button class="btn btn-sm btn-outline-success mb-3" data-toggle="tooltip" title="Exportar" @onclick="(()=> ExportarExcel(Buys!))">
                                     <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" fill="currentColor" class="bi bi-file-earmark-excel-fill" viewBox="0 0 16 16">
                                         <path d="M9.293 0H4a2 2 0 0 0-2 2v12a2 2 0 0 0 2 2h8a2 2 0 0 0 2-2V4.707A1 1 0 0 0 13.707 4L10 .293A1 1 0 0 0 9.293 0M9.5 3.5v-2l3 3h-2a1 1 0 0 1-1-1M5.884 6.68 8 9.219l2.116-2.54a.5.5 0 1 1 .768.641L8.651 10l2.233 2.68a.5.5 0 0 1-.768.64L8 10.781l-2.116 2.54a.5.5 0 0 1-.768-.641L7.349 10 5.116 7.32a.5.5 0 1 1 .768-.64" />
                                     </svg>
                                 </button>
 
-                                <button class="btn btn-sm btn-outline-success mb-3" data-toggle="tooltip" title="Exportar" @onclick="(()=> ExportarTodo())">
+                                <button class="btn btn-sm btn-outline-success mb-3" data-toggle="tooltip" title="Exportar" @onclick="(()=> ExportarExcel(BuysAll!))">
                                     <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" fill="currentColor" class="bi bi-file-excel-fill" viewBox="0 0 16 16">
                                         <path d="M12 0H4a2 2 0 0 0-2 2v12a2 2 0 0 0 2 2h8a2 2 0 0 0 2-2V2a2 2 0 0 0-2-2M5.884 4.68 8 7.219l2.116-2.54a.5.5 0 1 1 .768.641L8.651 8l2.233 2.68a.5.5 0 0 1-.768.64L8 8.781l-2.116 2.54a.5.5 0 0 1-.768-.641L7.349 8 5.116 5.32a.5.5 0 1 1 .768-.64" />
                                     </svg>
@@ -60,61 +60,38 @@ else
                     </div>
                 </div>
 
-                <GenericList MyList="Products">
+
+                <GenericList MyList="Buys">
                     <Body>
                         <table class="table table-sm table-info table-striped">
                             <thead>
                                 <tr>
-                                    <th>Categoría</th>
-                                    <th>Id</th>
-                                    <th>Nombre</th>
-                                    <th>Unidad</th>
-                                    <th>Cantidad</th>
-                                    <th>Precio</th>
-                                    <th>Galería</th>
-                                    <th>Imagen</th>
+                                    <th>Almacén</th>
+                                    <th>Proveedor</th>
+                                    <th>Fecha</th>
+                                    <th>Cant. Items</th>
                                     <th style="width:60px"></th>
                                 </tr>
                             </thead>
                             <tbody>
-                                @foreach (var product in Products!)
+                                @foreach (var buy in Buys!)
                                 {
                                     <tr>
                                         <td>
-                                            @product.Category!.Name
+                                            @buy.Store.Name
                                         </td>
                                         <td>
-                                            @product.Id
+                                            @buy.Supplier.Name
                                         </td>
                                         <td>
-                                            @product.Name
-                                        </td>
-                                        <td >
-                                            @product.Unit
+                                            @buy.Date
                                         </td>
                                         <td>
-                                            @($"{product.Quantity:N2}")
+                                            @buy.BuyDetails.Count()
                                         </td>
                                         <td>
-                                            @($"$ {product.Price:N2}")
-                                        </td>
-                                        <td>
-                                            @product.ProductImagesNumber
-                                        </td>
-
-                                        @if (@product.Image == null || @product.Image == "" || @product.Image == string.Empty)
-                                        {
-                                            <td></td>
-                                        }else
-
-                                        {
-                                            <td><img src="@product.ImageFullPath" width="80" /></td>
-                                        }
-
-                                        @* @onclick=@(() => ShowModal(product.Id, true, page: @currentPage)) *@
-
-                                        <td>
-                                            <a href="/products/edit/@product.Id" class="btn btn-sm btn-warning btn-sm">
+                                            @* @onclick=@(() => ShowModal(store.Id, true)) *@
+                                            <a  class="btn btn-sm btn-warning btn-sm">
                                                 <i class="bi bi-pencil-square" />
                                                 <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" fill="white" class="bi bi-pencil-square" viewBox="0 0 16 16">
                                                     <path d="M15.502 1.94a.5.5 0 0 1 0 .706L14.459 3.69l-2-2L13.502.646a.5.5 0 0 1 .707 0l1.293 1.293zm-1.75 2.456-2-2L4.939 9.21a.5.5 0 0 0-.121.196l-.805 2.414a.25.25 0 0 0 .316.316l2.414-.805a.5.5 0 0 0 .196-.12l6.813-6.814z" />
@@ -122,7 +99,7 @@ else
                                                 </svg>
                                             </a>
 
-                                            <button class="btn btn-danger btn-sm" @onclick=@(() => DeleteAsync(product.Id))>
+                                            <button class="btn btn-danger btn-sm" @onclick=@(() => DeleteAsync(buy.Id))>
                                                 <i class="bi bi-trash3-fill" />
                                                 <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" fill="white" class="bi bi-trash3-fill" viewBox="0 0 16 16">
                                                     <path d="M11 1.5v1h3.5a.5.5 0 0 1 0 1h-.538l-.853 10.66A2 2 0 0 1 11.115 16h-6.23a2 2 0 0 1-1.994-1.84L2.038 3.5H1.5a.5.5 0 0 1 0-1H5v-1A1.5 1.5 0 0 1 6.5 0h3A1.5 1.5 0 0 1 11 1.5m-5 0v1h4v-1a.5.5 0 0 0-.5-.5h-3a.5.5 0 0 0-.5.5M4.5 5.029l.5 8.5a.5.5 0 1 0 .998-.06l-.5-8.5a.5.5 0 1 0-.998.06m6.53-.528a.5.5 0 0 0-.528.47l-.5 8.5a.5.5 0 0 0 .998.058l.5-8.5a.5.5 0 0 0-.47-.528M8 4.5a.5.5 0 0 0-.5.5v8.5a.5.5 0 0 0 1 0V5a.5.5 0 0 0-.5-.5" />
@@ -141,32 +118,18 @@ else
                                 SelectedPage="SelectedPage" />
                     <p> Total Registros: @totalRegisters</p>
                 </div>
-
             </div>
         </div>
-    </div>    
+    </div>
 }
 
+
 @code {
-    public List<Product>? Products { get; set; }
-    public List<Product>? ProductsAll { get; set; }
-    public List<ProductDTO>? ProductsDTO { get; set; }
-
-    HttpResponseWrapper<List<Product>>? responseHttp;
-    HttpResponseWrapper<int>? responseHttp2;
-    HttpResponseWrapper<int>? responseHttp3;
-    HttpResponseWrapper<List<Product>>? responseHttp4;
-
-    string url1 = string.Empty;
-    string url2 = string.Empty;
-    string url3 = string.Empty;
-    string url4 = string.Empty;
-
+    public List<Buy>? Buys { get; set; }
+    public List<Buy>? BuysAll { get; set; }
     private int currentPage = 1;
     private int totalPages;
     private int totalRegisters;
-
-    private bool loading = true;
 
     [CascadingParameter]
     IModalService Modal { get; set; } = default!;
@@ -179,64 +142,61 @@ else
     [SupplyParameterFromQuery]
     public string Filter { get; set; } = "";
 
-    //---------------------------------------------------------------------------
+
     protected override async Task OnInitializedAsync()
     {
         await LoadAsync();
     }
 
-    //---------------------------------------------------------------------------
     private async Task SelectedPage(int page)
     {
         currentPage = page;
         await LoadAsync(page);
     }
 
-    //---------------------------------------------------------------------------
     private async Task LoadAsync(int page = 1)
     {
-        loading = true;
-
         if (!string.IsNullOrWhiteSpace(Page))
         {
             page = Convert.ToInt32(Page);
         }
 
+        string url1 = string.Empty;
+        string url2 = string.Empty;
+        string url3 = string.Empty;
+        string url4 = string.Empty;
+
         if (string.IsNullOrEmpty(Filter))
         {
-            url1 = $"/api/products?page={page}";
-            url2 = $"/api/products/totalPages";
-            url3 = $"/api/products/totalRegisters";
-            url4 = $"/api/products/all";
+            url1 = $"/api/buys?page={page}";
+            url2 = $"/api/buys/totalPages";
+            url3 = $"/api/buys/totalRegisters";
+            url4 = $"/api/buys/all";
         }
         else
         {
-            url1 = $"/api/products?page={page}&filter={Filter}";
-            url2 = $"/api/products/totalPages?filter={Filter}";
-            url3 = $"/api/products/totalRegisters?filter={Filter}";
-            url4 = $"/api/products/all?filter={Filter}";
+            url1 = $"/api/buys?page={page}&filter={Filter}";
+            url2 = $"/api/buys/totalPages?filter={Filter}";
+            url3 = $"/api/buys/totalRegisters?filter={Filter}";
+            url4 = $"/api/buys/all?filter={Filter}";
         }
-
         try
         {
-            responseHttp = await repository.Get<List<Product>>(url1);
-            responseHttp2 = await repository.Get<int>(url2);
-            responseHttp3 = await repository.Get<int>(url3);
-
-            Products = responseHttp.Response!;
+            var responseHttp = await repository.Get<List<Buy>>(url1);
+            var responseHttp2 = await repository.Get<int>(url2);
+            var responseHttp3 = await repository.Get<int>(url3);
+            //var responseHttp4 = await repository.Get<List<Store>>(url4);
+            Buys = responseHttp.Response!;
             totalPages = responseHttp2.Response!;
             totalRegisters = responseHttp3.Response!;
-
-            loading = false;            
+            //StoresAll = responseHttp4.Response!;
         }
         catch (Exception ex)
         {
-            loading = false;
             await swal.FireAsync("Error", ex.Message, SweetAlertIcon.Error);
         }
     }
 
-    //---------------------------------------------------------------------------
     private async Task DeleteAsync(int id)
     {
         var result = await swal.FireAsync(new SweetAlertOptions
@@ -256,7 +216,7 @@ else
             return;
         }
 
-        var responseHttp = await repository.Delete($"/api/products/{id}");
+        var responseHttp = await repository.Delete($"/api/buys/{id}");
 
         if (responseHttp.Error)
         {
@@ -275,34 +235,23 @@ else
                 Timer = 3000
             });
         await LoadAsync();
-        await toast.FireAsync(icon: SweetAlertIcon.Success, message: "Producto eliminado con éxito.");
+        await toast.FireAsync(icon: SweetAlertIcon.Success, message: "Compra eliminada con éxito.");
     }
 
-    //---------------------------------------------------------------------------
-    private async Task ExportarExcel(List<Product> products)
+    private async Task ExportarExcel(List<Buy> buys)
     {
-        loading = true;
-        ProductsDTO = [];
-        foreach (var product in products)
-        {
-            ProductsDTO.Add(ToProductDTO(product));
-        }
-
-        var response = await repository.Post("/api/Excel/ExportExcelProducts", ProductsDTO);
+        var response = await repository.Post("/api/Excel/ExportExcelBuys", buys);
         var fileStream = response.HttpResponseMessage.Content.ReadAsStream();
         using var streamRef = new DotNetStreamReference(stream: fileStream);
-        await JS.InvokeVoidAsync("DescargarExcel", "Productos.xlsx", streamRef);
-        loading = false;
+        await JS.InvokeVoidAsync("DescargarExcel", "Compras.xlsx", streamRef);
     }
 
-    //---------------------------------------------------------------------------
     private async Task CleanFilterAsync()
     {
         Filter = string.Empty;
         await ApplyFilterAsync();
     }
 
-    //---------------------------------------------------------------------------
     private async Task ApplyFilterAsync()
     {
         int page = 1;
@@ -310,54 +259,6 @@ else
         await SelectedPage(page);
     }
 
-    //---------------------------------------------------------------------------
-    private async Task ShowModal(int id = 0, bool isEdit = false, int page=1)
-    {
-        IModalReference modalReference;
 
-        if (isEdit)
-        {
-            modalReference = Modal.Show<ProductEdit>(string.Empty, new ModalParameters().Add("Id", id));
-        }
-        else
-        {
-            modalReference = Modal.Show<ProductCreate>();
-        }
 
-        var result = await modalReference.Result;
-        if (result.Confirmed)
-         {
-        //     await LoadAsync();
-         }
-        await LoadAsync(page);
-    }
-
-    //---------------------------------------------------------------------------
-    private ProductDTO ToProductDTO(Product product)
-    {
-        return new ProductDTO
-            {
-                Id = product.Id,
-                Name = product.Name,
-                CategoryId = product.CategoryId,
-                Category = product.Category!.Name,
-                Image = product.Image,
-                MeasureId = product.MeasureId,
-                Unit = product.Unit,
-                Price = product.Price,
-                Quantity = product.Quantity,
-                Remarks=product.Remarks,
-                ProductImages=[]
-            };
-    }
-     
-    //---------------------------------------------------------------------------
-    private async Task ExportarTodo()
-    {
-        loading = true;
-        var responseHttp4 = await repository.Get<List<Product>>(url4);
-        ProductsAll = responseHttp4.Response!;
-        await ExportarExcel(ProductsAll!);
-        loading = false;
-    }
 }

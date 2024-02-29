@@ -1,0 +1,481 @@
+﻿@inject SweetAlertService swal
+@inject IRepository repository
+
+<NavigationLock OnBeforeInternalNavigation="OnBeforeInternalNavigation"></NavigationLock>
+
+<EditForm EditContext="editContext" OnValidSubmit="OnValidSubmit">
+    <DataAnnotationsValidator />
+
+    <div class="container">
+        <div class="row">
+                         
+                @* ------------------------------- Columna 1 -------------------------------------*@
+                <div class="col-3">
+
+                    <div class="row g-3 align-items-center">
+                        <div class="col-3">
+                            <label class="col-form-label fw-bold">Fecha:</label>
+                        </div>
+                        <div class="col-5">
+                            <InputDate class="form-control" @bind-Value="@BuyDTO.Date" />
+                            <ValidationMessage For="@(() => BuyDTO.Date)" />
+                        </div>
+                    </div>
+
+                    <div class="row g-3 align-items-center">
+                        <div class="col-3">
+                            <label class="col-form-label fw-bold">Almacén:</label>
+                        </div>
+                        <div class="col-9">
+                            <select class="form-select" @bind="@BuyDTO.StoreId">
+                                <option value="0">-- Seleccione un Almacén --</option>
+                                @if (stores is not null)
+                                {
+                                    @foreach (var store in stores)
+                                    {
+                                        <option value="@store.Id">@store.Name</option>
+                                    }
+                                }
+                            </select>
+                            <ValidationMessage For="@(() => BuyDTO.StoreId)" />
+                        </div>
+                    </div>
+
+                    <div class="row g-3 align-items-center">
+                        <div class="col-3">
+                            <label class="col-form-label fw-bold">Proveedor:</label>
+                        </div>
+                        <div class="col-9">
+                            <select class="form-select" @bind="@BuyDTO.SupplierId">
+                                <option value="0">-- Seleccione un Proveedor --</option>
+                                @if (suppliers is not null)
+                                {
+                                    @foreach (var supplier in suppliers)
+                                    {
+                                        <option value="@supplier.Id">@supplier.Name</option>
+                                    }
+                                }
+                            </select>
+                            <ValidationMessage For="@(() => BuyDTO.SupplierId)" />
+                        </div>
+                    </div>
+                </div>
+
+            @* ------------------------------- Columna 2 -------------------------------------*@
+                 <div class= "col-6">
+                    
+                     <div class="row g-3 align-items-center">
+                        <div class="col-2">
+                            <label class="col-form-label fw-bold">Producto:</label>
+                        </div>
+                        <div class="col-2">
+                        <input type="number" class="form-control" value="@productId" @onchange="SearchProduct" />
+                        </div>
+                        <div class="col-8">
+                            <label class="col-form-label fw-bold">@description</label>
+                        </div>
+                    </div>
+
+                <div class="row g-3 align-items-center">
+                    <div class="col-2">
+                        <label class="col-form-label fw-bold">Cantidad:</label>
+                    </div>
+                    <div class="col-2">
+                        <InputNumber class="form-control" @bind-Value="@quantity" />
+                        <ValidationMessage For="@(() =>quantity)" />
+                    </div>
+                </div>
+                    
+                <div class="row g-3 align-items-center">
+                    <div class="col-2">
+                        <label class="col-form-label fw-bold">Costo:</label>
+                    </div>
+                    <div class="col-2">
+                        <InputNumber class="form-control" @bind-Value="@cost" />
+                        <ValidationMessage For="@(() =>cost)" />
+                    </div>
+                </div>
+                    
+                <div class="row g-3 align-items-center">
+                    <div class="col-2">
+                        <label class="col-form-label fw-bold">% Descuento:</label>
+                    </div>
+                    <div class="col-2">
+                        <InputNumber class="form-control" @bind-Value="@discount" />
+                        <ValidationMessage For="@(() =>discount)" />
+                    </div>
+                </div>
+                
+
+                <button class="btn btn-sm btn-outline-primary" @onclick="AddMove">
+                    <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" fill="currentColor" class="bi bi-plus-circle-fill" viewBox="0 0 16 16">
+                        <path d="M16 8A8 8 0 1 1 0 8a8 8 0 0 1 16 0M8.5 4.5a.5.5 0 0 0-1 0v3h-3a.5.5 0 0 0 0 1h3v3a.5.5 0 0 0 1 0v-3h3a.5.5 0 0 0 0-1h-3z" />
+                    </svg>
+                        Agregar
+                    </button>
+                </div>
+
+                @* ------------------------------- Columna 3 -------------------------------------*@
+                <div class="col-3">
+                        <div class="row g-3 align-items-center">
+                            <div class="col-2">
+                                <label class="col-form-label fw-bold">Imagen:</label>
+                            </div>
+                            <div class="col-10">
+                            
+                            </div>
+                        </div>
+                </div>
+            </div>
+
+
+
+        <GenericList MyList="myDetails">
+            <Body>
+                <table class="table table-sm table-info table-striped">
+                    <thead>
+                        <tr>
+                            <th>Id</th>
+                            <th>Descripción</th>
+                            <th>Cantidad</th>
+                            <th>Costo</th>
+                            <th>IVA</th>
+                            <th>% Descuento</th>
+                            <th>Valor Bruto</th>
+                            <th>Valor IVA</th>
+                            <th>Valor Descuento</th>
+                            <th>Valor Neto</th>
+                            <th style="width:60px"></th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        @foreach (var detail in myDetails!)
+                        {
+                            <tr>
+                                <td>
+                                    @detail.ProductId
+                                </td>
+                                <td>
+                                    @detail.Description
+                                </td>
+                                <td>
+                                    @detail.Quantity
+                                </td>
+                                <td>
+                                    @detail.Cost
+                                </td>
+                                <td>
+                                    @detail.PercentageIVA
+                                </td>
+                                <td>
+                                    @detail.PercentageDiscount
+                                </td>
+                                <td>
+                                    @detail.valorBruto
+                                </td>
+                                <td>
+                                    @detail.valorIVA
+                                </td>
+                                <td>
+                                    @detail.valorDescuento
+                                </td>
+                                <td>
+                                    @detail.valorNeto
+                                </td>
+                               
+                                <td>
+
+                                    @* @onclick=@(() => DeleteAsync(store.Id)) *@
+                                    <button class="btn btn-danger btn-sm" >
+                                        <i class="bi bi-trash3-fill" />
+                                        <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" fill="white" class="bi bi-trash3-fill" viewBox="0 0 16 16">
+                                            <path d="M11 1.5v1h3.5a.5.5 0 0 1 0 1h-.538l-.853 10.66A2 2 0 0 1 11.115 16h-6.23a2 2 0 0 1-1.994-1.84L2.038 3.5H1.5a.5.5 0 0 1 0-1H5v-1A1.5 1.5 0 0 1 6.5 0h3A1.5 1.5 0 0 1 11 1.5m-5 0v1h4v-1a.5.5 0 0 0-.5-.5h-3a.5.5 0 0 0-.5.5M4.5 5.029l.5 8.5a.5.5 0 1 0 .998-.06l-.5-8.5a.5.5 0 1 0-.998.06m6.53-.528a.5.5 0 0 0-.528.47l-.5 8.5a.5.5 0 0 0 .998.058l.5-8.5a.5.5 0 0 0-.47-.528M8 4.5a.5.5 0 0 0-.5.5v8.5a.5.5 0 0 0 1 0V5a.5.5 0 0 0-.5-.5" />
+                                        </svg>
+                                    </button>
+                                </td>
+                            </tr>
+                        }
+                    </tbody>
+                </table>
+            </Body>
+        </GenericList>
+
+
+
+
+
+
+
+             <div class="row">
+                <div class="offset-8 col-3">
+                <button class="btn btn-sm btn-outline-primary" type="submit">
+                    <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" fill="currentColor" class="bi bi-floppy-fill" viewBox="0 0 16 16">
+                        <path d="M0 1.5A1.5 1.5 0 0 1 1.5 0H3v5.5A1.5 1.5 0 0 0 4.5 7h7A1.5 1.5 0 0 0 13 5.5V0h.086a1.5 1.5 0 0 1 1.06.44l1.415 1.414A1.5 1.5 0 0 1 16 2.914V14.5a1.5 1.5 0 0 1-1.5 1.5H14v-5.5A1.5 1.5 0 0 0 12.5 9h-9A1.5 1.5 0 0 0 2 10.5V16h-.5A1.5 1.5 0 0 1 0 14.5z" />
+                        <path d="M3 16h10v-5.5a.5.5 0 0 0-.5-.5h-9a.5.5 0 0 0-.5.5zm9-16H4v5.5a.5.5 0 0 0 .5.5h7a.5.5 0 0 0 .5-.5zM9 1h2v4H9z" />
+                    </svg>
+                    Guardar Cambios
+                </button>
+                <button class="btn btn-sm btn-outline-success" @onclick="ReturnAction">
+                    <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-arrow-left-circle-fill" viewBox="0 0 16 16">
+                        <path d="M8 0a8 8 0 1 0 0 16A8 8 0 0 0 8 0m3.5 7.5a.5.5 0 0 1 0 1H5.707l2.147 2.146a.5.5 0 0 1-.708.708l-3-3a.5.5 0 0 1 0-.708l3-3a.5.5 0 1 1 .708.708L5.707 7.5z" />
+                    </svg>
+                    Regresar
+                </button>
+            </div>
+        </div>
+
+        
+    </div>
+
+</EditForm>
+
+@code {
+    private EditContext editContext = null!;
+    private List<Store>? stores;
+    private List<Supplier>? suppliers;
+    private int? productId;
+    private string? productId2;
+    private double? quantity;
+    private decimal? cost;
+    private double? discount;
+    private string description="";
+    private Product? product;
+    List<MoveDetail> myDetails = new List<MoveDetail>();
+
+    [EditorRequired]
+    [Parameter]
+    public BuyDTO BuyDTO { get; set; } = null!;
+
+    [Parameter]
+    [EditorRequired]    
+    public EventCallback OnValidSubmit { get; set; }
+
+    [EditorRequired]
+    [Parameter]
+    public EventCallback ReturnAction { get; set; }
+
+    public bool FormPostedSuccessfully { get; set; } = false;
+
+
+    protected override void OnInitialized()
+    {
+        editContext = new(BuyDTO);
+    }
+
+    protected override async Task OnInitializedAsync()
+    {
+        await LoadStoresAsync();
+        await LoadSuppliersAsync();
+        BuyDTO.Date = DateTime.Now;
+    }
+
+    private async Task LoadStoresAsync()
+    {
+        var responseHttp = await repository.Get<List<Store>>("/api/stores/combo");
+        if (responseHttp.Error)
+        {
+            var message = await responseHttp.GetErrorMessage();
+            await swal.FireAsync("Error", message, SweetAlertIcon.Error);
+            return;
+        }
+        stores = responseHttp.Response;
+    }
+
+    private async Task LoadSuppliersAsync()
+    {
+        var responseHttp = await repository.Get<List<Supplier>>("/api/suppliers/combo");
+        if (responseHttp.Error)
+        {
+            var message = await responseHttp.GetErrorMessage();
+            await swal.FireAsync("Error", message, SweetAlertIcon.Error);
+            return;
+        }
+        suppliers = responseHttp.Response;
+    }
+
+    private async Task OnBeforeInternalNavigation(LocationChangingContext context)
+    {
+        var formWasMofied = editContext.IsModified();
+        if (!formWasMofied || FormPostedSuccessfully)
+        {
+            return;
+        }
+
+        var result = await swal.FireAsync(new SweetAlertOptions
+            {
+                Title = "Confirmación",
+                Text = "¿Deseas abandonar la página y perder los cambios?",
+                Icon = SweetAlertIcon.Question,
+                ShowCancelButton = true,
+                CancelButtonText = "No",
+                ConfirmButtonText = "Si"
+            });
+
+        var confirm = !string.IsNullOrEmpty(result.Value);
+
+        if (confirm)
+        {
+            return;
+        }
+
+        context.PreventNavigation();
+    }
+
+    private async Task SearchProduct(ChangeEventArgs e)
+    {
+        description = "";
+        var message = string.Empty;
+
+        if (e.Value is null)
+        {
+            var toast = swal.Mixin(new SweetAlertOptions
+                {
+                    Toast = true,
+                    Position = SweetAlertPosition.Center,
+                    ShowConfirmButton = true,
+                    Timer = 3000
+                });
+            await toast.FireAsync(icon: SweetAlertIcon.Error, message: "Debe ingresar un Producto.");
+            return;
+        }
+        long producto;
+        try
+        {
+            producto = Convert.ToInt32(e.Value);
+        }
+        catch (Exception ex)
+        {
+            producto = 0;
+        }
+
+        if (producto == 0)
+        {
+            var toast = swal.Mixin(new SweetAlertOptions
+                {
+                    Toast = true,
+                    Position = SweetAlertPosition.Center,
+                    ShowConfirmButton = true,
+                    Timer = 3000
+                });
+            await toast.FireAsync(icon: SweetAlertIcon.Error, message: "Debe ingresar un valor numérico entero.");
+            return;
+        }
+
+        if (producto < 0)
+        {
+            var toast = swal.Mixin(new SweetAlertOptions
+                {
+                    Toast = true,
+                    Position = SweetAlertPosition.Center,
+                    ShowConfirmButton = true,
+                    Timer = 3000
+                });
+            await toast.FireAsync(icon: SweetAlertIcon.Error, message: "Debe ingresar un valor positivo.");
+            return;
+        }
+
+        if (e.Value is not null)
+        {
+            productId2 = e.Value.ToString();
+            var responseHttp = await repository.Get<Product>($"/api/products/{productId2}");
+            if (responseHttp.Error)
+            {
+                var toast = swal.Mixin(new SweetAlertOptions
+                    {
+                        Toast = true,
+                        Position = SweetAlertPosition.Center,
+                        ShowConfirmButton = true,
+                        Timer = 3000
+                    });
+                await toast.FireAsync(icon: SweetAlertIcon.Error, message: "Elproducto no existe.");
+                return;
+            }
+
+            product = responseHttp.Response;
+            description = product!.Name;
+            productId = product.Id;
+        }
+    }
+
+    private async Task VerifyValue(ChangeEventArgs e)
+    {
+        if (e.Value is null)
+        {
+            var toast = swal.Mixin(new SweetAlertOptions
+                {
+                    Toast = true,
+                    Position = SweetAlertPosition.Center,
+                    ShowConfirmButton = true,
+                    Timer = 3000
+                });
+            await toast.FireAsync(icon: SweetAlertIcon.Error, message: "Debe ingresar un valor numérico.");
+            return;
+        }
+        decimal value =0;
+        try
+        {
+            value = Convert.ToDecimal(e.Value);
+        }
+        catch (Exception ex)
+        {
+            value = 0;
+        }
+        if (value <= 0)
+        {
+            var toast = swal.Mixin(new SweetAlertOptions
+                {
+                    Toast = true,
+                    Position = SweetAlertPosition.Center,
+                    ShowConfirmButton = true,
+                    Timer = 3000
+                });
+            await toast.FireAsync(icon: SweetAlertIcon.Error, message: "Debe ingresar un valor mayor a cero.");
+            return;
+        }
+    }
+
+    private async Task VerifyDiscount(ChangeEventArgs e)
+    {
+        decimal value = 0;
+        if (e.Value is null)
+        {
+            value = 0;
+            return;
+        }
+
+        try
+        {
+            value = Convert.ToDecimal(e.Value);
+        }
+        catch (Exception ex)
+        {
+            value = 0;
+        }
+        if (value < 0 || value>100)
+        {
+            var toast = swal.Mixin(new SweetAlertOptions
+                {
+                    Toast = true,
+                    Position = SweetAlertPosition.Center,
+                    ShowConfirmButton = true,
+                    Timer = 3000
+                });
+            await toast.FireAsync(icon: SweetAlertIcon.Error, message: "Debe ingresar un valor mayor a 0 y menor o igual a 100.");
+            return;
+        }
+    }
+
+    private async Task AddMove()
+    {
+        MoveDetail moveDetail = new MoveDetail();
+        moveDetail.Cost = (decimal)cost!;
+        moveDetail.PercentageIVA = 0;
+        moveDetail.ProductId = product!.Id;
+        moveDetail.Description = product.Name;
+        moveDetail.Quantity = (double)quantity!;
+        moveDetail.PercentageDiscount = (double)discount!;
+
+        myDetails.Add(moveDetail);
+    }
+
+}
