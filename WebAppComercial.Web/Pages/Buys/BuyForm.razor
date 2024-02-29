@@ -62,61 +62,67 @@
                 </div>
 
             @* ------------------------------- Columna 2 -------------------------------------*@
-                 <div class= "col-6">
+                 <div class= "col-4">
                     
                      <div class="row g-3 align-items-center">
-                        <div class="col-2">
+                        <div class="col-3">
                             <label class="col-form-label fw-bold">Producto:</label>
                         </div>
-                        <div class="col-2">
+                        <div class="col-3">
                         <input type="number" class="form-control" value="@productId" @onchange="SearchProduct" />
                         </div>
-                        <div class="col-8">
+                        <div class="col-6">
                             <label class="col-form-label fw-bold">@description</label>
                         </div>
                     </div>
 
                 <div class="row g-3 align-items-center">
-                    <div class="col-2">
+                    <div class="col-3">
                         <label class="col-form-label fw-bold">Cantidad:</label>
                     </div>
-                    <div class="col-2">
-                        <InputNumber class="form-control" @bind-Value="@quantity" />
+                    <div class="col-3">
+                        <InputNumber class="form-control" @bind-Value="@quantity"  />
                         <ValidationMessage For="@(() =>quantity)" />
                     </div>
                 </div>
                     
                 <div class="row g-3 align-items-center">
-                    <div class="col-2">
+                    <div class="col-3">
                         <label class="col-form-label fw-bold">Costo:</label>
                     </div>
-                    <div class="col-2">
+                    <div class="col-3">
                         <InputNumber class="form-control" @bind-Value="@cost" />
                         <ValidationMessage For="@(() =>cost)" />
                     </div>
                 </div>
                     
                 <div class="row g-3 align-items-center">
-                    <div class="col-2">
+                    <div class="col-3">
                         <label class="col-form-label fw-bold">% Descuento:</label>
                     </div>
-                    <div class="col-2">
+                    <div class="col-3">
                         <InputNumber class="form-control" @bind-Value="@discount" />
                         <ValidationMessage For="@(() =>discount)" />
                     </div>
                 </div>
-                
 
-                <button class="btn btn-sm btn-outline-primary" @onclick="AddMove">
-                    <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" fill="currentColor" class="bi bi-plus-circle-fill" viewBox="0 0 16 16">
-                        <path d="M16 8A8 8 0 1 1 0 8a8 8 0 0 1 16 0M8.5 4.5a.5.5 0 0 0-1 0v3h-3a.5.5 0 0 0 0 1h3v3a.5.5 0 0 0 1 0v-3h3a.5.5 0 0 0 0-1h-3z" />
-                    </svg>
-                        Agregar
-                    </button>
+                <div class="row g-3 align-items-center">
+                    <div class="col-9">
+                    </div>
+                    <div class="col-3">
+                        <button class="btn btn-sm btn-outline-primary" @onclick="AddMove">
+                            <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" fill="currentColor" class="bi bi-plus-circle-fill" viewBox="0 0 16 16">
+                                <path d="M16 8A8 8 0 1 1 0 8a8 8 0 0 1 16 0M8.5 4.5a.5.5 0 0 0-1 0v3h-3a.5.5 0 0 0 0 1h3v3a.5.5 0 0 0 1 0v-3h3a.5.5 0 0 0 0-1h-3z" />
+                            </svg>
+                            Agregar
+                        </button>
+                    </div>
+                </div>
+               
                 </div>
 
                 @* ------------------------------- Columna 3 -------------------------------------*@
-                <div class="col-3">
+                <div class="col-5">
                         <div class="row g-3 align-items-center">
                             <div class="col-2">
                                 <label class="col-form-label fw-bold">Imagen:</label>
@@ -127,24 +133,25 @@
                         </div>
                 </div>
             </div>
+            
+            <br />
 
-
-
+        @* ----------------------- Detalle ----------------------- *@
         <GenericList MyList="myDetails">
             <Body>
                 <table class="table table-sm table-info table-striped">
                     <thead>
                         <tr>
-                            <th>Id</th>
-                            <th>Descripción</th>
-                            <th>Cantidad</th>
-                            <th>Costo</th>
-                            <th>IVA</th>
-                            <th>% Descuento</th>
-                            <th>Valor Bruto</th>
-                            <th>Valor IVA</th>
-                            <th>Valor Descuento</th>
-                            <th>Valor Neto</th>
+                            <th><p align='center'>Id</p></th>
+                            <th><p align='center'>Descripción</p></th>
+                            <th><p align='center'>Cantidad</p></th>
+                            <th><p align='center'>Costo</p></th>
+                            <th><p align='center'>IVA</p></th>
+                            <th><p align='center'>% Descuento</p></th>
+                            <th><p align='center'>Valor Bruto</p></th>
+                            <th><p align='center'>Valor IVA</p></th>
+                            <th><p align='center'>Valor Descuento</p></th>
+                            <th><p align='center'>Valor Neto</p></th>
                             <th style="width:60px"></th>
                         </tr>
                     </thead>
@@ -159,28 +166,43 @@
                                     @detail.Description
                                 </td>
                                 <td>
-                                    @detail.Quantity
+                                     <p align='right'>
+                                    @($"{detail.Quantity:N2}")
+                                    </p>
                                 </td>
                                 <td>
-                                    @detail.Cost
+                                     <p align='right'>
+                                        @($"{detail.Cost:N2} $")
+                                    </p>
                                 </td>
                                 <td>
-                                    @detail.PercentageIVA
+                                     <p align='right'>
+                                        @($"{detail.PercentageIVA:P2}")
+                                    </p>
                                 </td>
                                 <td>
-                                    @detail.PercentageDiscount
+                                    <p align='right'>
+                                    @($"{detail.PercentageDiscount:P2}")
+                                    </p>
                                 </td>
                                 <td>
-                                    @detail.valorBruto
+                                     <p align='right'>
+                                    @($"{detail.valorBruto:N2} $")
+                                    </p>
                                 </td>
                                 <td>
-                                    @detail.valorIVA
+                                     <p align='right'>
+                                    @($"{detail.valorIVA:N2} $")
+                                    </p>
+                                </td>
+                                <td> <p align='right'>
+                                    @($"{detail.valorDescuento:N2} $")
+                                    </p>
                                 </td>
                                 <td>
-                                    @detail.valorDescuento
-                                </td>
-                                <td>
-                                    @detail.valorNeto
+                                    <p align='right'>
+                                    @($"{detail.valorNeto:N2} $")
+                                    </p>
                                 </td>
                                
                                 <td>
@@ -200,11 +222,66 @@
             </Body>
         </GenericList>
 
+        @* ----------------------- Totales ----------------------- *@
+        <div class="row">
+            <div class="col-2">
+                
+            </div>
+            <div class="col-2">
+                <div class="row g-3 align-items-center">
+                    <div class="col-7">
+                        <label class="col-form-label fw-bold">Cant. Items:</label>
+                    </div>
+                    <div class="col-5">
+                        <label class="col-form-label fw-bold">@totalItems</label>
+                    </div>
+                </div>
+            </div>
 
-
-
-
-
+            <div class="col-2">
+                <div class="row g-3 align-items-center">
+                    <div class="col-7">
+                        <label class="col-form-label fw-bold">Total Bruto:</label>
+                    </div>
+                    <div class="col-5">
+                        <label class="col-form-label fw-bold">@($"{totalValorBruto:N2} $")</label>
+                    </div>
+                </div>
+            </div>
+        
+            <div class="col-2">
+                <div class="row g-3 align-items-center">
+                    <div class="col-7">
+                        <label class="col-form-label fw-bold">Total IVA:</label>
+                    </div>
+                    <div class="col-5">
+                        <label class="col-form-label fw-bold">@($"{totalValorIva:N2} $")</label>
+                    </div>
+                </div>
+            </div>
+        
+            <div class="col-2">
+                <div class="row g-3 align-items-center">
+                    <div class="col-7">
+                        <label class="col-form-label fw-bold">Total Descuento:</label>
+                    </div>
+                    <div class="col-5">
+                        <label class="col-form-label fw-bold">@($"{totalValorDescuento:N2} $")</label>
+                    </div>
+                </div>
+            </div>
+        
+            <div class="col-2">
+                <div class="row g-3 align-items-center">
+                    <div class="col-7">
+                        <label class="col-form-label fw-bold">Total Neto:</label>
+                    </div>
+                    <div class="col-5">
+                        <label class="col-form-label fw-bold">@($"{totalValorNeto:N2} $")</label>
+                    </div>
+                </div>
+            </div>
+        </div>
 
              <div class="row">
                 <div class="offset-8 col-3">
@@ -223,7 +300,7 @@
                 </button>
             </div>
         </div>
-
+        
         
     </div>
 
@@ -241,6 +318,12 @@
     private string description="";
     private Product? product;
     List<MoveDetail> myDetails = new List<MoveDetail>();
+
+    private int totalItems=0;
+    private decimal totalValorBruto = 0;
+    private decimal totalValorIva = 0;
+    private decimal totalValorDescuento = 0;
+    private decimal totalValorNeto = 0;
 
     [EditorRequired]
     [Parameter]
@@ -397,9 +480,11 @@
         }
     }
 
-    private async Task VerifyValue(ChangeEventArgs e)
+
+    private async Task AddMove()
     {
-        if (e.Value is null)
+        // ----- Verifica Product -----
+        if (productId is null)
         {
             var toast = swal.Mixin(new SweetAlertOptions
                 {
@@ -408,13 +493,27 @@
                     ShowConfirmButton = true,
                     Timer = 3000
                 });
-            await toast.FireAsync(icon: SweetAlertIcon.Error, message: "Debe ingresar un valor numérico.");
+            await toast.FireAsync(icon: SweetAlertIcon.Error, message: "Debe ingresar un producto.");
             return;
         }
-        decimal value =0;
+
+        // ----- Verifica Cantidad -----
+        if (quantity is null)
+        {
+            var toast = swal.Mixin(new SweetAlertOptions
+                {
+                    Toast = true,
+                    Position = SweetAlertPosition.Center,
+                    ShowConfirmButton = true,
+                    Timer = 3000
+                });
+            await toast.FireAsync(icon: SweetAlertIcon.Error, message: "Debe ingresar una cantidad.");
+            return;
+        }
+        decimal value = 0;
         try
         {
-            value = Convert.ToDecimal(e.Value);
+            value = Convert.ToDecimal(quantity);
         }
         catch (Exception ex)
         {
@@ -429,29 +528,12 @@
                     ShowConfirmButton = true,
                     Timer = 3000
                 });
-            await toast.FireAsync(icon: SweetAlertIcon.Error, message: "Debe ingresar un valor mayor a cero.");
-            return;
-        }
-    }
-
-    private async Task VerifyDiscount(ChangeEventArgs e)
-    {
-        decimal value = 0;
-        if (e.Value is null)
-        {
-            value = 0;
+            await toast.FireAsync(icon: SweetAlertIcon.Error, message: "Debe ingresar una cantidad.");
             return;
         }
 
-        try
-        {
-            value = Convert.ToDecimal(e.Value);
-        }
-        catch (Exception ex)
-        {
-            value = 0;
-        }
-        if (value < 0 || value>100)
+        // ----- Verifica Costo -----
+        if (cost is null)
         {
             var toast = swal.Mixin(new SweetAlertOptions
                 {
@@ -460,13 +542,61 @@
                     ShowConfirmButton = true,
                     Timer = 3000
                 });
-            await toast.FireAsync(icon: SweetAlertIcon.Error, message: "Debe ingresar un valor mayor a 0 y menor o igual a 100.");
+            await toast.FireAsync(icon: SweetAlertIcon.Error, message: "Debe ingresar un costo.");
             return;
         }
-    }
+        decimal value2 = 0;
+        try
+        {
+            value2 = Convert.ToDecimal(cost);
+        }
+        catch (Exception ex)
+        {
+            value2 = 0;
+        }
+        if (value2 <= 0)
+        {
+            var toast = swal.Mixin(new SweetAlertOptions
+                {
+                    Toast = true,
+                    Position = SweetAlertPosition.Center,
+                    ShowConfirmButton = true,
+                    Timer = 3000
+                });
+            await toast.FireAsync(icon: SweetAlertIcon.Error, message: "Debe ingresar un costo.");
+            return;
+        }
 
-    private async Task AddMove()
-    {
+        // ----- Verifica Descuento -----
+        decimal value3 = 0;
+
+        if (discount == null)
+        {
+            discount = 0;
+        }
+
+        try
+        {
+            value3 = Convert.ToDecimal(discount);
+        }
+        catch (Exception ex)
+        {
+            value3 = 0;
+        }
+        if (value3 < 0 || value3 > 1)
+        {
+            var toast = swal.Mixin(new SweetAlertOptions
+                {
+                    Toast = true,
+                    Position = SweetAlertPosition.Center,
+                    ShowConfirmButton = true,
+                    Timer = 3000
+                });
+            await toast.FireAsync(icon: SweetAlertIcon.Error, message: "Debe ingresar un descuento entre 0 y 1.");
+            return;
+        }
+
+
         MoveDetail moveDetail = new MoveDetail();
         moveDetail.Cost = (decimal)cost!;
         moveDetail.PercentageIVA = 0;
@@ -476,6 +606,18 @@
         moveDetail.PercentageDiscount = (double)discount!;
 
         myDetails.Add(moveDetail);
+
+        totalItems++;
+        totalValorBruto += moveDetail.valorBruto;
+        totalValorIva += moveDetail.valorIVA;
+        totalValorDescuento += moveDetail.valorDescuento;
+        totalValorNeto += moveDetail.valorNeto;
+
+        productId=null;
+        quantity=null;
+        cost=null;
+        discount = null;;
+        description = "";
     }
 
 }
