@@ -8,84 +8,84 @@
 
     <div class="container">
         <div class="row">
-                         
-                @* ------------------------------- Columna 1 -------------------------------------*@
-                <div class="col-3">
 
-                    <div class="row g-3 align-items-center">
-                        <div class="col-3">
-                            <label class="col-form-label fw-bold">Fecha:</label>
-                        </div>
-                        <div class="col-5">
-                            <InputDate class="form-control" @bind-Value="@BuyDTO.Date" />
-                            <ValidationMessage For="@(() => BuyDTO.Date)" />
-                        </div>
+            @* ------------------------------- Columna 1 -------------------------------------*@
+            <div class="col-3">
+
+                <div class="row g-3 align-items-center">
+                    <div class="col-3">
+                        <label class="col-form-label fw-bold">Fecha:</label>
                     </div>
-
-                    <div class="row g-3 align-items-center">
-                        <div class="col-3">
-                            <label class="col-form-label fw-bold">Almacén:</label>
-                        </div>
-                        <div class="col-9">
-                            <select class="form-select" @bind="@BuyDTO.StoreId">
-                                <option value="0">-- Seleccione un Almacén --</option>
-                                @if (stores is not null)
-                                {
-                                    @foreach (var store in stores)
-                                    {
-                                        <option value="@store.Id">@store.Name</option>
-                                    }
-                                }
-                            </select>
-                            <ValidationMessage For="@(() => BuyDTO.StoreId)" />
-                        </div>
-                    </div>
-
-                    <div class="row g-3 align-items-center">
-                        <div class="col-3">
-                            <label class="col-form-label fw-bold">Proveedor:</label>
-                        </div>
-                        <div class="col-9">
-                            <select class="form-select" @bind="@BuyDTO.SupplierId">
-                                <option value="0">-- Seleccione un Proveedor --</option>
-                                @if (suppliers is not null)
-                                {
-                                    @foreach (var supplier in suppliers)
-                                    {
-                                        <option value="@supplier.Id">@supplier.Name</option>
-                                    }
-                                }
-                            </select>
-                            <ValidationMessage For="@(() => BuyDTO.SupplierId)" />
-                        </div>
+                    <div class="col-5">
+                        <InputDate class="form-control" @bind-Value="@BuyDTO.Date" />
+                        <ValidationMessage For="@(() => BuyDTO.Date)" />
                     </div>
                 </div>
 
-            @* ------------------------------- Columna 2 -------------------------------------*@
-                 <div class= "col-4">
-                    
-                     <div class="row g-3 align-items-center">
-                        <div class="col-3">
-                            <label class="col-form-label fw-bold">Producto:</label>
-                        </div>
-                        <div class="col-3">
-                        <input type="number" class="form-control" value="@productId" @onchange="SearchProduct" />
-                        </div>
-                        <div class="col-6">
-                            <label class="col-form-label fw-bold">@description</label>
-                        </div>
+                <div class="row g-3 align-items-center">
+                    <div class="col-3">
+                        <label class="col-form-label fw-bold">Almacén:</label>
                     </div>
+                    <div class="col-9">
+                        <select class="form-select" @bind="@BuyDTO.StoreId">
+                            <option value="0">-- Seleccione un Almacén --</option>
+                            @if (stores is not null)
+                            {
+                                @foreach (var store in stores)
+                                {
+                                    <option value="@store.Id">@store.Name</option>
+                                }
+                            }
+                        </select>
+                        <ValidationMessage For="@(() => BuyDTO.StoreId)" />
+                    </div>
+                </div>
+
+                <div class="row g-3 align-items-center">
+                    <div class="col-3">
+                        <label class="col-form-label fw-bold">Proveedor:</label>
+                    </div>
+                    <div class="col-9">
+                        <select class="form-select" @bind="@BuyDTO.SupplierId">
+                            <option value="0">-- Seleccione un Proveedor --</option>
+                            @if (suppliers is not null)
+                            {
+                                @foreach (var supplier in suppliers)
+                                {
+                                    <option value="@supplier.Id">@supplier.Name</option>
+                                }
+                            }
+                        </select>
+                        <ValidationMessage For="@(() => BuyDTO.SupplierId)" />
+                    </div>
+                </div>
+            </div>
+
+            @* ------------------------------- Columna 2 -------------------------------------*@
+            <div class="col-4">
+
+                <div class="row g-3 align-items-center">
+                    <div class="col-3">
+                        <label class="col-form-label fw-bold">Producto:</label>
+                    </div>
+                    <div class="col-3">
+                        <input type="number" class="form-control" value="@productId" @onchange="SearchProduct" />
+                    </div>
+                    <div class="col-6">
+                        <label class="col-form-label fw-bold">@description</label>
+                    </div>
+                </div>
 
                 <div class="row g-3 align-items-center">
                     <div class="col-3">
                         <label class="col-form-label fw-bold">Cantidad:</label>
                     </div>
                     <div class="col-3">
-                        <InputNumber class="form-control" @bind-Value="@quantity"  />
+                        <InputNumber class="form-control" @bind-Value="@quantity" />
                         <ValidationMessage For="@(() =>quantity)" />
                     </div>
                 </div>
-                    
+
                 <div class="row g-3 align-items-center">
                     <div class="col-3">
                         <label class="col-form-label fw-bold">Costo:</label>
@@ -95,7 +95,7 @@
                         <ValidationMessage For="@(() =>cost)" />
                     </div>
                 </div>
-                    
+
                 <div class="row g-3 align-items-center">
                     <div class="col-3">
                         <label class="col-form-label fw-bold">% Descuento:</label>
@@ -118,23 +118,33 @@
                         </button>
                     </div>
                 </div>
-               
-                </div>
 
-                @* ------------------------------- Columna 3 -------------------------------------*@
-                <div class="col-5">
-                        <div class="row g-3 align-items-center">
-                            <div class="col-2">
-                                <label class="col-form-label fw-bold">Imagen:</label>
-                            </div>
-                            <div class="col-10">
-                            
-                            </div>
-                        </div>
+            </div>
+
+            @* ------------------------------- Columna 3 -------------------------------------*@
+            <div class="col-5">
+                <div class="row g-3 align-items-center">
+                    <div class="col-2">
+                        <label class="col-form-label fw-bold">Imagen:</label>
+                    </div>
+                    <div class="col-10">
+                        @if (@product != null)
+                        {
+                            @if (@product!.Image == null || @product.Image == "" || @product.Image == string.Empty)
+                            {
+                            }
+                            else
+
+                            {
+                                <img src="@product.ImageFullPath" width="160" />
+                            }
+                        }
+                    </div>
                 </div>
             </div>
-            
-            <br />
+        </div>
+
+        <br />
 
         @* ----------------------- Detalle ----------------------- *@
         <GenericList MyList="myDetails">
@@ -166,49 +176,50 @@
                                     @detail.Description
                                 </td>
                                 <td>
-                                     <p align='right'>
-                                    @($"{detail.Quantity:N2}")
+                                    <p align='right'>
+                                        @($"{detail.Quantity:N2}")
                                     </p>
                                 </td>
                                 <td>
-                                     <p align='right'>
+                                    <p align='right'>
                                         @($"{detail.Cost:N2} $")
                                     </p>
                                 </td>
                                 <td>
-                                     <p align='right'>
+                                    <p align='right'>
                                         @($"{detail.PercentageIVA:P2}")
                                     </p>
                                 </td>
                                 <td>
                                     <p align='right'>
-                                    @($"{detail.PercentageDiscount:P2}")
-                                    </p>
-                                </td>
-                                <td>
-                                     <p align='right'>
-                                    @($"{detail.valorBruto:N2} $")
-                                    </p>
-                                </td>
-                                <td>
-                                     <p align='right'>
-                                    @($"{detail.valorIVA:N2} $")
-                                    </p>
-                                </td>
-                                <td> <p align='right'>
-                                    @($"{detail.valorDescuento:N2} $")
+                                        @($"{detail.PercentageDiscount:P2}")
                                     </p>
                                 </td>
                                 <td>
                                     <p align='right'>
-                                    @($"{detail.valorNeto:N2} $")
+                                        @($"{detail.valorBruto:N2} $")
                                     </p>
                                 </td>
-                               
+                                <td>
+                                    <p align='right'>
+                                        @($"{detail.valorIVA:N2} $")
+                                    </p>
+                                </td>
+                                <td>
+                                    <p align='right'>
+                                        @($"{detail.valorDescuento:N2} $")
+                                    </p>
+                                </td>
+                                <td>
+                                    <p align='right'>
+                                        @($"{detail.valorNeto:N2} $")
+                                    </p>
+                                </td>
+
                                 <td>
 
                                     @* @onclick=@(() => DeleteAsync(store.Id)) *@
-                                    <button class="btn btn-danger btn-sm" >
+                                    <button class="btn btn-danger btn-sm">
                                         <i class="bi bi-trash3-fill" />
                                         <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" fill="white" class="bi bi-trash3-fill" viewBox="0 0 16 16">
                                             <path d="M11 1.5v1h3.5a.5.5 0 0 1 0 1h-.538l-.853 10.66A2 2 0 0 1 11.115 16h-6.23a2 2 0 0 1-1.994-1.84L2.038 3.5H1.5a.5.5 0 0 1 0-1H5v-1A1.5 1.5 0 0 1 6.5 0h3A1.5 1.5 0 0 1 11 1.5m-5 0v1h4v-1a.5.5 0 0 0-.5-.5h-3a.5.5 0 0 0-.5.5M4.5 5.029l.5 8.5a.5.5 0 1 0 .998-.06l-.5-8.5a.5.5 0 1 0-.998.06m6.53-.528a.5.5 0 0 0-.528.47l-.5 8.5a.5.5 0 0 0 .998.058l.5-8.5a.5.5 0 0 0-.47-.528M8 4.5a.5.5 0 0 0-.5.5v8.5a.5.5 0 0 0 1 0V5a.5.5 0 0 0-.5-.5" />
@@ -225,7 +236,6 @@
         @* ----------------------- Totales ----------------------- *@
         <div class="row">
             <div class="col-2">
-                
             </div>
             <div class="col-2">
                 <div class="row g-3 align-items-center">
@@ -248,7 +258,7 @@
                     </div>
                 </div>
             </div>
-        
+
             <div class="col-2">
                 <div class="row g-3 align-items-center">
                     <div class="col-7">
@@ -259,7 +269,7 @@
                     </div>
                 </div>
             </div>
-        
+
             <div class="col-2">
                 <div class="row g-3 align-items-center">
                     <div class="col-7">
@@ -270,7 +280,7 @@
                     </div>
                 </div>
             </div>
-        
+
             <div class="col-2">
                 <div class="row g-3 align-items-center">
                     <div class="col-7">
@@ -283,9 +293,9 @@
             </div>
         </div>
 
-             <div class="row">
-                <div class="offset-8 col-3">
-                <button class="btn btn-sm btn-outline-primary" type="submit">
+        <div class="row">
+            <div class="offset-8 col-3">
+                <button class="btn btn-sm btn-outline-primary" type="submit" @onclick="Guardar">
                     <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" fill="currentColor" class="bi bi-floppy-fill" viewBox="0 0 16 16">
                         <path d="M0 1.5A1.5 1.5 0 0 1 1.5 0H3v5.5A1.5 1.5 0 0 0 4.5 7h7A1.5 1.5 0 0 0 13 5.5V0h.086a1.5 1.5 0 0 1 1.06.44l1.415 1.414A1.5 1.5 0 0 1 16 2.914V14.5a1.5 1.5 0 0 1-1.5 1.5H14v-5.5A1.5 1.5 0 0 0 12.5 9h-9A1.5 1.5 0 0 0 2 10.5V16h-.5A1.5 1.5 0 0 1 0 14.5z" />
                         <path d="M3 16h10v-5.5a.5.5 0 0 0-.5-.5h-9a.5.5 0 0 0-.5.5zm9-16H4v5.5a.5.5 0 0 0 .5.5h7a.5.5 0 0 0 .5-.5zM9 1h2v4H9z" />
@@ -300,8 +310,8 @@
                 </button>
             </div>
         </div>
-        
-        
+
+
     </div>
 
 </EditForm>
@@ -315,11 +325,11 @@
     private double? quantity;
     private decimal? cost;
     private double? discount;
-    private string description="";
+    private string description = "";
     private Product? product;
     List<MoveDetail> myDetails = new List<MoveDetail>();
 
-    private int totalItems=0;
+    private int totalItems = 0;
     private decimal totalValorBruto = 0;
     private decimal totalValorIva = 0;
     private decimal totalValorDescuento = 0;
@@ -330,7 +340,7 @@
     public BuyDTO BuyDTO { get; set; } = null!;
 
     [Parameter]
-    [EditorRequired]    
+    [EditorRequired]
     public EventCallback OnValidSubmit { get; set; }
 
     [EditorRequired]
@@ -339,12 +349,13 @@
 
     public bool FormPostedSuccessfully { get; set; } = false;
 
-
+    //---------------------------------------------------------------------------------
     protected override void OnInitialized()
     {
         editContext = new(BuyDTO);
     }
 
+    //---------------------------------------------------------------------------------
     protected override async Task OnInitializedAsync()
     {
         await LoadStoresAsync();
@@ -352,6 +363,7 @@
         BuyDTO.Date = DateTime.Now;
     }
 
+    //---------------------------------------------------------------------------------
     private async Task LoadStoresAsync()
     {
         var responseHttp = await repository.Get<List<Store>>("/api/stores/combo");
@@ -364,6 +376,7 @@
         stores = responseHttp.Response;
     }
 
+    //---------------------------------------------------------------------------------
     private async Task LoadSuppliersAsync()
     {
         var responseHttp = await repository.Get<List<Supplier>>("/api/suppliers/combo");
@@ -376,6 +389,7 @@
         suppliers = responseHttp.Response;
     }
 
+    //---------------------------------------------------------------------------------
     private async Task OnBeforeInternalNavigation(LocationChangingContext context)
     {
         var formWasMofied = editContext.IsModified();
@@ -404,6 +418,7 @@
         context.PreventNavigation();
     }
 
+    //---------------------------------------------------------------------------------
     private async Task SearchProduct(ChangeEventArgs e)
     {
         description = "";
@@ -480,7 +495,7 @@
         }
     }
 
-
+    //---------------------------------------------------------------------------------
     private async Task AddMove()
     {
         // ----- Verifica Product -----
@@ -599,7 +614,7 @@
 
         MoveDetail moveDetail = new MoveDetail();
         moveDetail.Cost = (decimal)cost!;
-        moveDetail.PercentageIVA = 0;
+        moveDetail.PercentageIVA = 0.21;
         moveDetail.ProductId = product!.Id;
         moveDetail.Description = product.Name;
         moveDetail.Quantity = (double)quantity!;
@@ -613,11 +628,103 @@
         totalValorDescuento += moveDetail.valorDescuento;
         totalValorNeto += moveDetail.valorNeto;
 
-        productId=null;
-        quantity=null;
-        cost=null;
-        discount = null;;
+        productId = null;
+        product = null;
+        quantity = null;
+        cost = null;
+        discount = null; ;
         description = "";
+    }
+
+    //---------------------------------------------------------------------------------
+    private async Task Guardar()
+    {
+        var toast = swal.Mixin(new SweetAlertOptions
+            {
+                Toast = true,
+                Position = SweetAlertPosition.Center,
+                ShowConfirmButton = true,
+                Timer = 3000
+            });
+
+        //---------- Verifica Almacén ----------
+        if (BuyDTO.StoreId<=0)
+        {
+            await toast.FireAsync(icon: SweetAlertIcon.Error, message: "Debe seleccionar un Almacén");
+            return;
+        }
+
+        //---------- Verifica Proveedor ----------
+        if (BuyDTO.SupplierId <= 0)
+        {
+            await toast.FireAsync(icon: SweetAlertIcon.Error, message: "Debe seleccionar un Proveedor");
+            return;
+        }
+
+        //---------- Verifica que haya Productos cargados ----------
+        if (myDetails.Count==0)
+        {
+            await toast.FireAsync(icon: SweetAlertIcon.Error, message: "Debe cargar al menos un Producto");
+            return;
+        }
+
+        //---------- Guardar Cabececera de Compra ----------
+
+        var httpResponse = await repository.Post("/api/buys", BuyDTO);
+        if (httpResponse.Error)
+        {
+            var message = await httpResponse.GetErrorMessage();
+            await swal.FireAsync("Error", message, SweetAlertIcon.Error);
+            return;
+        }
+
+        foreach (MoveDetail detail in myDetails)
+        {
+            //---------- Guardar AlmacénProducto ----------
+
+            var httpResponse2 = await repository.Get<Storeproduct>($"/api/storeproducts/GetStoreprodutByProductAndStoreAsync/{detail.ProductId}/{BuyDTO.StoreId}");
+            Storeproduct storeproduct = new Storeproduct();
+            storeproduct = httpResponse2.Response!;
+
+            StoreproductDTO storeproductDTO = new StoreproductDTO();
+
+            if (storeproduct == null)
+            {
+                storeproductDTO.ProductId = detail.ProductId;
+                storeproductDTO.StoreId = BuyDTO.StoreId;
+                storeproductDTO.Stock = detail.Quantity;
+                storeproductDTO.Minimum = 0;
+                storeproductDTO.Maximum = 0;
+                storeproductDTO.Replacementdays = 0;
+                storeproductDTO.Minimumquantity = 0;
+                await repository.Post("/api/storeproducts/",storeproductDTO);
+            }
+            else
+            {
+                storeproductDTO.Id = storeproduct.Id;
+                storeproductDTO.ProductId = storeproduct.ProductId;
+                storeproductDTO.StoreId = storeproduct.StoreId;
+                storeproductDTO.Stock = storeproduct.Stock + detail.Quantity;
+                storeproductDTO.Minimum = storeproduct.Minimum;
+                storeproductDTO.Maximum = storeproduct.Maximum;
+                storeproductDTO.Replacementdays = storeproduct.Replacementdays;
+                storeproductDTO.Minimumquantity = storeproduct.Minimumquantity;
+                await repository.Put("/api/storeproducts/", storeproductDTO);
+            }
+            //---------- Guardar Kardex ----------
+            //---------- Guardar Detalle Compra ----------
+        }
+        
+
+        //---------- Limpia Campos ----------
+        BuyDTO.StoreId = 0;
+        BuyDTO.SupplierId = 0;
+        BuyDTO.Date = DateTime.Now;
+        myDetails.Clear();
+
+        //---------- Mensaje Ok ----------
+        await toast.FireAsync(icon: SweetAlertIcon.Success, message: "Compra creada con éxito.");
+
     }
 
 }

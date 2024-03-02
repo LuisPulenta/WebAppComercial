@@ -114,18 +114,29 @@ namespace WebAppComercial.Api.Controllers
 
         //---------------------------------------------------------------------------------------
         [HttpPost]
-        public async Task<ActionResult> PostAsync(Buy buy)
+        public async Task<ActionResult> PostAsync(BuyDTO buyDTO)
         {
-            if (buy is null)
+            if (buyDTO is null)
             {
-                throw new ArgumentNullException(nameof(buy));
+                throw new ArgumentNullException(nameof(buyDTO));
             }
 
-            _context.Add(buy);
+            Store? store = await _context.Stores!.FindAsync(buyDTO.StoreId);
+            Supplier? supplier = await _context.Suppliers!.FindAsync(buyDTO.SupplierId);
+
+            Buy newBuy = new Buy();
+            newBuy.StoreId = buyDTO.StoreId;
+            newBuy.SupplierId = buyDTO. SupplierId;
+            newBuy.Date = buyDTO.Date;
+            newBuy.Store = store!;
+            newBuy.Supplier = supplier!;
+
+
+            _context.Add(newBuy);
             try
             {
                 await _context.SaveChangesAsync();
-                return Ok(buy);
+                return Ok(newBuy);
             }
             catch (DbUpdateException dbUpdateException)
             {

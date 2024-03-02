@@ -1,7 +1,9 @@
-﻿using Microsoft.AspNetCore.Authentication.JwtBearer;
+﻿using DocumentFormat.OpenXml.Office2010.Excel;
+using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
+using NPOI.SS.Formula.Functions;
 using WebAppComercial.Api.Data;
 using WebAppComercial.Shared.DTOs;
 using WebAppComercial.Shared.Entities;
@@ -34,6 +36,20 @@ namespace WebAppComercial.Api.Controllers
         }
 
         //---------------------------------------------------------------------------------------
+        [HttpGet("GetStoreprodutByProductAndStoreAsync/{productid:int}/{storeid:int}")]
+        public async Task<ActionResult> GetStoreprodutByProductAndStoreAsync(int productid, int storeid)
+        {
+            var storeproduct = await _context.Storeproducts
+                 .FirstOrDefaultAsync(x => x.StoreId == storeid && x.ProductId == productid);
+
+            if (storeproduct is null)
+                {
+                    return NotFound();
+                }
+            return Ok(storeproduct);
+        }
+
+        //---------------------------------------------------------------------------------------
         [HttpPost]
         public async Task<ActionResult> PostAsync(StoreproductDTO storeproductDTO)
         {
@@ -52,7 +68,7 @@ namespace WebAppComercial.Api.Controllers
                     Product=product!,
                     Store=store!,
                     StoreId= storeproductDTO.StoreId,
-                    Stock=0,
+                    Stock= storeproductDTO.Stock,
                     ProductId = storeproductDTO.ProductId,
                 };
                 _context.Add(newStoreproduct);

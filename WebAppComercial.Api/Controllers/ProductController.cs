@@ -187,16 +187,16 @@ namespace WebAppComercial.Api.Controllers
         [HttpGet("{id:int}")]
         public async Task<ActionResult> Get(int id)
         {
-            var customer = await _context.Products
+            var product = await _context.Products
                 .Include(x => x.Category!)
                 .Include(x => x.ProductImages)
                 .FirstOrDefaultAsync(x => x.Id == id);
-            if (customer is null)
+            if (product is null)
             {
                 return NotFound();
             }
 
-            return Ok(customer);
+            return Ok(product);
         }
 
         //---------------------------------------------------------------------------------------
