@@ -648,7 +648,7 @@
             });
 
         //---------- Verifica Almacén ----------
-        if (BuyDTO.StoreId<=0)
+        if (BuyDTO.StoreId <= 0)
         {
             await toast.FireAsync(icon: SweetAlertIcon.Error, message: "Debe seleccionar un Almacén");
             return;
@@ -662,7 +662,7 @@
         }
 
         //---------- Verifica que haya Productos cargados ----------
-        if (myDetails.Count==0)
+        if (myDetails.Count == 0)
         {
             await toast.FireAsync(icon: SweetAlertIcon.Error, message: "Debe cargar al menos un Producto");
             return;
@@ -670,13 +670,16 @@
 
         //---------- Guardar Cabececera de Compra ----------
 
-        var httpResponse = await repository.Post("/api/buys", BuyDTO);
+        var httpResponse = await repository.Post<BuyDTO,Buy>("/api/buys", BuyDTO);
         if (httpResponse.Error)
         {
             var message = await httpResponse.GetErrorMessage();
             await swal.FireAsync("Error", message, SweetAlertIcon.Error);
             return;
         }
+        Buy newBuy = new Buy();
+        newBuy = httpResponse.Response!;
+
 
         foreach (MoveDetail detail in myDetails)
         {
@@ -712,10 +715,37 @@
                 await repository.Put("/api/storeproducts/", storeproductDTO);
             }
             //---------- Guardar Kardex ----------
+
+            var httpResponse3 = await repository.Get<Move>($"/api/moves/lastmove/{BuyDTO.StoreId}/{detail.ProductId}");
+            Move lastMove = new Move();
+            lastMove = httpResponse3.Response!;
+
+            double lastBalance = 0;
+            decimal lastAverageCost = 0;
+
+            if (lastMove != null)
+            {
+                lastBalance = lastMove.Balance;
+                lastAverageCost = lastMove.AverageCost; 
+            }
+
+            MoveDTO newmoveDTO = new MoveDTO();
+
+            newmoveDTO.StoreId = BuyDTO.StoreId;
+            newmoveDTO.ProductId = detail.ProductId;
+            newmoveDTO.Date = BuyDTO.Date;
+            newmoveDTO.Document = $"CO-{newBuy.Id}";
+            newmoveDTO.Entrance = detail.Quantity;
+            newmoveDTO.Exit =0;
+            newmoveDTO.Balance = lastBalance + detail.Quantity;
+            newmoveDTO.LastCost =detail.Cost;
+            newmoveDTO.AverageCost = ((decimal)lastBalance * lastAverageCost + (decimal)detail.Quantity * detail.Cost) / ((decimal)lastBalance + (decimal)detail.Quantity);
+
+            await repository.Post("/api/moves/", newmoveDTO);
+
             //---------- Guardar Detalle Compra ----------
         }
-        
-
+ 
         //---------- Limpia Campos ----------
         BuyDTO.StoreId = 0;
         BuyDTO.SupplierId = 0;
@@ -724,7 +754,5 @@
 
         //---------- Mensaje Ok ----------
         await toast.FireAsync(icon: SweetAlertIcon.Success, message: "Compra creada con éxito.");
-
     }
-
 }

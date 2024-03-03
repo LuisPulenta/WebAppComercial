@@ -66,6 +66,7 @@ else
                         <table class="table table-sm table-info table-striped">
                             <thead>
                                 <tr>
+                                    <th>Id</th>
                                     <th>Almacén</th>
                                     <th>Proveedor</th>
                                     <th>Fecha</th>
@@ -77,6 +78,9 @@ else
                                 @foreach (var buy in Buys!)
                                 {
                                     <tr>
+                                        <td>
+                                            @buy.Store.Id
+                                        </td>
                                         <td>
                                             @buy.Store.Name
                                         </td>
