@@ -5,6 +5,7 @@ using WebAppComercial.Shared.DTOs;
 using WebAppComercial.Shared.Entities;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Authorization;
+using WebAppComercial.Api.Helpers;
 
 namespace WebAppComercial.Api.Controllers
 {
@@ -18,6 +19,93 @@ namespace WebAppComercial.Api.Controllers
         public MovesController(DataContext context)
         {
             _context = context;
+        }
+
+        //---------------------------------------------------------------------------------------
+        [HttpGet]
+        public async Task<IActionResult> GetAsync([FromQuery] PaginationDTO pagination)
+        {
+            var queryable = _context.Moves
+                .Include(o => o.Store)
+                .Include(o => o.Product)
+                .AsQueryable();
+
+            if (!string.IsNullOrWhiteSpace(pagination.Filter))
+            {
+                queryable = queryable.Where(x =>
+                x.Store.Name.ToLower().Contains(pagination.Filter.ToLower())
+                || x.Product.Name.ToLower().Contains(pagination.Filter.ToLower())
+                );
+            }
+
+            return Ok(await queryable
+                .OrderByDescending(x => x.Date)
+                .Paginate(pagination)
+                .ToListAsync());
+        }
+
+        //---------------------------------------------------------------------------------------
+        [HttpGet("all")]
+        public async Task<IActionResult> GetAll([FromQuery] PaginationDTO pagination)
+        {
+            var queryable = _context.Moves
+                 .Include(o => o.Store)
+                 .Include(o => o.Product)
+                 .AsQueryable();
+
+            if (!string.IsNullOrWhiteSpace(pagination.Filter))
+            {
+                queryable = queryable.Where(x =>
+                 x.Store.Name.ToLower().Contains(pagination.Filter.ToLower())
+                 || x.Product.Name.ToLower().Contains(pagination.Filter.ToLower())
+                 );
+            }
+
+            return Ok(await queryable
+               .OrderByDescending(x => x.Date)
+                .ToListAsync());
+        }
+
+        //---------------------------------------------------------------------------------------
+        [HttpGet("totalPages")]
+        public async Task<ActionResult> GetPages([FromQuery] PaginationDTO pagination)
+        {
+            var queryable = _context.Moves
+                 .Include(o => o.Store)
+                 .Include(o => o.Product)
+                 .AsQueryable();
+
+            if (!string.IsNullOrWhiteSpace(pagination.Filter))
+            {
+                queryable = queryable.Where(x =>
+                   x.Store.Name.ToLower().Contains(pagination.Filter.ToLower())
+                   || x.Product.Name.ToLower().Contains(pagination.Filter.ToLower())
+                   );
+            }
+            double count = await queryable.CountAsync();
+            double totalPages = Math.Ceiling(count / pagination.RecordsNumber);
+            return Ok(totalPages);
+        }
+
+        //---------------------------------------------------------------------------------------
+        [HttpGet("totalRegisters")]
+        public async Task<ActionResult> GetRegisters([FromQuery] PaginationDTO pagination)
+        {
+            var queryable = _context.Moves
+                .Include(o => o.Store)
+                .Include(o => o.Product)
+                .AsQueryable();
+
+            if (!string.IsNullOrWhiteSpace(pagination.Filter))
+            {
+                queryable = queryable.Where(x =>
+                 x.Store.Name.ToLower().Contains(pagination.Filter.ToLower())
+                 || x.Product.Name.ToLower().Contains(pagination.Filter.ToLower())
+                 );
+            }
+
+            double count = await queryable.CountAsync();
+            return Ok(count);
         }
 
         //---------------------------------------------------------------------------------------

@@ -1,0 +1,233 @@
+﻿@page "/moves"
+@attribute [Authorize(Roles = "Admin")]
+@inject IRepository repository
+@inject NavigationManager navigationManager
+@inject SweetAlertService swal
+@inject HttpClient Http
+@inject IJSRuntime JS
+
+@if (Moves is null)
+{
+    <Spinner />
+}
+else
+{
+    <div class="container">
+        <div class="row">
+            <div class="offset-1 col-10">
+                <div class="card">
+                    <div class="card-header">
+                        <span>
+                            <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" fill="currentColor" class="bi bi-arrows-move" viewBox="0 0 16 16">
+                                <path fill-rule="evenodd" d="M7.646.146a.5.5 0 0 1 .708 0l2 2a.5.5 0 0 1-.708.708L8.5 1.707V5.5a.5.5 0 0 1-1 0V1.707L6.354 2.854a.5.5 0 1 1-.708-.708zM8 10a.5.5 0 0 1 .5.5v3.793l1.146-1.147a.5.5 0 0 1 .708.708l-2 2a.5.5 0 0 1-.708 0l-2-2a.5.5 0 0 1 .708-.708L7.5 14.293V10.5A.5.5 0 0 1 8 10M.146 8.354a.5.5 0 0 1 0-.708l2-2a.5.5 0 1 1 .708.708L1.707 7.5H5.5a.5.5 0 0 1 0 1H1.707l1.147 1.146a.5.5 0 0 1-.708.708zM10 8a.5.5 0 0 1 .5-.5h3.793l-1.147-1.146a.5.5 0 0 1 .708-.708l2 2a.5.5 0 0 1 0 .708l-2 2a.5.5 0 0 1-.708-.708L14.293 8.5H10.5A.5.5 0 0 1 10 8" />
+                            </svg>
+                            Kardex
+                            
+                        </span>
+                    </div>
+                    <div class="card-body">
+                        <div style="display: flex; justify-content:space-between; align-items: center;">
+                            <div style="display: flex;  align-items: center;">
+                                <div>
+                                    <input style="width: 400px;" type="text" class="form-control" id="titulo" placeholder="Buscar Proveedor o Almacén..." @bind-value="Filter" />
+                                </div>
+                                <div class="mx-1">
+                                    <button type="button" class="btn btn-outline-primary" @onclick="ApplyFilterAsync"><i class="oi oi-layers" /> Filtrar</button>
+                                    <button type="button" class="btn btn-outline-danger" @onclick="CleanFilterAsync"><i class="oi oi-ban" /> Limpiar</button>
+                                </div>
+
+                            </div>
+                            <div>
+                                <button class="btn btn-sm btn-outline-success mb-3" data-toggle="tooltip" title="Exportar" @onclick="(()=> ExportarExcel(Moves!))">
+                                    <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" fill="currentColor" class="bi bi-file-earmark-excel-fill" viewBox="0 0 16 16">
+                                        <path d="M9.293 0H4a2 2 0 0 0-2 2v12a2 2 0 0 0 2 2h8a2 2 0 0 0 2-2V4.707A1 1 0 0 0 13.707 4L10 .293A1 1 0 0 0 9.293 0M9.5 3.5v-2l3 3h-2a1 1 0 0 1-1-1M5.884 6.68 8 9.219l2.116-2.54a.5.5 0 1 1 .768.641L8.651 10l2.233 2.68a.5.5 0 0 1-.768.64L8 10.781l-2.116 2.54a.5.5 0 0 1-.768-.641L7.349 10 5.116 7.32a.5.5 0 1 1 .768-.64" />
+                                    </svg>
+                                </button>
+
+                                <button class="btn btn-sm btn-outline-success mb-3" data-toggle="tooltip" title="Exportar" @onclick="(()=> ExportarExcel(MovesAll!))">
+                                    <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" fill="currentColor" class="bi bi-file-excel-fill" viewBox="0 0 16 16">
+                                        <path d="M12 0H4a2 2 0 0 0-2 2v12a2 2 0 0 0 2 2h8a2 2 0 0 0 2-2V2a2 2 0 0 0-2-2M5.884 4.68 8 7.219l2.116-2.54a.5.5 0 1 1 .768.641L8.651 8l2.233 2.68a.5.5 0 0 1-.768.64L8 8.781l-2.116 2.54a.5.5 0 0 1-.768-.641L7.349 8 5.116 5.32a.5.5 0 1 1 .768-.64" />
+                                    </svg>
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+
+                <GenericList MyList="Moves">
+                    <Body>
+                        <table class="table table-sm table-info table-striped">
+                            <thead>
+                                <tr>
+                                    <th>Id</th>
+                                    <th>Almacén</th>
+                                    <th>Producto</th>
+                                    <th>Fecha</th>
+                                    <th>Documento</th>
+                                    <th>Entrada</th>
+                                    <th>Salida</th>
+                                    <th>Balance</th>
+                                    <th>Ult. Costo</th>
+                                    <th>Costo Prom.</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                @foreach (var move in Moves!)
+                                {
+                                    <tr>
+                                        <td>
+                                            @move.Id
+                                        </td>
+                                        <td>
+                                            @move.Store.Name
+                                        </td>
+                                        <td>
+                                            @move.Product.Name
+                                        </td>
+                                        <td>
+                                            @move.Date
+                                        </td>
+                                        <td>
+                                            @move.Document
+                                        </td>
+                                        <td>
+                                            <p align='right'>
+                                                @($"{move.Entrance:N2}")
+                                            </p>
+                                        </td>
+                                        <td>
+                                            <p align='right'>
+                                                @($"{move.Exit:N2}")
+                                            </p>
+                                        </td>
+                                        <td>
+                                            <p align='right'>
+                                                @($"{move.Balance:N2}")
+                                            </p>
+                                        </td>
+                                        <td>
+                                            <p align='right'>
+                                                @($"{move.LastCost:N2} $")
+                                            </p>
+                                        </td>
+                                        <td>
+                                            <p align='right'>
+                                                @($"{move.AverageCost:N2} $")
+                                            </p>
+                                        </td>
+                                    </tr>
+                                }
+                            </tbody>
+                        </table>
+                    </Body>
+                </GenericList>
+                <div class="d-flex justify-content-between align-items-lg-center">
+                    <Pagination CurrentPage="currentPage"
+                                TotalPages="totalPages"
+                                SelectedPage="SelectedPage" />
+                    <p> Total Registros: @totalRegisters</p>
+                </div>
+            </div>
+        </div>
+    </div>
+}
+
+
+@code {
+    public List<Move>? Moves { get; set; }
+    public List<Move>? MovesAll { get; set; }
+    private int currentPage = 1;
+    private int totalPages;
+    private int totalRegisters;
+
+    [CascadingParameter]
+    IModalService Modal { get; set; } = default!;
+
+    [Parameter]
+    [SupplyParameterFromQuery]
+    public string Page { get; set; } = "";
+
+    [Parameter]
+    [SupplyParameterFromQuery]
+    public string Filter { get; set; } = "";
+
+
+    protected override async Task OnInitializedAsync()
+    {
+        await LoadAsync();
+    }
+
+    private async Task SelectedPage(int page)
+    {
+        currentPage = page;
+        await LoadAsync(page);
+    }
+
+    private async Task LoadAsync(int page = 1)
+    {
+        if (!string.IsNullOrWhiteSpace(Page))
+        {
+            page = Convert.ToInt32(Page);
+        }
+
+        string url1 = string.Empty;
+        string url2 = string.Empty;
+        string url3 = string.Empty;
+        string url4 = string.Empty;
+
+        if (string.IsNullOrEmpty(Filter))
+        {
+            url1 = $"/api/moves?page={page}";
+            url2 = $"/api/moves/totalPages";
+            url3 = $"/api/moves/totalRegisters";
+            url4 = $"/api/moves/all";
+        }
+        else
+        {
+            url1 = $"/api/moves?page={page}&filter={Filter}";
+            url2 = $"/api/moves/totalPages?filter={Filter}";
+            url3 = $"/api/moves/totalRegisters?filter={Filter}";
+            url4 = $"/api/moves/all?filter={Filter}";
+        }
+        try
+        {
+            var responseHttp = await repository.Get<List<Move>>(url1);
+            var responseHttp2 = await repository.Get<int>(url2);
+            var responseHttp3 = await repository.Get<int>(url3);
+            //var responseHttp4 = await repository.Get<List<Store>>(url4);
+            Moves = responseHttp.Response!;
+            totalPages = responseHttp2.Response!;
+            totalRegisters = responseHttp3.Response!;
+            //StoresAll = responseHttp4.Response!;
+        }
+        catch (Exception ex)
+        {
+            await swal.FireAsync("Error", ex.Message, SweetAlertIcon.Error);
+        }
+    }
+
+    private async Task ExportarExcel(List<Move> moves)
+    {
+        var response = await repository.Post("/api/Excel/ExportExcelMoves", moves);
+        var fileStream = response.HttpResponseMessage.Content.ReadAsStream();
+        using var streamRef = new DotNetStreamReference(stream: fileStream);
+        await JS.InvokeVoidAsync("DescargarExcel", "Kardex.xlsx", streamRef);
+    }
+
+    private async Task CleanFilterAsync()
+    {
+        Filter = string.Empty;
+        await ApplyFilterAsync();
+    }
+
+    private async Task ApplyFilterAsync()
+    {
+        int page = 1;
+        await LoadAsync(page);
+        await SelectedPage(page);
+    }
+
+
+
+}

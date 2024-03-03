@@ -15,5 +15,11 @@ namespace WebAppComercial.Shared.DTOs
 
         [Display(Name = "Almacén")]
         public int StoreId { get; set; }
+
+        public string? Store { get; set; }
+
+        public string? Supplier { get; set; }
+
+        public int? Items { get; set; }
     }
 }

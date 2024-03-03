@@ -6,7 +6,7 @@
 @inject HttpClient Http
 @inject IJSRuntime JS
 
-@if (Buys is null)
+@if (loading)
 {
     <Spinner />
 }
@@ -50,7 +50,7 @@ else
                                     </svg>
                                 </button>
 
-                                <button class="btn btn-sm btn-outline-success mb-3" data-toggle="tooltip" title="Exportar" @onclick="(()=> ExportarExcel(BuysAll!))">
+                                <button class="btn btn-sm btn-outline-success mb-3" data-toggle="tooltip" title="Exportar" @onclick="(()=> ExportarTodo())">
                                     <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" fill="currentColor" class="bi bi-file-excel-fill" viewBox="0 0 16 16">
                                         <path d="M12 0H4a2 2 0 0 0-2 2v12a2 2 0 0 0 2 2h8a2 2 0 0 0 2-2V2a2 2 0 0 0-2-2M5.884 4.68 8 7.219l2.116-2.54a.5.5 0 1 1 .768.641L8.651 8l2.233 2.68a.5.5 0 0 1-.768.64L8 8.781l-2.116 2.54a.5.5 0 0 1-.768-.641L7.349 8 5.116 5.32a.5.5 0 1 1 .768-.64" />
                                     </svg>
@@ -79,7 +79,7 @@ else
                                 {
                                     <tr>
                                         <td>
-                                            @buy.Store.Id
+                                            @buy.Id
                                         </td>
                                         <td>
                                             @buy.Store.Name
@@ -131,9 +131,23 @@ else
 @code {
     public List<Buy>? Buys { get; set; }
     public List<Buy>? BuysAll { get; set; }
+    public List<BuyDTO>? BuysDTO { get; set; }
+
+    HttpResponseWrapper<List<Buy>>? responseHttp;
+    HttpResponseWrapper<int>? responseHttp2;
+    HttpResponseWrapper<int>? responseHttp3;
+    HttpResponseWrapper<List<Buy>>? responseHttp4;
+
+    string url1 = string.Empty;
+    string url2 = string.Empty;
+    string url3 = string.Empty;
+    string url4 = string.Empty;
+
     private int currentPage = 1;
     private int totalPages;
     private int totalRegisters;
+
+    private bool loading = true;
 
     [CascadingParameter]
     IModalService Modal { get; set; } = default!;
@@ -146,29 +160,27 @@ else
     [SupplyParameterFromQuery]
     public string Filter { get; set; } = "";
 
-
+    //---------------------------------------------------------------------------
     protected override async Task OnInitializedAsync()
     {
         await LoadAsync();
     }
 
+    //---------------------------------------------------------------------------
     private async Task SelectedPage(int page)
     {
         currentPage = page;
         await LoadAsync(page);
     }
 
+    //---------------------------------------------------------------------------
     private async Task LoadAsync(int page = 1)
     {
+        loading = true;
         if (!string.IsNullOrWhiteSpace(Page))
         {
             page = Convert.ToInt32(Page);
         }
-
-        string url1 = string.Empty;
-        string url2 = string.Empty;
-        string url3 = string.Empty;
-        string url4 = string.Empty;
 
         if (string.IsNullOrEmpty(Filter))
         {
@@ -186,21 +198,24 @@ else
         }
         try
         {
-            var responseHttp = await repository.Get<List<Buy>>(url1);
-            var responseHttp2 = await repository.Get<int>(url2);
-            var responseHttp3 = await repository.Get<int>(url3);
-            //var responseHttp4 = await repository.Get<List<Store>>(url4);
+            responseHttp = await repository.Get<List<Buy>>(url1);
+            responseHttp2 = await repository.Get<int>(url2);
+            responseHttp3 = await repository.Get<int>(url3);
+            
             Buys = responseHttp.Response!;
             totalPages = responseHttp2.Response!;
             totalRegisters = responseHttp3.Response!;
-            //StoresAll = responseHttp4.Response!;
+            
+            loading = false;
         }
         catch (Exception ex)
         {
             await swal.FireAsync("Error", ex.Message, SweetAlertIcon.Error);
+            loading = false;
         }
     }
 
+    //---------------------------------------------------------------------------
     private async Task DeleteAsync(int id)
     {
         var result = await swal.FireAsync(new SweetAlertOptions
@@ -242,20 +257,41 @@ else
         await toast.FireAsync(icon: SweetAlertIcon.Success, message: "Compra eliminada con éxito.");
     }
 
+    //---------------------------------------------------------------------------
     private async Task ExportarExcel(List<Buy> buys)
     {
-        var response = await repository.Post("/api/Excel/ExportExcelBuys", buys);
+        loading = true;
+        BuysDTO = [];
+        foreach (var buy in buys)
+        {
+            BuysDTO.Add(ToBuyDTO(buy));
+        }
+
+        var response = await repository.Post("/api/Excel/ExportExcelBuys", BuysDTO);
         var fileStream = response.HttpResponseMessage.Content.ReadAsStream();
         using var streamRef = new DotNetStreamReference(stream: fileStream);
         await JS.InvokeVoidAsync("DescargarExcel", "Compras.xlsx", streamRef);
+        loading = false;
     }
 
+    //---------------------------------------------------------------------------
+    private async Task ExportarTodo()
+    {
+        loading = true;
+        var responseHttp4 = await repository.Get<List<Buy>>(url4);
+        BuysAll = responseHttp4.Response!;
+        await ExportarExcel(BuysAll!);
+        loading = false;
+    }
+
+    //---------------------------------------------------------------------------
     private async Task CleanFilterAsync()
     {
         Filter = string.Empty;
         await ApplyFilterAsync();
     }
 
+    //---------------------------------------------------------------------------
     private async Task ApplyFilterAsync()
     {
         int page = 1;
@@ -263,6 +299,25 @@ else
         await SelectedPage(page);
     }
 
+    //---------------------------------------------------------------------------
+    private BuyDTO ToBuyDTO(Buy buy)
+    {
+        if (buy is null)
+        {
+            throw new ArgumentNullException(nameof(buy));
+        }
+
+        return new BuyDTO
+            {
+                Id = buy.Id,
+                Date = buy.Date,
+                Items = buy.BuyDetails!.Count(),
+                Store = buy.Store.Name,
+                StoreId = buy.StoreId,
+                Supplier = buy.Supplier.Name,
+                SupplierId = buy.Supplier.Id,
+            };
+    }
 
 
 }

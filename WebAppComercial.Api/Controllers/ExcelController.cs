@@ -455,6 +455,52 @@ namespace GenerarExcel.Server.Controllers
                 throw;
             }
         }
+
+        //-------------------------------------------------------------------------------------------
+        [HttpPost]
+        [Route("ExportExcelBuys")]
+
+        public IActionResult ExportExcelBuys([FromBody] List<BuyDTO> buys)
+        {
+            try
+            {
+                DataTable table = new DataTable();//tabla general
+
+                table.Columns.Add("ID");
+                table.Columns.Add("ALMACEN");
+                table.Columns.Add("PROVEEDOR");
+                table.Columns.Add("FECHA");
+                table.Columns.Add("CANT. ITEMS");
+
+                foreach (BuyDTO buy in buys)
+                {
+                    DataRow fila = table.NewRow();
+                    fila["ID"] = buy.Id;
+                    fila["ALMACEN"] = buy.Store;
+                    fila["PROVEEDOR"] = buy.Supplier;
+                    fila["FECHA"] = buy.Date;
+                    fila["CANT. ITEMS"] = buy.Items;
+                    table.Rows.Add(fila);
+                }
+
+                using var libro = new XLWorkbook();
+                table.TableName = "Compras";
+
+                var hoja = libro.Worksheets.Add(table);
+
+                hoja.ColumnsUsed().AdjustToContents();
+
+                using var memoria = new MemoryStream();
+                libro.SaveAs(memoria);
+                var nombreExcel = "Reporte.xlsx";
+                var archivo = File(memoria.ToArray(), "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet", nombreExcel);
+                return archivo;
+            }
+            catch (Exception)
+            {
+                throw;
+            }
+        }
     }
 }
 
