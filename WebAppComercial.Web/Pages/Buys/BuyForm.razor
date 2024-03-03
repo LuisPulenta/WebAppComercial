@@ -737,6 +737,7 @@
             newmoveDTO.Document = $"CO-{newBuy.Id}";
             newmoveDTO.Entrance = detail.Quantity;
             newmoveDTO.Exit =0;
+            newmoveDTO.LastBalance = lastBalance;
             newmoveDTO.Balance = lastBalance + detail.Quantity;
             newmoveDTO.LastCost =detail.Cost;
             newmoveDTO.AverageCost = ((decimal)lastBalance * lastAverageCost + (decimal)detail.Quantity * detail.Cost) / ((decimal)lastBalance + (decimal)detail.Quantity);

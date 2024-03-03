@@ -67,7 +67,8 @@ else
                                     <th>Documento</th>
                                     <th>Entrada</th>
                                     <th>Salida</th>
-                                    <th>Balance</th>
+                                    <th>Stock Anterior</th>
+                                    <th>Stock</th>
                                     <th>Ult. Costo</th>
                                     <th>Costo Prom.</th>
                                 </tr>
@@ -99,6 +100,11 @@ else
                                         <td>
                                             <p align='right'>
                                                 @($"{move.Exit:N2}")
+                                            </p>
+                                        </td>
+                                        <td>
+                                            <p align='right'>
+                                                @($"{move.LastBalance:N2}")
                                             </p>
                                         </td>
                                         <td>

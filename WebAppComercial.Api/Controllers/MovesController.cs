@@ -161,6 +161,7 @@ namespace WebAppComercial.Api.Controllers
                 Product = product!,
                 ProductId = moveDTO.ProductId,
                 AverageCost = moveDTO.AverageCost,
+                LastBalance = moveDTO.LastBalance,
                 Balance = moveDTO.Balance,
                 Date = moveDTO.Date,
                 Document = moveDTO.Document,

@@ -41,7 +41,12 @@ namespace WebAppComercial.Shared.Entities
 
 
         [DisplayFormat(DataFormatString = "{0:N2}")]
-        [Display(Name = "Saldo")]
+        [Display(Name = "Stock Anterior")]
+        [Required(ErrorMessage = "El campo {0} es obligatorio.")]
+        public double LastBalance { get; set; }
+
+        [DisplayFormat(DataFormatString = "{0:N2}")]
+        [Display(Name = "Stock")]
         [Required(ErrorMessage = "El campo {0} es obligatorio.")]
         public double Balance { get; set; }
 
@@ -57,6 +62,6 @@ namespace WebAppComercial.Shared.Entities
         [Required(ErrorMessage = "El campo {0} es obligatorio.")]
         public decimal AverageCost { get; set; }
 
-        public ICollection<BuyDetail>? BuyDetails { get; set; }
+        //public ICollection<BuyDetail>? BuyDetails { get; set; }
     }
 }

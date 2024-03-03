@@ -1,0 +1,9 @@
+﻿DELETE FROM BuyDetails
+DELETE FROM Buys
+DELETE FROM Moves
+DELETE FROM Storeproducts
+--Inicializar los indices de las tablas
+DBCC CHECKIDENT (BuyDetails, RESEED,0)
+DBCC CHECKIDENT (Buys, RESEED,0)
+DBCC CHECKIDENT (Moves, RESEED,0)
+DBCC CHECKIDENT (Storeproducts, RESEED,0)

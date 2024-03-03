@@ -12,7 +12,7 @@ using WebAppComercial.Api.Data;
 namespace WebAppComercial.Api.Migrations
 {
     [DbContext(typeof(DataContext))]
-    [Migration("20240228120614_InitialDb")]
+    [Migration("20240303212924_InitialDb")]
     partial class InitialDb
     {
         /// <inheritdoc />
@@ -222,7 +222,7 @@ namespace WebAppComercial.Api.Migrations
                     b.Property<decimal>("Cost")
                         .HasColumnType("decimal(18,3)");
 
-                    b.Property<int?>("MoveId")
+                    b.Property<int>("MoveId")
                         .HasColumnType("int");
 
                     b.Property<string>("Name")
@@ -245,8 +245,6 @@ namespace WebAppComercial.Api.Migrations
                     b.HasKey("Id");
 
                     b.HasIndex("BuyId");
-
-                    b.HasIndex("MoveId");
 
                     b.HasIndex("ProductId");
 
@@ -452,6 +450,9 @@ namespace WebAppComercial.Api.Migrations
                         .HasColumnType("float");
 
                     b.Property<double>("Exit")
+                        .HasColumnType("float");
+
+                    b.Property<double>("LastBalance")
                         .HasColumnType("float");
 
                     b.Property<decimal>("LastCost")
@@ -835,14 +836,10 @@ namespace WebAppComercial.Api.Migrations
             modelBuilder.Entity("WebAppComercial.Shared.Entities.BuyDetail", b =>
                 {
                     b.HasOne("WebAppComercial.Shared.Entities.Buy", "Buy")
-                        .WithMany()
+                        .WithMany("BuyDetails")
                         .HasForeignKey("BuyId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
-
-                    b.HasOne("WebAppComercial.Shared.Entities.Move", null)
-                        .WithMany("BuyDetails")
-                        .HasForeignKey("MoveId");
 
                     b.HasOne("WebAppComercial.Shared.Entities.Product", "Product")
                         .WithMany()
@@ -947,6 +944,11 @@ namespace WebAppComercial.Api.Migrations
                     b.Navigation("DocumentType");
                 });
 
+            modelBuilder.Entity("WebAppComercial.Shared.Entities.Buy", b =>
+                {
+                    b.Navigation("BuyDetails");
+                });
+
             modelBuilder.Entity("WebAppComercial.Shared.Entities.Category", b =>
                 {
                     b.Navigation("Products");
@@ -967,11 +969,6 @@ namespace WebAppComercial.Api.Migrations
             modelBuilder.Entity("WebAppComercial.Shared.Entities.Measure", b =>
                 {
                     b.Navigation("Products");
-                });
-
-            modelBuilder.Entity("WebAppComercial.Shared.Entities.Move", b =>
-                {
-                    b.Navigation("BuyDetails");
                 });
 
             modelBuilder.Entity("WebAppComercial.Shared.Entities.Product", b =>

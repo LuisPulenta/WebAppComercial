@@ -391,6 +391,7 @@ namespace WebAppComercial.Api.Migrations
                     Document = table.Column<string>(type: "nvarchar(max)", nullable: false),
                     Entrance = table.Column<double>(type: "float", nullable: false),
                     Exit = table.Column<double>(type: "float", nullable: false),
+                    LastBalance = table.Column<double>(type: "float", nullable: false),
                     Balance = table.Column<double>(type: "float", nullable: false),
                     LastCost = table.Column<decimal>(type: "decimal(18,3)", nullable: false),
                     AverageCost = table.Column<decimal>(type: "decimal(18,3)", nullable: false)
@@ -474,9 +475,9 @@ namespace WebAppComercial.Api.Migrations
                     Name = table.Column<string>(type: "nvarchar(100)", maxLength: 100, nullable: false),
                     Cost = table.Column<decimal>(type: "decimal(18,3)", nullable: false),
                     Quantity = table.Column<double>(type: "float", nullable: false),
+                    MoveId = table.Column<int>(type: "int", nullable: false),
                     PercentageIVA = table.Column<double>(type: "float", nullable: false),
-                    PercentageDiscount = table.Column<double>(type: "float", nullable: false),
-                    MoveId = table.Column<int>(type: "int", nullable: true)
+                    PercentageDiscount = table.Column<double>(type: "float", nullable: false)
                 },
                 constraints: table =>
                 {
@@ -487,11 +488,6 @@ namespace WebAppComercial.Api.Migrations
                         principalTable: "Buys",
                         principalColumn: "Id",
                         onDelete: ReferentialAction.Cascade);
-                    table.ForeignKey(
-                        name: "FK_BuyDetails_Moves_MoveId",
-                        column: x => x.MoveId,
-                        principalTable: "Moves",
-                        principalColumn: "Id");
                     table.ForeignKey(
                         name: "FK_BuyDetails_Products_ProductId",
                         column: x => x.ProductId,
@@ -554,11 +550,6 @@ namespace WebAppComercial.Api.Migrations
                 name: "IX_BuyDetails_BuyId",
                 table: "BuyDetails",
                 column: "BuyId");
-
-            migrationBuilder.CreateIndex(
-                name: "IX_BuyDetails_MoveId",
-                table: "BuyDetails",
-                column: "MoveId");
 
             migrationBuilder.CreateIndex(
                 name: "IX_BuyDetails_ProductId",
@@ -712,6 +703,9 @@ namespace WebAppComercial.Api.Migrations
                 name: "Customers");
 
             migrationBuilder.DropTable(
+                name: "Moves");
+
+            migrationBuilder.DropTable(
                 name: "ProductImages");
 
             migrationBuilder.DropTable(
@@ -727,19 +721,13 @@ namespace WebAppComercial.Api.Migrations
                 name: "Buys");
 
             migrationBuilder.DropTable(
-                name: "Moves");
-
-            migrationBuilder.DropTable(
-                name: "Suppliers");
-
-            migrationBuilder.DropTable(
                 name: "Products");
 
             migrationBuilder.DropTable(
                 name: "Stores");
 
             migrationBuilder.DropTable(
-                name: "DocumentTypes");
+                name: "Suppliers");
 
             migrationBuilder.DropTable(
                 name: "Categories");
@@ -749,6 +737,9 @@ namespace WebAppComercial.Api.Migrations
 
             migrationBuilder.DropTable(
                 name: "Measures");
+
+            migrationBuilder.DropTable(
+                name: "DocumentTypes");
         }
     }
 }
