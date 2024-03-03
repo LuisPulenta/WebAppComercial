@@ -741,9 +741,25 @@
             newmoveDTO.LastCost =detail.Cost;
             newmoveDTO.AverageCost = ((decimal)lastBalance * lastAverageCost + (decimal)detail.Quantity * detail.Cost) / ((decimal)lastBalance + (decimal)detail.Quantity);
 
-            await repository.Post("/api/moves/", newmoveDTO);
+            var httpResponse4 = await repository.Post<MoveDTO,Move>("/api/moves/", newmoveDTO);
+
+            Move newMove = new Move();
+            newMove = httpResponse4.Response!;
 
             //---------- Guardar Detalle Compra ----------
+
+            BuyDetail newbuydetailDTO = new BuyDetail();
+
+            newbuydetailDTO.BuyId = newBuy.Id;
+            newbuydetailDTO.ProductId = detail.ProductId;
+            newbuydetailDTO.Name = detail.Description;
+            newbuydetailDTO.Cost = detail.Cost;
+            newbuydetailDTO.Quantity = detail.Quantity;
+            newbuydetailDTO.MoveId = newMove.Id;
+            newbuydetailDTO.PercentageDiscount = detail.PercentageDiscount;
+            newbuydetailDTO.PercentageIVA = detail.PercentageIVA;
+
+            await repository.Post("/api/buydetails/", newbuydetailDTO);
         }
  
         //---------- Limpia Campos ----------
