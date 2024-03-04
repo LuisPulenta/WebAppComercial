@@ -2,19 +2,19 @@
 
 namespace WebAppComercial.Shared.Entities
 {
-    public class Buy
+    public class Sale
     {
         public int Id { get; set; }
-        
+
         [Display(Name = "Fecha")]
         public DateTime Date { get; set; }
 
-        [Display(Name = "Proveedor")]
-        public int SupplierId { get; set; }
+        [Display(Name = "Cliente")]
+        public int CustomerId { get; set; }
 
-        [Display(Name = "Proveedor")]
+        [Display(Name = "Cliente")]
         [Required(ErrorMessage = "El campo {0} es obligatorio.")]
-        public Supplier Supplier { get; set; } = null!;
+        public Customer Customer { get; set; } = null!;
 
         [Display(Name = "Almacén")]
         public int StoreId { get; set; }
@@ -23,6 +23,6 @@ namespace WebAppComercial.Shared.Entities
         [Required(ErrorMessage = "El campo {0} es obligatorio.")]
         public Store Store { get; set; } = null!;
 
-        public ICollection<BuyDetail>? BuyDetails { get; set; }
+        public ICollection<SaleDetail>? SaleDetails { get; set; }
     }
 }

@@ -17,8 +17,8 @@
                         <label class="col-form-label fw-bold">Fecha:</label>
                     </div>
                     <div class="col-5">
-                        <InputDate class="form-control" @bind-Value="@BuyDTO.Date" />
-                        <ValidationMessage For="@(() => BuyDTO.Date)" />
+                        <InputDate class="form-control" @bind-Value="@SaleDTO.Date" />
+                        <ValidationMessage For="@(() => SaleDTO.Date)" />
                     </div>
                 </div>
 
@@ -27,7 +27,7 @@
                         <label class="col-form-label fw-bold">Almacén:</label>
                     </div>
                     <div class="col-9">
-                        <select class="form-select" @bind="@BuyDTO.StoreId">
+                        <select class="form-select" @bind="@SaleDTO.StoreId">
                             <option value="0">-- Seleccione un Almacén --</option>
                             @if (stores is not null)
                             {
@@ -37,26 +37,26 @@
                                 }
                             }
                         </select>
-                        <ValidationMessage For="@(() => BuyDTO.StoreId)" />
+                        <ValidationMessage For="@(() => SaleDTO.StoreId)" />
                     </div>
                 </div>
 
                 <div class="row g-3 align-items-center">
                     <div class="col-3">
-                        <label class="col-form-label fw-bold">Proveedor:</label>
+                        <label class="col-form-label fw-bold">Cliente:</label>
                     </div>
                     <div class="col-9">
-                        <select class="form-select" @bind="@BuyDTO.SupplierId">
-                            <option value="0">-- Seleccione un Proveedor --</option>
-                            @if (suppliers is not null)
+                        <select class="form-select" @bind="@SaleDTO.CustomerId">
+                            <option value="0">-- Seleccione un Cliente --</option>
+                            @if (customers is not null)
                             {
-                                @foreach (var supplier in suppliers)
+                                @foreach (var supplier in customers)
                                 {
                                     <option value="@supplier.Id">@supplier.Name</option>
                                 }
                             }
                         </select>
-                        <ValidationMessage For="@(() => BuyDTO.SupplierId)" />
+                        <ValidationMessage For="@(() => SaleDTO.CustomerId)" />
                     </div>
                 </div>
             </div>
@@ -88,11 +88,10 @@
 
                 <div class="row g-3 align-items-center">
                     <div class="col-3">
-                        <label class="col-form-label fw-bold">Costo:</label>
+                        <label class="col-form-label fw-bold">Precio:</label>
                     </div>
                     <div class="col-3">
-                        <InputNumber class="form-control" @bind-Value="@cost" />
-                        <ValidationMessage For="@(() =>cost)" />
+                        <label class="col-form-label fw-bold"> @($"{price:N2} $")</label>
                     </div>
                 </div>
 
@@ -155,7 +154,7 @@
                             <th><p align='center'>Id</p></th>
                             <th><p align='center'>Descripción</p></th>
                             <th><p align='center'>Cantidad</p></th>
-                            <th><p align='center'>Costo</p></th>
+                            <th><p align='center'>Precio</p></th>
                             <th><p align='center'>IVA</p></th>
                             <th><p align='center'>% Descuento</p></th>
                             <th><p align='center'>Valor Bruto</p></th>
@@ -319,11 +318,11 @@
 @code {
     private EditContext editContext = null!;
     private List<Store>? stores;
-    private List<Supplier>? suppliers;
+    private List<Customer>? customers;
     private int? productId;
     private string? productId2;
     private double? quantity;
-    private decimal? cost;
+    private decimal? price;
     private double? discount;
     private string description = "";
     private Product? product;
@@ -337,7 +336,7 @@
 
     [EditorRequired]
     [Parameter]
-    public BuyDTO BuyDTO { get; set; } = null!;
+    public SaleDTO SaleDTO { get; set; } = null!;
 
     [Parameter]
     [EditorRequired]
@@ -352,15 +351,15 @@
     //---------------------------------------------------------------------------------
     protected override void OnInitialized()
     {
-        editContext = new(BuyDTO);
+        editContext = new(SaleDTO);
     }
 
     //---------------------------------------------------------------------------------
     protected override async Task OnInitializedAsync()
     {
         await LoadStoresAsync();
-        await LoadSuppliersAsync();
-        BuyDTO.Date = DateTime.Now;
+        await LoadCustomersAsync();
+        SaleDTO.Date = DateTime.Now;
     }
 
     //---------------------------------------------------------------------------------
@@ -377,16 +376,16 @@
     }
 
     //---------------------------------------------------------------------------------
-    private async Task LoadSuppliersAsync()
+    private async Task LoadCustomersAsync()
     {
-        var responseHttp = await repository.Get<List<Supplier>>("/api/suppliers/combo");
+        var responseHttp = await repository.Get<List<Customer>>("/api/customers/combo");
         if (responseHttp.Error)
         {
             var message = await responseHttp.GetErrorMessage();
             await swal.FireAsync("Error", message, SweetAlertIcon.Error);
             return;
         }
-        suppliers = responseHttp.Response;
+        customers = responseHttp.Response;
     }
 
     //---------------------------------------------------------------------------------
@@ -422,6 +421,7 @@
     private async Task SearchProduct(ChangeEventArgs e)
     {
         description = "";
+        price = null;
         var message = string.Empty;
 
         if (e.Value is null)
@@ -492,6 +492,7 @@
             product = responseHttp.Response;
             description = product!.Name;
             productId = product.Id;
+            price = product.Price;
         }
     }
 
@@ -547,8 +548,8 @@
             return;
         }
 
-        // ----- Verifica Costo -----
-        if (cost is null)
+        // ----- Verifica Precio -----
+        if (price is null)
         {
             var toast = swal.Mixin(new SweetAlertOptions
                 {
@@ -557,13 +558,13 @@
                     ShowConfirmButton = true,
                     Timer = 3000
                 });
-            await toast.FireAsync(icon: SweetAlertIcon.Error, message: "Debe ingresar un costo.");
+            await toast.FireAsync(icon: SweetAlertIcon.Error, message: "Debe ingresar un precio.");
             return;
         }
         decimal value2 = 0;
         try
         {
-            value2 = Convert.ToDecimal(cost);
+            value2 = Convert.ToDecimal(price);
         }
         catch (Exception ex)
         {
@@ -578,7 +579,7 @@
                     ShowConfirmButton = true,
                     Timer = 3000
                 });
-            await toast.FireAsync(icon: SweetAlertIcon.Error, message: "Debe ingresar un costo.");
+            await toast.FireAsync(icon: SweetAlertIcon.Error, message: "Debe ingresar un precio.");
             return;
         }
 
@@ -613,7 +614,7 @@
 
 
         MoveDetail moveDetail = new MoveDetail();
-        moveDetail.Cost = (decimal)cost!;
+        moveDetail.Cost = (decimal)price!;
         moveDetail.PercentageIVA = 0.21;
         moveDetail.ProductId = product!.Id;
         moveDetail.Description = product.Name;
@@ -631,7 +632,7 @@
         productId = null;
         product = null;
         quantity = null;
-        cost = null;
+        price = null;
         discount = null; ;
         description = "";
     }
@@ -648,16 +649,16 @@
             });
 
         //---------- Verifica Almacén ----------
-        if (BuyDTO.StoreId <= 0)
+        if (SaleDTO.StoreId <= 0)
         {
             await toast.FireAsync(icon: SweetAlertIcon.Error, message: "Debe seleccionar un Almacén");
             return;
         }
 
         //---------- Verifica Proveedor ----------
-        if (BuyDTO.SupplierId <= 0)
+        if (SaleDTO.CustomerId <= 0)
         {
-            await toast.FireAsync(icon: SweetAlertIcon.Error, message: "Debe seleccionar un Proveedor");
+            await toast.FireAsync(icon: SweetAlertIcon.Error, message: "Debe seleccionar un Cliente");
             return;
         }
 
@@ -668,24 +669,24 @@
             return;
         }
 
-        //---------- Guardar Cabececera de Compra ----------
+        //---------- Guardar Cabececera de Venta ----------
 
-        var httpResponse = await repository.Post<BuyDTO,Buy>("/api/buys", BuyDTO);
+        var httpResponse = await repository.Post<SaleDTO,Sale>("/api/sales", SaleDTO);
         if (httpResponse.Error)
         {
             var message = await httpResponse.GetErrorMessage();
             await swal.FireAsync("Error", message, SweetAlertIcon.Error);
             return;
         }
-        Buy newBuy = new Buy();
-        newBuy = httpResponse.Response!;
+        Sale newSale = new Sale();
+        newSale = httpResponse.Response!;
 
 
         foreach (MoveDetail detail in myDetails)
         {
             //---------- Guardar AlmacénProducto ----------
 
-            var httpResponse2 = await repository.Get<Storeproduct>($"/api/storeproducts/GetStoreprodutByProductAndStoreAsync/{detail.ProductId}/{BuyDTO.StoreId}");
+            var httpResponse2 = await repository.Get<Storeproduct>($"/api/storeproducts/GetStoreprodutByProductAndStoreAsync/{detail.ProductId}/{SaleDTO.StoreId}");
             Storeproduct storeproduct = new Storeproduct();
             storeproduct = httpResponse2.Response!;
 
@@ -694,7 +695,7 @@
             if (storeproduct == null)
             {
                 storeproductDTO.ProductId = detail.ProductId;
-                storeproductDTO.StoreId = BuyDTO.StoreId;
+                storeproductDTO.StoreId = SaleDTO.StoreId;
                 storeproductDTO.Stock = detail.Quantity;
                 storeproductDTO.Minimum = 0;
                 storeproductDTO.Maximum = 0;
@@ -707,7 +708,7 @@
                 storeproductDTO.Id = storeproduct.Id;
                 storeproductDTO.ProductId = storeproduct.ProductId;
                 storeproductDTO.StoreId = storeproduct.StoreId;
-                storeproductDTO.Stock = storeproduct.Stock + detail.Quantity;
+                storeproductDTO.Stock = storeproduct.Stock - detail.Quantity;
                 storeproductDTO.Minimum = storeproduct.Minimum;
                 storeproductDTO.Maximum = storeproduct.Maximum;
                 storeproductDTO.Replacementdays = storeproduct.Replacementdays;
@@ -716,7 +717,7 @@
             }
             //---------- Guardar Kardex ----------
 
-            var httpResponse3 = await repository.Get<Move>($"/api/moves/lastmove/{BuyDTO.StoreId}/{detail.ProductId}");
+            var httpResponse3 = await repository.Get<Move>($"/api/moves/lastmove/{SaleDTO.StoreId}/{detail.ProductId}");
             Move lastMove = new Move();
             lastMove = httpResponse3.Response!;
 
@@ -731,46 +732,46 @@
 
             MoveDTO newmoveDTO = new MoveDTO();
 
-            newmoveDTO.StoreId = BuyDTO.StoreId;
+            newmoveDTO.StoreId = SaleDTO.StoreId;
             newmoveDTO.ProductId = detail.ProductId;
-            newmoveDTO.Date = BuyDTO.Date;
-            newmoveDTO.Document = $"CO-{newBuy.Id}";
+            newmoveDTO.Date = SaleDTO.Date;
+            newmoveDTO.Document = $"VE-{newSale.Id}";
             newmoveDTO.Entrance = detail.Quantity;
             newmoveDTO.Exit =0;
             newmoveDTO.LastBalance = lastBalance;
-            newmoveDTO.Balance = lastBalance + detail.Quantity;
+            newmoveDTO.Balance = lastBalance - detail.Quantity;
             newmoveDTO.LastCost =detail.Cost;
-            newmoveDTO.AverageCost = ((decimal)lastBalance * lastAverageCost + (decimal)detail.Quantity * detail.Cost) / ((decimal)lastBalance + (decimal)detail.Quantity);
+            newmoveDTO.AverageCost = lastAverageCost;
 
             var httpResponse4 = await repository.Post<MoveDTO,Move>("/api/moves/", newmoveDTO);
 
             Move newMove = new Move();
             newMove = httpResponse4.Response!;
 
-            //---------- Guardar Detalle Compra ----------
+            //---------- Guardar Detalle Venta ----------
 
-            BuyDetail newbuydetailDTO = new BuyDetail();
+            SaleDetail newsaledetailDTO = new SaleDetail();
 
-            newbuydetailDTO.BuyId = newBuy.Id;
-            newbuydetailDTO.ProductId = detail.ProductId;
-            newbuydetailDTO.Name = detail.Description;
-            newbuydetailDTO.Cost = detail.Cost;
-            newbuydetailDTO.Quantity = detail.Quantity;
-            newbuydetailDTO.MoveId = newMove.Id;
-            newbuydetailDTO.PercentageDiscount = detail.PercentageDiscount;
-            newbuydetailDTO.PercentageIVA = detail.PercentageIVA;
+            newsaledetailDTO.SaleId = newSale.Id;
+            newsaledetailDTO.ProductId = detail.ProductId;
+            newsaledetailDTO.Name = detail.Description;
+            newsaledetailDTO.Price = detail.Cost;
+            newsaledetailDTO.Quantity = detail.Quantity;
+            newsaledetailDTO.MoveId = newMove.Id;
+            newsaledetailDTO.PercentageDiscount = detail.PercentageDiscount;
+            newsaledetailDTO.PercentageIVA = detail.PercentageIVA;
 
-            await repository.Post("/api/buydetails/", newbuydetailDTO);
+            await repository.Post("/api/saledetails/", newsaledetailDTO);
         }
-
+ 
         //---------- Limpia Campos ----------
-        BuyDTO.StoreId = 0;
-        BuyDTO.SupplierId = 0;
-        BuyDTO.Date = DateTime.Now;
+        SaleDTO.StoreId = 0;
+        SaleDTO.CustomerId = 0;
+        SaleDTO.Date = DateTime.Now;
         FormPostedSuccessfully = true;
         myDetails.Clear();
 
         //---------- Mensaje Ok ----------
-        await toast.FireAsync(icon: SweetAlertIcon.Success, message: "Compra creada con éxito.");
+        await toast.FireAsync(icon: SweetAlertIcon.Success, message: "Venta creada con éxito.");
     }
 }

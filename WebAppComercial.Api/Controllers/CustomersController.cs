@@ -202,5 +202,15 @@ namespace WebAppComercial.Api.Controllers
             await _context.SaveChangesAsync();
             return NoContent();
         }
+
+        //---------------------------------------------------------------------------------------
+        [AllowAnonymous]
+        [HttpGet("combo")]
+        public async Task<ActionResult> GetCombo()
+        {
+            return Ok(await _context.Customers
+                  .OrderBy(c => c.Name)
+                  .ToListAsync());
+        }
     }
 }
