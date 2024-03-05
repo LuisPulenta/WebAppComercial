@@ -722,11 +722,13 @@
             lastMove = httpResponse3.Response!;
 
             double lastBalance = 0;
+            decimal lastCost = 0;
             decimal lastAverageCost = 0;
 
             if (lastMove != null)
             {
                 lastBalance = lastMove.Balance;
+                lastCost = lastMove.LastCost;
                 lastAverageCost = lastMove.AverageCost; 
             }
 
@@ -736,11 +738,11 @@
             newmoveDTO.ProductId = detail.ProductId;
             newmoveDTO.Date = SaleDTO.Date;
             newmoveDTO.Document = $"VE-{newSale.Id}";
-            newmoveDTO.Entrance = detail.Quantity;
-            newmoveDTO.Exit =0;
+            newmoveDTO.Entrance = 0;
+            newmoveDTO.Exit = detail.Quantity; 
             newmoveDTO.LastBalance = lastBalance;
             newmoveDTO.Balance = lastBalance - detail.Quantity;
-            newmoveDTO.LastCost =detail.Cost;
+            newmoveDTO.LastCost = lastCost;
             newmoveDTO.AverageCost = lastAverageCost;
 
             var httpResponse4 = await repository.Post<MoveDTO,Move>("/api/moves/", newmoveDTO);
